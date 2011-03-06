@@ -1,5 +1,11 @@
 TODO
   [ ] Makefile for the helper apps here
+  [ ] tests?
+  [ ] 
+
+last_command
+  [ ] determine the current shell
+  [ ] return the previous command in the proper format for known shells
   [ ] 
 
 log_history

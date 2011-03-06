@@ -1,0 +1,56 @@
+#!/usr/bin/zsh
+#
+# Author: cpa@google.com (Carl Anderson)
+#
+
+source "${0%/*}/../common" &>/dev/null || exit 1
+
+
+setopt extended_history
+setopt inc_append_history
+
+
+##
+# Invoked by ah::log in the common library (see parent directory).
+#
+function ah::last_command() {
+  local cmd cmd_no start_ts end_ts=$( date +%s )
+  read start_ts <<< "$( grep "^:" "${HISTFILE}" | tail -n1 | cut -d: -f2 )"
+  read -r cmd_no cmd <<< "$( builtin history -1 )"
+  echo -E ${cmd_no} ${start_ts} ${end_ts} "${cmd}"
+}
+
+
+##
+# Placeholder function.
+#
+function ah::original_precmd() {
+  :
+}
+
+# Rename the original precmd so it can still be invoked.
+source <( typeset -f precmd | sed -e 's/^precmd/ah::original_precmd/' )
+
+
+##
+# 
+#
+function precmd() {
+  AH_PIPESTATUS=( ${?} ${pipestatus[@]} )
+  if [[ -z ${AH_SESSION_ID} ]]; then
+    export AH_SESSION_ID="$( ah::get_session_id )"
+    ah::notify "Advanced History is enabled (session: ${AH_SESSION_ID})."
+    readonly AH_SESSION_ID
+  else
+    ah::log ${AH_PIPESTATUS[@]}
+  fi
+  ah::original_precmd
+
+  local rval=${AH_PIPESTATUS[0]}
+  export AH_PIPESTATUS=( ${AH_PIPESTATUS[2,-1]} )
+
+  # Causes the exit code to be reset to what it was before logging.
+  /bin/sh <( echo -e "#\!/bin/sh\nexit \$1" ) ${rval}
+}
+
+

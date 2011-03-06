@@ -7,6 +7,5 @@ int main(int argc, char ** argv) {
     printf("Usage: %s exit_code [extra args]\n", argv[0]);
     return 1;
   }
-  int rval = atoi(argv[1]);
-  return rval;
+  return atoi(argv[1]);
 }
