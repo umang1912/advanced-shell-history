@@ -1,0 +1,13 @@
+TODO
+  [ ] Makefile for the helper apps here
+  [ ] 
+
+log_history
+  [ ] add sqlite3 amalgamation support
+  [ ] 
+
+query_history
+  [ ] add sqlite3 amalgamation support
+  [ ] add getopts to look for query_history
+  [ ] 
+
