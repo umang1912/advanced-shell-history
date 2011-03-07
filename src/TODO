@@ -1,6 +1,4 @@
 TODO
-  [ ] Makefile for the helper apps here
-  [ ] tests?
   [ ] 
 
 last_command
@@ -16,4 +14,3 @@ query_history
   [ ] add sqlite3 amalgamation support
   [ ] add getopts to look for query_history
   [ ] 
-
