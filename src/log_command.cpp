@@ -7,8 +7,6 @@
 using namespace std;
 
 
-
-
 int main(int argc, char ** argv) {
   if (argc == 1) {
     printf("Usage: %s exit_code [extra args]\n", argv[0]);
@@ -20,6 +18,20 @@ int main(int argc, char ** argv) {
   FLAGS.define_bool("get-session", 's', false, "Get the current shell history session ID, inserting one if missing.");
   FLAGS.define_bool("version", 'v', false, "Display the version number and quit.");
   FLAGS.parse(argc, argv);
+  // TODO: set an error code if flags failed to parse.
+
+  if (FLAGS.get_bool("debug")) {
+    // TODO: turn on a debugging var?
+  }
+
+  if (FLAGS.get_bool("version")) {
+    // TODO: echo the version number and exit.
+  }
+
+  if (FLAGS.get_bool("help")) {
+    FLAGS.usage();
+    exit(0);
+  }
 
   if (FLAGS.get_bool("get-session")) {
     int session_id = 0;
