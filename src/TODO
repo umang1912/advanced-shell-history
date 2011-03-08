@@ -1,13 +1,12 @@
 TODO
   [ ] 
 
-last_command
-  [ ] determine the current shell
-  [ ] return the previous command in the proper format for known shells
-  [ ] 
-
 log_history
   [ ] add sqlite3 amalgamation support
+  [ ] 
+
+flags.h
+  [ ] complete arg processing logic
   [ ] 
 
 query_history
