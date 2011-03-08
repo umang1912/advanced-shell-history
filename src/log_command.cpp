@@ -13,6 +13,8 @@ int main(int argc, char ** argv) {
     return 1;
   }
 
+  FLAGS.define_string(0, 'w', 0, "Reuired -w string.");
+  FLAGS.define_string("long-only", 0, "test", "Optional long-only string.");
   FLAGS.define_bool("debug", 'd', false, "Display debugging info.");
   FLAGS.define_bool("help", 'h', false, "Display help for this binary.");
   FLAGS.define_bool("get-session", 's', false, "Get the current shell history session ID, inserting one if missing.");

@@ -8,6 +8,9 @@
 #include <vector>
 #include <map>
 
+#include <iostream>
+using std::cout;
+using std::endl;
 
 using std::vector;
 using std::string;
@@ -34,6 +37,7 @@ class Flags {
     };
 
   public:
+    Flags() : next_key(0) {}
     ~Flags();
 
     void parse(int argc, char ** argv);
@@ -61,12 +65,17 @@ class Flags {
     Flag::Value & new_value(const char * name, const int has_arg, const char short_name, const char * description);
 
   private:
-    typedef map<const char *, Flag *> flag_map;
-    typedef flag_map::iterator iterator;
-    typedef flag_map::const_iterator const_iterator;
+    typedef map<const char *, int> key_map;
+    typedef map<const int, Flag *> flag_map;
+    typedef key_map::iterator key_iterator;
+    typedef key_map::const_iterator const_key_iterator;
+    typedef flag_map::iterator flag_iterator;
+    typedef flag_map::const_iterator const_flag_iterator;
 
     string getopt_str;
+    key_map keys;
     flag_map flags;
+    int next_key;
 };
 
 
@@ -99,7 +108,7 @@ struct option Flags::Flag::get_option() const {
 
 struct option * Flags::get_long_options() {
   vector<struct option> long_opts;
-  for (iterator i = flags.begin(); i != flags.end(); ++i) {
+  for (flag_iterator i = flags.begin(); i != flags.end(); ++i) {
     if (i -> second -> name != 0) {
       long_opts.push_back(i -> second -> get_option());
     }
@@ -118,29 +127,41 @@ void Flags::parse(int argc, char ** argv) {
   while (1) {
     int index = 0;
     int c = getopt_long(argc, argv, getopt_str.c_str(), long_options, &index);
+cout << "c = " << c << endl;
+    const char * name = 0;
     switch (c) {
       case -1: return;
-      case 0: break;
-      case 'd': break;
-      case 'h': break;  // TODO: dump all the valid flags.
-      case 's': break;
-      case 'v': break;
-      default: break;
+      case '?': cout << "WOAH" << endl; break;
+      case 0: name = long_options[index].name;
+        break;
+      default: name = (string("-") + ((char) c)).c_str();
+        break;
+    }
+cout << "name = '" << name << "'" << endl;
+    if (name && optarg) {
+      get_value(name).c = optarg;
     }
   }
 }
 
 
 Flags::Flag::Value & Flags::new_value(const char * name, const int has_arg, const char short_name, const char * description) {
-  const char * n = name == 0 ? (string("-SHORT[") + short_name + "]").c_str() : name;
-  Flags::Flag * new_flag = new Flags::Flag(n, has_arg, short_name, description);
-  flags[n] = new_flag;
+  const char * short_n = short_name == 0 ? 0 : (string("-") + short_name).c_str();
+  if (name == 0 && short_name == 0) {
+    // TODO: emit an error message - no arg name.
+    exit(1);
+  }
+  int key = next_key++;
+  if (name) keys[name] = key;
+  if (short_n) keys[name] = key;
+  Flags::Flag * new_flag = new Flags::Flag(name, has_arg, short_name, description);
+  flags[key] = new_flag;
   return new_flag -> value;
 }
 
 
 Flags::~Flags() {
-  for (iterator i = flags.begin(); i != flags.end(); ++i) {
+  for (flag_iterator i = flags.begin(); i != flags.end(); ++i) {
     if (i -> second != 0)
       delete i -> second;
     i -> second = 0;
@@ -149,17 +170,28 @@ Flags::~Flags() {
 
 
 Flags::Flag::Value Flags::get_value(const char * name) const {
-  const_iterator i = flags.find(name);
-  if (i == flags.end()) {
+  const_key_iterator i = keys.find(name);
+  if (i == keys.end()) {
+cout << "key not found for key: '" << name << "'" << endl;
     // TODO: emit an error message here.
     exit(1);
   }
-  return i -> second -> value;
+  int key = i -> second;
+  const_flag_iterator j = flags.find(key);
+  if (j == flags.end()) {
+    // TODO: emit an error.
+    exit(1);
+  }
+  return j -> second -> value;
 }
 
 
 Flags::Flag::Value Flags::get_value(const char short_name) const {
-  return get_value((string("-SHORT[") + short_name + "]").c_str());
+  if (short_name == 0) {
+    // TODO: emit an error.
+    exit(1);
+  }
+  return get_value((string("-") + short_name).c_str());
 }
 
 
@@ -185,3 +217,4 @@ Flags::Flag::Flag(const char * n, const int h, const char s, const char * d)
 
 
 #endif /* __ASH_FLAGS_H__ */
+
