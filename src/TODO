@@ -1,15 +1,6 @@
 TODO
   [ ] 
 
-log_history
-  [ ] add sqlite3 amalgamation support
-  [ ] 
-
-flags.h
+ash_log.h
   [ ] complete arg processing logic
-  [ ] 
-
-query_history
-  [ ] add sqlite3 amalgamation support
-  [ ] add getopts to look for query_history
   [ ] 
