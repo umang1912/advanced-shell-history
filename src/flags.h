@@ -48,24 +48,24 @@ class Flags {
     void define_int(const char * name, const char short_name, const char * default_value, const char * description);
 
     // long names:
-    string get_string(const char * name) const { return string(get_value(name).c); }
+    const char * get_string(const char * name) const { return get_value(name).c; }
     int get_int(const char * name) const { return get_value(name).i; }
     bool get_bool(const char * name) const { return get_value(name).b; }
 
     // short names:
-    string get_string(const char short_name) const { return string(get_value(short_name).c); }
+    const char * get_string(const char short_name) const { return get_value(short_name).c; }
     int get_int(const char short_name) const { return get_value(short_name).i; }
     bool get_bool(const char short_name) const { return get_value(short_name).b; }
 
   private:
     struct option * get_long_options();
     void set_value(const char * name, Flag::Value value);
-    Flag::Value get_value(const char short_name) const;
-    Flag::Value get_value(const char * name) const;
+    Flag::Value & get_value(const char short_name) const;
+    Flag::Value & get_value(const char * name) const;
     Flag::Value & new_value(const char * name, const int has_arg, const char short_name, const char * description);
 
   private:
-    typedef map<const char *, int> key_map;
+    typedef map<const string, int> key_map;
     typedef map<const int, Flag *> flag_map;
     typedef key_map::iterator key_iterator;
     typedef key_map::const_iterator const_key_iterator;
@@ -82,6 +82,7 @@ class Flags {
 void Flags::usage() const {
   // TODO: dump flag descriptions and quit.
   // TODO: add a string arg for a message?
+  cout << "You want to see usage, nice." << endl;
 }
 
 
@@ -129,17 +130,21 @@ void Flags::parse(int argc, char ** argv) {
     int c = getopt_long(argc, argv, getopt_str.c_str(), long_options, &index);
 cout << "c = " << c << endl;
     const char * name = 0;
+    Flag::Value * v = 0;
     switch (c) {
       case -1: return;
       case '?': cout << "WOAH" << endl; break;
-      case 0: name = long_options[index].name;
+      case 0: v = &get_value(long_options[index].name);
         break;
-      default: name = (string("-") + ((char) c)).c_str();
+      default: v = &get_value((char) c);
         break;
     }
-cout << "name = '" << name << "'" << endl;
-    if (name && optarg) {
-      get_value(name).c = optarg;
+    if (v && optarg) {
+cout << "FUCK" << endl;
+      v -> c = optarg;
+    }
+    if (v) {
+cout << "optarg = " << (v -> c) << endl;
     }
   }
 }
@@ -148,12 +153,13 @@ cout << "name = '" << name << "'" << endl;
 Flags::Flag::Value & Flags::new_value(const char * name, const int has_arg, const char short_name, const char * description) {
   const char * short_n = short_name == 0 ? 0 : (string("-") + short_name).c_str();
   if (name == 0 && short_name == 0) {
+cout << "name and short_name are null." << endl;
     // TODO: emit an error message - no arg name.
     exit(1);
   }
   int key = next_key++;
-  if (name) keys[name] = key;
-  if (short_n) keys[name] = key;
+  if (name != 0) keys[name] = key;
+  if (short_n != 0) keys[short_n] = key;
   Flags::Flag * new_flag = new Flags::Flag(name, has_arg, short_name, description);
   flags[key] = new_flag;
   return new_flag -> value;
@@ -169,24 +175,33 @@ Flags::~Flags() {
 }
 
 
-Flags::Flag::Value Flags::get_value(const char * name) const {
-  const_key_iterator i = keys.find(name);
+Flags::Flag::Value & Flags::get_value(const char * name) const {
+  const_key_iterator i = keys.begin();
+  string n = name;
+cout << "looking for value of flag named " << n << endl;
+  for (; i != keys.end(); ++i) {
+cout << "considering " << (i -> first) << endl;
+    if (n == (i -> first)) break;
+  }
   if (i == keys.end()) {
 cout << "key not found for key: '" << name << "'" << endl;
     // TODO: emit an error message here.
     exit(1);
   }
+cout << "key = " << (i -> second) << endl;
+
   int key = i -> second;
   const_flag_iterator j = flags.find(key);
   if (j == flags.end()) {
     // TODO: emit an error.
+cout << "flag not found for key: " << key << endl;
     exit(1);
   }
   return j -> second -> value;
 }
 
 
-Flags::Flag::Value Flags::get_value(const char short_name) const {
+Flags::Flag::Value & Flags::get_value(const char short_name) const {
   if (short_name == 0) {
     // TODO: emit an error.
     exit(1);
@@ -208,6 +223,7 @@ Flags::Flag::Flag(const char * n, const int h, const char s, const char * d)
       if (has_arg != 0)
         FLAGS.getopt_str += ':';
     } else {
+cout << "redefining an existing flag" << endl;
       // TODO: echo an error message and die.
       exit(1);
     }
