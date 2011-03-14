@@ -11,9 +11,9 @@
 using namespace std;
 
 
-int MyCallback(void * foo, int argc, char ** argv, char ** column_names) {
+int SelectInt(void * result, int rows, char ** cols, char ** column_names) {
   // TODO(cpa): rename this to something better, think about incorporating as a class member or something
-  *((int*)foo) = atoi(argv[0]);
+  *((int*) result) = atoi(cols[0]);
   return 0;
 }
 
@@ -41,8 +41,9 @@ Database::Database(const char * filename)
   // Init the DB if it is missing the main tables.
   int result = -1;
   char query[] = "select count(*) from sqlite_master where tbl_name in (\"sessions\", \"commands\");";
-  // TODO(cpa): need to save the return value of exec to check for failures?
-  sqlite3_exec(db, query, MyCallback, &result, 0);
+  if (sqlite3_exec(db, query, SelectInt, &result, 0)) {
+    // TODO(cpa): echo an error?
+  }
   if (result != 2) {
     init_db();
   }
@@ -58,7 +59,7 @@ Database::~Database() {
 
 
 void Database::init_db() {
-  // TODO(cpa): initialize the database, create the schema, etc.
+  // TODO(cpa): create the schema.
   cout << "SUCCESS" << endl;
 }
 
@@ -73,8 +74,6 @@ int Database::get_session_id() {
   }
 
   // Create a new session for this user.
-  // TODO(cpa): if the current session_id exists, emit it
-  // TODO(cpa): else create a new session_id and emit it
 
   return -1;
 }

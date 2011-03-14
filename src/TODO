@@ -6,7 +6,5 @@ database.cpp
   [ ] execute arbitrary queries
   [ ] 
 
-ash_log.h
-  [ ] initialize the DB if none exists
-  [ ] complete arg processing logic
+ash_log.cpp
   [ ] 
