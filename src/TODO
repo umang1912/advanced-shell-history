@@ -1,6 +1,12 @@
 TODO
   [ ] 
 
+database.cpp
+  [ ] initialize a database if none exists
+  [ ] execute arbitrary queries
+  [ ] 
+
 ash_log.h
+  [ ] initialize the DB if none exists
   [ ] complete arg processing logic
   [ ] 

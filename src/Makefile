@@ -1,7 +1,7 @@
 # TODO(cpa): add a copyright here
 
 EXE	:= ash_log
-OBJ	:= $(addsuffix .o,${EXE})
+OBJ	:= $(addsuffix .o,${EXE}) database.o
 TRASH	:= ${OBJ} ${EXE}
 CPP	:= g++
 FLAGS	:= -g -Wall -O2
@@ -20,6 +20,8 @@ ${EXE}:	sqlite3.o ${OBJ}
 %.o:	%.cpp
 	${CPP} -c ${FLAGS} -o ${@} ${<}
 
+database.o: sqlite3.o database.hpp database.cpp
+	${CPP} -c ${FLAGS} -o ${@} database.cpp
 
 sqlite3.o:
 	wget ${SQLITE_URL}
