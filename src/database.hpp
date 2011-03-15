@@ -13,6 +13,7 @@ class Database {
 
   private:
     void init_db();
+    int select_int(const char * query) const;
 
   private:
     const char * db_filename;

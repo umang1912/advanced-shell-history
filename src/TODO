@@ -1,6 +1,10 @@
 TODO
   [ ] 
 
+session.cpp
+  [ ] populate values in ctor
+  [ ] 
+
 database.cpp
   [ ] initialize a database if none exists
   [ ] execute arbitrary queries

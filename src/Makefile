@@ -1,7 +1,7 @@
 # TODO(cpa): add a copyright here
 
 EXE	:= ash_log
-OBJ	:= $(addsuffix .o,${EXE}) database.o
+OBJ	:= $(addsuffix .o,${EXE}) database.o session.o
 TRASH	:= ${OBJ} ${EXE}
 CPP	:= g++
 FLAGS	:= -g -Wall -O2
@@ -17,11 +17,11 @@ all:	${EXE}
 ${EXE}:	sqlite3.o ${OBJ}
 	${CPP} ${FLAGS} -o ${@} ${<} ${OBJ}
 
-%.o:	%.cpp
+%.o:	%.cpp %.hpp
 	${CPP} -c ${FLAGS} -o ${@} ${<}
-
-database.o: sqlite3.o database.hpp database.cpp
-	${CPP} -c ${FLAGS} -o ${@} database.cpp
+#
+#database.o: sqlite3.o database.hpp database.cpp
+#	${CPP} -c ${FLAGS} -o ${@} database.cpp
 
 sqlite3.o:
 	wget ${SQLITE_URL}
@@ -30,6 +30,8 @@ sqlite3.o:
 	gcc -DSQLITE_OMIT_LOAD_EXTENSION -DSQLITE_THREADSAFE=0 -c sqlite3.c
 	rm -rf ${SQLITE_DIR} ${SQLITE_ZIP}
 
+
+new:	clean all
 
 distclean:
 	rm -f ${OBJ}

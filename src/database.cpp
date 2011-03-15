@@ -2,20 +2,16 @@
 #include <stdio.h>    /* for fopen */
 #include <stdlib.h>
 #include <iostream>
+#include <sstream>
 
 #include "database.hpp"
+#include "session.hpp"
 #include "sqlite3.h"
+// TODO(cpa): instead of exiting, throw an exception where apt.
 // TODO(cpa): create an include file that holds all the queries I want to use.
 
 
 using namespace std;
-
-
-int SelectInt(void * result, int rows, char ** cols, char ** column_names) {
-  // TODO(cpa): rename this to something better, think about incorporating as a class member or something
-  *((int*) result) = atoi(cols[0]);
-  return 0;
-}
 
 
 Database::Database(const char * filename)
@@ -39,14 +35,11 @@ Database::Database(const char * filename)
   }
 
   // Init the DB if it is missing the main tables.
-  int result = -1;
   char query[] = "select count(*) from sqlite_master where tbl_name in (\"sessions\", \"commands\");";
-  if (sqlite3_exec(db, query, SelectInt, &result, 0)) {
-    // TODO(cpa): echo an error?
-  }
-  if (result != 2) {
+  if (select_int(query) != 2) {
     init_db();
   }
+  // TODO(cpa): maybe emit a warning if there are more tables than just the two...
 }
 
 
@@ -64,17 +57,42 @@ void Database::init_db() {
 }
 
 
+int SelectInt(void * result, int rows, char ** cols, char ** column_names) {
+  *((int*) result) = atoi(cols[0]);
+  return 0;
+}
+
+
+int Database::select_int(const char * query) const {
+  int result = -1;
+  if (sqlite3_exec(db, query, SelectInt, &result, 0)) {
+    cout << sqlite3_errmsg(db) << endl << query << endl;
+    exit(1);
+  }
+  return result;
+}
+
+
 int Database::get_session_id() {
+  stringstream ss;
+
   // First check the environment, return that if present.
   char * id = getenv("AH_SESSION_ID");
   if (id) {
-    // TODO(cpa): check that the session exists in the DB and is still ongoing - basic sanity checks
-    // TODO(cpa): set id to 0 if sanity checks fail, forcing a new session creation.
-    return atoi(id);
+    ss << "select count(*) from sessions where id = " << id << ";";
+    if (select_int(ss.str().c_str()) == 0) {
+      cout << "ERROR: session_id(" << id << ") not found, creating new session." << endl << ss.str() << endl;
+      id = 0;
+    }
+    ss.str("");
+
+    // TODO(cpa): check that the session is still ongoing - basic sanity check
+    if (id) {
+      return atoi(id);
+    }
   }
 
-  // Create a new session for this user.
-
+  Session session;
+  cout << "session sql = " << session.get_sql() << endl;
   return -1;
 }
-

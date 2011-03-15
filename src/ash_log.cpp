@@ -1,7 +1,8 @@
-#include <getopt.h>
+#include <getopt.h>  /* for getopt_long */
 #include <iostream>  /* for cout, endl */
 #include <stdlib.h>  /* for exit */
 
+#include "ash_log.hpp"
 #include "database.hpp"
 
 
@@ -24,8 +25,13 @@ int main(int argc, char ** argv) {
         cout << db.get_session_id() << endl;
         exit(0);
       }
+      case '?': {
+        cout << "Question Mark???" << endl;
+        break;
+      }
       default:
         cout << "AWESOME: " << c << endl;
+        break;
     }
   }
   return 0;
