@@ -133,7 +133,7 @@ INSERT INTO sessions(
 )
 VALUES(
   $( date +%s ),
-  ${PPID},  -- TODO(cpa): is this bash-only?
+  ${PPID},
   ${$},
   '${tty#/dev/}',
   ${UID},
