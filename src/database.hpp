@@ -4,6 +4,7 @@
 
 class sqlite3;  // Forward declaration.
 
+namespace ash {
 
 class Database {
   public:
@@ -20,5 +21,6 @@ class Database {
     sqlite3 * db;
 };
 
+} // namespace ash
 
 #endif /* __ASH_DATABASE__ */

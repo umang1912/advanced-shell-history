@@ -4,19 +4,25 @@
 #include <map>
 #include <string>
 
+#include "db_object.hpp"
+
 using std::map;
 using std::string;
 
+namespace ash {
 
-class Session {
+
+class Session : public DBObject {
   public:
     Session();
-    string get_sql() const;
+    virtual ~Session();
 
-  private:
-    map<string, string> values;
+    virtual string get_sql() const;
+    virtual string get_name() const;
 };
 
+
+}  // namespace ash
 
 #endif /* __ASH_SESSION__ */
 

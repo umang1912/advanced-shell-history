@@ -4,13 +4,13 @@
 #include <iostream>
 #include <sstream>
 
-#include "database.hpp"
-#include "session.hpp"
+#include "ash_log.hpp"
 #include "sqlite3.h"
 // TODO(cpa): instead of exiting, throw an exception where apt.
 // TODO(cpa): create an include file that holds all the queries I want to use.
 
 
+using namespace ash;
 using namespace std;
 
 

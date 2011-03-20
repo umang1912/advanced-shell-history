@@ -3,9 +3,9 @@
 #include <stdlib.h>  /* for exit */
 
 #include "ash_log.hpp"
-#include "database.hpp"
 
 
+using namespace ash;
 using namespace std;
 
 
