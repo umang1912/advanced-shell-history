@@ -17,8 +17,8 @@ class Session : public DBObject {
     Session();
     virtual ~Session();
 
-    virtual string get_sql() const;
-    virtual string get_name() const;
+    virtual const string get_sql() const;
+    virtual const string get_name() const;
 };
 
 

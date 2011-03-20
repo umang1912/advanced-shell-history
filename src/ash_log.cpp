@@ -10,17 +10,31 @@ using namespace std;
 
 
 static struct option options[] = {
-  {"get-session-id", 0, 0, 's'}
+  {"command", 1, 0, 'c'},
+  {"exit-code", 1, 0, 'e'},
+  {"finish", 1, 0, 'f'},
+  {"number", 1, 0, 'n'},
+  {"pipe-status", 1, 0, 'p'},
+  {"start", 1, 0, 's'},
+  {"get-session-id", 0, 0, 'S'}
 };
 
 
 int main(int argc, char ** argv) {
+  string command, exit_code, start, finish, number, pipes;
   int c = 0;
   while (c != -1) {
     int index = 0;
-    c = getopt_long(argc, argv, "s", options, &index);
+    c = getopt_long(argc, argv, "c:e:f:n:p:s:S", options, &index);
     switch (c) {
-      case 's': {
+      case 'c': command = optarg; break;
+      case 'e': exit_code = optarg; break;
+      case 'f': finish = optarg; break;
+      case 'n': number = optarg; break;
+      case 'p': pipes = optarg; break;
+      case 's': start = optarg; break;
+      case 'S': {
+        Session session;
         Database db = Database("/home/riddle/.history.db");
         cout << db.get_session_id() << endl;
         exit(0);
@@ -34,5 +48,13 @@ int main(int argc, char ** argv) {
         break;
     }
   }
+  // TODO(cpa): parse the received arguments for sanity and log the command
+  Database db = Database("/home/riddle/.history.db");
+  int ec = atoi(exit_code.c_str());
+  int st = atoi(start.c_str());
+  int fi = atoi(finish.c_str());
+  int nu = atoi(number.c_str());
+  Command com(command, ec, st, fi, nu);
+  cout << com.get_sql() << endl;
   return 0;
 }

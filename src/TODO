@@ -5,11 +5,9 @@ session.cpp
   [ ] 
 
 util.cpp
-  [ ] put all unix-like functions there
   [ ] 
 
 db_object.cpp
-  [ ] create wrapper methods for getting env variables, ints and strings.
   [ ] 
 
 database.cpp

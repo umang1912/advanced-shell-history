@@ -12,12 +12,16 @@ namespace ash {
 
 /* abstract */
 class DBObject {
+  public:
+    static const string quote(const char * value);
+    static const string quote(const string & value);
+
   protected:
     DBObject();
     virtual ~DBObject();
 
-    virtual string get_name() const = 0;  // abstract
-    virtual string get_sql() const;
+    virtual const string get_name() const = 0;  // abstract
+    virtual const string get_sql() const;
 
   protected:
     map<string, string> values;

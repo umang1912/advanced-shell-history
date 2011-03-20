@@ -1,7 +1,7 @@
 # TODO(cpa): add a copyright here
 
 EXE	:= ash_log
-OBJ	:= $(addsuffix .o,${EXE}) database.o db_object.o session.o unix.o util.o
+OBJ	:= $(addsuffix .o,${EXE}) command.o database.o db_object.o session.o unix.o util.o
 TRASH	:= ${OBJ} ${EXE}
 CPP	:= g++
 FLAGS	:= -g -Wall -O2

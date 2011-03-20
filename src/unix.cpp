@@ -17,17 +17,9 @@ using namespace std;
 const string null = "null";
 
 
-// TODO(cpa): move this to Util or DBObject
-const string quote(const char * value) {
-  if (value) {
-    string rval(value);
-// TODO(cpa): replace all single-quotes with double-single-quotes... O'Brien becomes O''Brien
-    return "'" + rval + "'";
-  }
-  return null;
-}
-
-
+/**
+ * Returns the i'th row of /proc/$$/stat.
+ */
 const string proc_stat(int target) {
   static string filename = "/proc/" + Unix::pid() + "/stat";
   ifstream fin(filename.c_str());
@@ -41,8 +33,26 @@ const string proc_stat(int target) {
 }
 
 
+const string Unix::cwd() {
+  static string filename = "/proc/" + Unix::pid() + "/cwd";
+  stringstream ss;
+  char buffer[1024];
+  int bytes_read = readlink(filename.c_str(), buffer, sizeof(buffer));
+  switch (bytes_read) {
+    case -1:
+      // TODO(cpa): log a warning.
+      return DBObject::quote(0);
+    case 0:
+      return DBObject::quote(ss.str());
+    default:
+      ss << string(buffer, bytes_read);
+  }
+  return DBObject::quote(ss.str());
+}
+
+
 const string Unix::ppid() {
-  return "'" + proc_stat(3) + "'";
+  return proc_stat(3);
 }
 
 
@@ -51,7 +61,7 @@ const string Unix::shell() {
   if (!token.empty() && token[0] == '(' && token[token.length() - 1] == ')') {
     token = token.substr(1, token.length() - 2);
   }
-  return "'" + token + "'";
+  return DBObject::quote(token);
 }
 
 
@@ -108,7 +118,7 @@ const string Unix::host_ip() {
   }
   freeifaddrs(addrs);
   if (ips == 0) return null;
-  return "'" + ss.str() + "'";
+  return DBObject::quote(ss.str());
 }
 
 
@@ -117,17 +127,17 @@ const string Unix::host_name() {
   if (gethostname(buffer, sizeof(buffer))) {
     // TOOD(cpa): log a warning
   }
-  return quote(buffer);
+  return DBObject::quote(buffer);
 }
 
 
 const string Unix::login_name() {
-  return quote(getlogin());
+  return DBObject::quote(getlogin());
 }
 
 
 const string Unix::tty() {
-  string tty = quote(ttyname(0));
+  string tty = DBObject::quote(ttyname(0));
   if (tty.find("/dev/") == 1) {
     return "'" + tty.substr(6);
   }
@@ -136,5 +146,10 @@ const string Unix::tty() {
 
 
 const string Unix::env(const char * name) {
-  return quote(getenv(name));
+  return DBObject::quote(getenv(name));
+}
+
+
+const string Unix::env_int(const char * name) {
+  return Util::to_string(atoi(getenv(name)));
 }

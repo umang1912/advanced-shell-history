@@ -8,6 +8,23 @@ using namespace ash;
 using namespace std;
 
 
+const string DBObject::quote(const char * value) {
+  return value ? quote(string(value)) : "null";
+}
+
+
+const string DBObject::quote(const string & in) {
+  if (in.empty()) return "null";
+  string out = "'";
+  for (string::const_iterator i = in.begin(), e = in.end(); i != e; ++i) {
+    out.push_back(*i);
+    if (*i == '\'') out.push_back('\'');
+  }
+  out.push_back('\'');
+  return out;
+}
+
+
 DBObject::DBObject() {
   // Nothing to do here.
 }
@@ -18,7 +35,7 @@ DBObject::~DBObject() {
 }
 
 
-string DBObject::get_sql() const {
+const string DBObject::get_sql() const {
   typedef map<string, string>::const_iterator c_iter;
 
   stringstream ss;

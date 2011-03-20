@@ -1,13 +1,14 @@
-#include <sys/stat.h> /* for stat */
-#include <stdio.h>    /* for fopen */
+#include <sys/stat.h>  /* for stat */
+#include <stdio.h>     /* for fopen */
 #include <stdlib.h>
 #include <iostream>
 #include <sstream>
 
 #include "ash_log.hpp"
 #include "sqlite3.h"
-// TODO(cpa): instead of exiting, throw an exception where apt.
-// TODO(cpa): create an include file that holds all the queries I want to use.
+
+// TODO(cpa): instead of exiting, throw an exception where i'm currently exiting.
+// TODO(cpa): create an include file that holds all the queries I want to use???
 
 
 using namespace ash;
@@ -35,6 +36,7 @@ Database::Database(const char * filename)
   }
 
   // Init the DB if it is missing the main tables.
+// TODO(cpa): this query can be built from the names of classes extending DBObject...
   char query[] = "select count(*) from sqlite_master where tbl_name in (\"sessions\", \"commands\");";
   if (select_int(query) != 2) {
     init_db();
@@ -57,6 +59,7 @@ void Database::init_db() {
 }
 
 
+// Callback used in Database::select_int
 int SelectInt(void * result, int rows, char ** cols, char ** column_names) {
   *((int*) result) = atoi(cols[0]);
   return 0;
@@ -76,6 +79,7 @@ int Database::select_int(const char * query) const {
 int Database::get_session_id() {
   stringstream ss;
 
+  // TODO(cpa): move this method into the Session ctor.
   // First check the environment, return that if present.
   char * id = getenv("AH_SESSION_ID");
   if (id) {
@@ -87,12 +91,14 @@ int Database::get_session_id() {
     ss.str("");
 
     // TODO(cpa): check that the session is still ongoing - basic sanity check
+
     if (id) {
       return atoi(id);
     }
   }
 
   Session session;
+  // TODO(cpa): execute the SQL to insert the session and return the new ID.
   cout << "session sql = " << session.get_sql() << endl;
   return -1;
 }

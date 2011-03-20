@@ -30,12 +30,12 @@ Session::~Session() {
 }
 
 
-string Session::get_name() const {
+const string Session::get_name() const {
   return "session";
 }
 
 
-string Session::get_sql() const {
+const string Session::get_sql() const {
   stringstream ss;
   ss << "BEGIN TRANSACTION; ";
   ss << DBObject::get_sql();

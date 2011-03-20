@@ -4,7 +4,8 @@
 
 #include "database.hpp"
 #include "db_object.hpp"
-#include "session.hpp"
+#include   "session.hpp"
+#include   "command.hpp"
 #include "util.hpp"
 #include "unix.hpp"
 
