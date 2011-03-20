@@ -2,5 +2,6 @@ TODO
   [ ] Makefile to build all binaries and bundle a tarball to be unpacked over /
   [ ] add a NOTICE file
   [ ] add a script to build an empty database
+  [ ] write an installer to build and install
   [ ] 
 
