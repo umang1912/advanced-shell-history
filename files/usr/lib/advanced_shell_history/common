@@ -27,7 +27,7 @@ readonly AH_HISTORY_DB
 # Ensure there is a HISTFILE.
 if [[ -z "${HISTFILE}" ]]; then
   export HISTFILE="${AH_HISTORY_DB%.db}"
-  ah::notify "WARN: HISTFILE undefined.  Exporting HISTFILE as: '${HISTFILE}'."
+  ah::notify "WARN: HISTFILE undefined. Exporting HISTFILE as: '${HISTFILE}'."
 fi
 if [[ ! -e "${HISTFILE}" ]] && ! touch "${HISTFILE}" &>/dev/null; then
   ah::notify "Failed to create shell history file: '${HISTFILE}'."
@@ -38,146 +38,18 @@ fi
 
 
 ##
-# Initialize the sqlite3 command history database, if possible and necessary.
-#
-function ah::init_db() {
-  if [ -e "${AH_HISTORY_DB}" ]; then
-    return
-  fi
-
-  if [ -z "$( which sqlite3 )" ]; then
-    ah::notify "Install sqlite3 if you wish to save advanced command history."
-    return
-  fi
-
-  # TODO(cpa): add a primary key to the commands table to define the command key as session_id.command_no
-  # TODO(cpa): reorder sessions columns: id, hostname, host_ip, ppid, pid
-  cat << EOSQL | sqlite3 "${AH_HISTORY_DB}"
-PRAGMA foreign_keys=OFF;
-BEGIN TRANSACTION;
-CREATE TABLE IF NOT EXISTS sessions(
-  id integer primary key autoincrement,
-  hostname varchar(128) not null,
-  host_ip varchar(40) not null,
-  ppid int(5) not null,
-  pid int(5) not null,
-  start_time integer not null,
-  end_time integer,
-  duration integer,
-  tty varchar(20) not null,
-  uid int(16) not null,
-  euid int(16) not null,
-  logname varchar(48) not null,
-  shell varchar(50) not null,
-  sudo_user varchar(48),
-  sudo_uid int(16),
-  ssh_client varchar(60),
-  ssh_connection varchar(100)
-);
-CREATE TABLE IF NOT EXISTS commands(
-  id integer primary key autoincrement,
-  session_id integer not null,
-  shell_level integer not null,
-  command_no integer not null,
-  tty varchar(20) not null,
-  euid int(16) not null,
-  cwd varchar(256) not null,
-  rval int(5) not null,
-  start_time integer not null,
-  end_time integer not null,
-  duration integer not null,
-  pipe_cnt int(3) not null,
-  pipe_vals varchar(80) not null,
-  command varchar(1000) not null
-);
-COMMIT;
-EOSQL
-}
-
-
-##
-# Creates a new session entry in the history db and returns the session rowid.
-#
-function ah::get_session_id() {
-  if [[ -n "${AH_SESSION_ID}" ]]; then
-    echo ${AH_SESSION_ID}
-    return
-  fi
-
-  [[ -z "${SUDO_USER}" ]] || local sudo_user="'${SUDO_USER}'"
-  [[ -z "${SUDO_UID}" ]] || local sudo_uid="'${SUDO_UID}'"
-  [[ -z "${SSH_CLIENT}" ]] || local ssh_client="'${SSH_CLIENT}'"
-  [[ -z "${SSH_CONNECTION}" ]] || local ssh_connection="'${SSH_CONNECTION}'"
-  local tty=$( readlink /proc/self/fd/0 )
-  local shell="$( ps --no-heading -o cmd $$ )"
-
-  ah::init_db
-  # TODO(cpa): first try to select the session_id using hostname, $$, tty
-  cat << EOSQL | sqlite3 "${AH_HISTORY_DB}"
-BEGIN TRANSACTION;
-INSERT INTO sessions(
-  start_time,
-  ppid,
-  pid,
-  tty,
-  uid,
-  euid,
-  logname,
-  hostname,
-  host_ip,
-  shell,
-  sudo_user,
-  sudo_uid,
-  ssh_client,
-  ssh_connection
-)
-VALUES(
-  $( date +%s ),
-  ${PPID},
-  ${$},
-  '${tty#/dev/}',
-  ${UID},
-  ${EUID},
-  '$( logname )',
-  '$( hostname )',
-  '$( hostname -i )',
-  '${shell}',
-  ${sudo_user:-null},
-  ${sudo_uid:-null},
-  ${ssh_client:-null},
-  ${ssh_connection:-null}
-);
-select last_insert_rowid();
-COMMIT;
-EOSQL
-}
-
-
-##
 # This is invoked when a user session is exited.
 #
 # Args:
 #   rval: The numeric exit code from the last user-entered command.
 #
 function ah::end_session() {
-  ah::log "${1}"
-
-  # Update the session entry in the DB.
-  local end_ts=$( date +%s )
-  cat << EOSQL | sqlite3 "${AH_HISTORY_DB}"
-UPDATE
-  sessions
-SET
-  end_time = ${end_ts},
-  duration = ${end_ts} - start_time
-WHERE
-  id = ${AH_SESSION_ID}
-;
-EOSQL
+  ah::log "${@}"
+  ash_log --end-session
 }
 
 # This is executed when the user types 'exit'
-trap 'ah::end_session ${?}' EXIT
+trap 'ah::end_session ${?} ${PIPESTATUS[@]} ${pipestatus[@]}' EXIT
 
 
 ##
@@ -188,53 +60,9 @@ trap 'ah::end_session ${?}' EXIT
 #   pipes: The set of pipe exit codes (one or more codes).
 #
 function ah::log() {
-  local rval="${1}" && shift
-  local pipes
-  pipes=( ${@} )
-  local cmd_no start_ts end_ts cmd
-  read -r cmd_no start_ts end_ts cmd <<< "$( ah::last_command )"
-  local tty=$( readlink /proc/self/fd/0 )
-
-  cat << EOSQL | sqlite3 "${AH_HISTORY_DB}"
-INSERT INTO commands(
-  session_id,
-  shell_level,
-  command_no,
-  tty,
-  euid,
-  cwd,
-  rval,
-  start_time,
-  end_time,
-  duration,
-  pipe_cnt,
-  pipe_vals,
-  command
-)
-VALUES(
-  ${AH_SESSION_ID},
-  ${SHLVL},
-  ${cmd_no},
-  '${tty#/dev/}',
-  ${EUID},
-  '${PWD}',
-  ${rval},
-  ${start_ts},
-  ${end_ts},
-  $(( end_ts - start_ts )),
-  ${#pipes[@]},
-  '${pipes[@]}',
-  '${cmd//\'/''}'
-);
-UPDATE
-  sessions
-SET
-  end_time = null,
-  duration = null
-WHERE
-  id = ${AH_SESSION_ID}
-;
-EOSQL
+  local no start end cmd rval="${1}" && shift
+  read -r no start end cmd <<< "$( ah::last_command )"
+  ash_log -e ${rval} -s ${start} -f ${end} -n ${no} -p "${@}" -c "${cmd}"
 }
 
 

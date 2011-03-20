@@ -3,6 +3,7 @@
 # Author: cpa@google.com (Carl Anderson)
 #
 
+# TODO(cpa): make this an absolute path.
 source "${0%/*}/../common" || exit 1
 
 
@@ -31,7 +32,7 @@ readonly HISTTIMEFORMAT
 #
 function ah::begin_session() {
   export PROMPT_COMMAND="ah::precmd \${?} \${PIPESTATUS[@]}"
-  export AH_SESSION_ID="$( ah::get_session_id )"
+  export AH_SESSION_ID="$( ash_log --get-session-id )"
   ah::notify "Advanced History is enabled (session: ${AH_SESSION_ID})."
   readonly AH_SESSION_ID PROMPT_COMMAND
 }
@@ -67,3 +68,7 @@ function ah::last_command() {
 readonly -f ah::begin_session
 readonly -f ah::last_command
 readonly -f ah::precmd
+
+# Export functions used by subshells.
+export -f ah::last_command
+export -f ah::precmd

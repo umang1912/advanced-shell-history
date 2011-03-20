@@ -1,8 +1,9 @@
-#!/usr/bin/zsh
+#!/bin/bash
 #
 # Author: cpa@google.com (Carl Anderson)
 #
 
+# TODO(cpa): make this an absolute path.
 source "${0%/*}/../common" &>/dev/null || exit 1
 
 
@@ -33,12 +34,13 @@ source <( typeset -f precmd | sed -e 's/^precmd/ah::original_precmd/' )
 
 
 ##
-# 
+# Invoked before each new prompt is written, and after the previous command
+# has finished.
 #
 function precmd() {
   AH_PIPESTATUS=( ${?} ${pipestatus[@]} )
   if [[ -z ${AH_SESSION_ID} ]]; then
-    export AH_SESSION_ID="$( ah::get_session_id )"
+    export AH_SESSION_ID="$( ash_log --get-session-id )"
     ah::notify "Advanced History is enabled (session: ${AH_SESSION_ID})."
     readonly AH_SESSION_ID
   else
@@ -50,7 +52,6 @@ function precmd() {
   export AH_PIPESTATUS=( ${AH_PIPESTATUS[2,-1]} )
 
   # Causes the exit code to be reset to what it was before logging.
+  # TODO(cpa): make this into an executable.
   /bin/sh <( echo -e "#\!/bin/sh\nexit \$1" ) ${rval}
 }
-
-
