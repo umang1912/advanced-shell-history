@@ -1,7 +1,10 @@
+#include <sstream>
+
 #include "ash_log.hpp"
 
 
 using namespace ash;
+using std::stringstream;
 
 
 Command::Command(const string command, int rval, int start_ts, int end_ts, int number) {
@@ -33,6 +36,10 @@ const string Command::get_name() const {
 
 
 const string Command::get_sql() const {
-  // TODO(cpa): create a transactional insert, as in Session??? NO - don't want to lock the DB
-  return DBObject::get_sql();
+  stringstream ss;
+  ss << DBObject::get_sql();
+  ss << "UPDATE sessions ";
+  ss << "SET end_time = null, duration = null ";
+  ss << "WHERE id = " << Unix::env_int("AH_SESSION_ID") << ";";
+  return ss.str();
 }

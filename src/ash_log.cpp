@@ -16,6 +16,7 @@ static struct option options[] = {
   {"number", 1, 0, 'n'},
   {"pipe-status", 1, 0, 'p'},
   {"start", 1, 0, 's'},
+  {"end-session", 0, 0, 'E'},
   {"get-session-id", 0, 0, 'S'}
 };
 
@@ -33,6 +34,21 @@ int main(int argc, char ** argv) {
       case 'n': number = optarg; break;
       case 'p': pipes = optarg; break;
       case 's': start = optarg; break;
+      case 'E': {
+        Session session;
+        Database db = Database("/home/riddle/.history.db");
+        // TODO(cpa): end the session
+/*
+UPDATE
+  sessions
+SET
+  end_time = ${end_ts},
+  duration = ${end_ts} - start_time
+WHERE
+  id = ${AH_SESSION_ID}
+*/
+        exit(0);
+      }
       case 'S': {
         Session session;
         Database db = Database("/home/riddle/.history.db");
