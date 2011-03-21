@@ -8,6 +8,27 @@ using namespace ash;
 using namespace std;
 
 
+list<string> DBObject::create_tables;
+
+
+const string DBObject::get_create_tables() {
+  stringstream ss;
+  ss << "PRAGMA foreign_keys=OFF;"
+     << "BEGIN TRANSACTION;";
+  typedef list<string>::iterator it;
+  for (it i = create_tables.begin(), e = create_tables.end(); i != e; ++i) {
+    ss << *i << "; ";
+  }
+  ss << "COMMIT;";
+  return ss.str();
+}
+
+
+void DBObject::register_table(const string & create_statement) {
+  create_tables.push_back(create_statement);
+}
+
+
 const string DBObject::quote(const char * value) {
   return value ? quote(string(value)) : "null";
 }

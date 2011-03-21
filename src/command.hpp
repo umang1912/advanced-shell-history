@@ -15,6 +15,7 @@ class Command : public DBObject {
     Command(const string command, int rval, int start, int end, int num);
     virtual ~Command();
 
+    virtual const string get_create_table() const;
     virtual const string get_name() const;
     virtual const string get_sql() const;
 };

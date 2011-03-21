@@ -35,6 +35,28 @@ const string Command::get_name() const {
 }
 
 
+const string Command::get_create_table() const {
+  stringstream ss;
+  ss << "CREATE TABLE IF NOT EXISTS commands("
+     << "  id integer primary key autoincrement,"
+     << "  session_id integer not null,"
+     << "  shell_level integer not null,"
+     << "  command_no integer not null,"
+     << "  tty varchar(20) not null,"
+     << "  euid int(16) not null,"
+     << "  cwd varchar(256) not null,"
+     << "  rval int(5) not null,"
+     << "  start_time integer not null,"
+     << "  end_time integer not null,"
+     << "  duration integer not null,"
+     << "  pipe_cnt int(3) not null,"
+     << "  pipe_vals varchar(80) not null,"
+     << "  command varchar(1000) not null"
+     << ");";
+  return ss.str();
+}
+
+
 const string Command::get_sql() const {
   stringstream ss;
   ss << DBObject::get_sql();
