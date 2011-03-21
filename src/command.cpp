@@ -7,6 +7,28 @@ using namespace ash;
 using std::stringstream;
 
 
+const string Command::get_create_table() {
+  stringstream ss;
+  ss << "CREATE TABLE IF NOT EXISTS commands("
+     << "  id integer primary key autoincrement,"
+     << "  session_id integer not null,"
+     << "  shell_level integer not null,"
+     << "  command_no integer not null,"
+     << "  tty varchar(20) not null,"
+     << "  euid int(16) not null,"
+     << "  cwd varchar(256) not null,"
+     << "  rval int(5) not null,"
+     << "  start_time integer not null,"
+     << "  end_time integer not null,"
+     << "  duration integer not null,"
+     << "  pipe_cnt int(3) not null,"
+     << "  pipe_vals varchar(80) not null,"
+     << "  command varchar(1000) not null"
+     << ");";
+  return ss.str();
+}
+
+
 Command::Command(const string command, int rval, int start_ts, int end_ts, int number) {
   values["session_id"] = Unix::env_int("AH_SESSION_ID");
   values["shell_level"] = Unix::env_int("SHLVL");
@@ -32,28 +54,6 @@ Command::~Command() {
 // TODO(cpa): rename this table_name or something
 const string Command::get_name() const {
   return "commands";
-}
-
-
-const string Command::get_create_table() const {
-  stringstream ss;
-  ss << "CREATE TABLE IF NOT EXISTS commands("
-     << "  id integer primary key autoincrement,"
-     << "  session_id integer not null,"
-     << "  shell_level integer not null,"
-     << "  command_no integer not null,"
-     << "  tty varchar(20) not null,"
-     << "  euid int(16) not null,"
-     << "  cwd varchar(256) not null,"
-     << "  rval int(5) not null,"
-     << "  start_time integer not null,"
-     << "  end_time integer not null,"
-     << "  duration integer not null,"
-     << "  pipe_cnt int(3) not null,"
-     << "  pipe_vals varchar(80) not null,"
-     << "  command varchar(1000) not null"
-     << ");";
-  return ss.str();
 }
 
 

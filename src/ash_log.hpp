@@ -10,4 +10,8 @@
 #include "unix.hpp"
 
 
+//ash::DBObject::register_table(ash::Session::get_create_table());
+//ash::DBObject::register_table(ash::Command::get_create_table());
+
+
 #endif /* __ASH_ASH_LOG__ */

@@ -22,6 +22,9 @@ static struct option options[] = {
 
 
 int main(int argc, char ** argv) {
+  DBObject::register_table(Session::get_create_table());
+  DBObject::register_table(Command::get_create_table());
+
   string command, exit_code, start, finish, number, pipes;
   int c = 0;
   while (c != -1) {

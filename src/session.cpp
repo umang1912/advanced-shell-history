@@ -7,6 +7,31 @@ using namespace ash;
 using std::stringstream;
 
 
+const string Session::get_create_table() {
+  stringstream ss;
+  ss << "CREATE TABLE IF NOT EXISTS sessions ("
+     << "  id integer primary key autoincrement,"
+     << "  hostname varchar(128) not null,"
+     << "  host_ip varchar(40) not null,"
+     << "  ppid int(5) not null,"
+     << "  pid int(5) not null,"
+     << "  start_time integer not null,"
+     << "  end_time integer,"
+     << "  duration integer,"
+     << "  tty varchar(20) not null,"
+     << "  uid int(16) not null,"
+     << "  euid int(16) not null,"
+     << "  logname varchar(48) not null,"
+     << "  shell varchar(50) not null,"
+     << "  sudo_user varchar(48),"
+     << "  sudo_uid int(16),"
+     << "  ssh_client varchar(60),"
+     << "  ssh_connection varchar(100)"
+     << ");";
+  return ss.str();
+}
+
+
 Session::Session() {
   values["start_time"] = Unix::time();
   values["ppid"] = Unix::ppid();
@@ -32,31 +57,6 @@ Session::~Session() {
 
 const string Session::get_name() const {
   return "session";
-}
-
-
-const string Session::get_create_table() const {
-  stringstream ss;
-  ss << "CREATE TABLE IF NOT EXISTS " << get_name() << " ("
-     << "  id integer primary key autoincrement,"
-     << "  hostname varchar(128) not null,"
-     << "  host_ip varchar(40) not null,"
-     << "  ppid int(5) not null,"
-     << "  pid int(5) not null,"
-     << "  start_time integer not null,"
-     << "  end_time integer,"
-     << "  duration integer,"
-     << "  tty varchar(20) not null,"
-     << "  uid int(16) not null,"
-     << "  euid int(16) not null,"
-     << "  logname varchar(48) not null,"
-     << "  shell varchar(50) not null,"
-     << "  sudo_user varchar(48),"
-     << "  sudo_uid int(16),"
-     << "  ssh_client varchar(60),"
-     << "  ssh_connection varchar(100)"
-     << ");";
-  return ss.str();
 }
 
 
