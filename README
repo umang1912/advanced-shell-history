@@ -1,4 +1,4 @@
-This is the official readme for the Advanced Shell History project.
+Advanced Shell History
 
 This project aims to provide a convenient and lightweight mechanism to add
 detailed interactive console command history.
@@ -7,4 +7,4 @@ Some initial goals:
   1. Clearly separate history between terminal sessions.
   2. Save extra command data such as exit code, pipestatus and runtime.
   3. Impose low overhead and require no additional libraries.
-  4. Work well with multiple popular shells.
+  4. Work well with multiple popular shells (zsh and bash).
