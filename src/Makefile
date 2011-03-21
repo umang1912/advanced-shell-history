@@ -26,12 +26,14 @@ ${EXE}:	sqlite3.o ${OBJ}
 #database.o: sqlite3.o database.hpp database.cpp
 #	${CPP} -c ${FLAGS} -o ${@} database.cpp
 
-sqlite3.o:
+sqlite3.c:
 	wget ${SQLITE_URL}
 	unzip ${SQLITE_ZIP}
 	mv ${SQLITE_DIR}/sqlite3.* .
-	gcc -DSQLITE_OMIT_LOAD_EXTENSION -DSQLITE_THREADSAFE=0 -c sqlite3.c
 	rm -rf ${SQLITE_DIR} ${SQLITE_ZIP}
+	
+sqlite3.o: sqlite3.c
+	gcc -DSQLITE_OMIT_LOAD_EXTENSION -DSQLITE_THREADSAFE=0 -c sqlite3.c
 
 
 new:	clean all
