@@ -39,7 +39,7 @@ int main(int argc, char ** argv) {
       case 's': start = optarg; break;
       case 'E': {
         Session session;
-        Database db = Database("/home/riddle/.history.db");
+        Database db = Database("/home/cpa/.history.db");
         // TODO(cpa): end the session
 /*
 UPDATE
@@ -54,7 +54,7 @@ WHERE
       }
       case 'S': {
         Session session;
-        Database db = Database("/home/riddle/.history.db");
+        Database db = Database("/home/cpa/.history.db");
         cout << db.get_session_id() << endl;
         exit(0);
       }
@@ -68,12 +68,12 @@ WHERE
     }
   }
   // TODO(cpa): parse the received arguments for sanity and log the command
-  Database db = Database("/home/riddle/.history.db");
+  Database db = Database("/home/cpa/.history.db");
   int ec = atoi(exit_code.c_str());
   int st = atoi(start.c_str());
   int fi = atoi(finish.c_str());
   int nu = atoi(number.c_str());
   Command com(command, ec, st, fi, nu);
-  cout << com.get_sql() << endl;
+cout << com.get_sql() << endl;
   return 0;
 }

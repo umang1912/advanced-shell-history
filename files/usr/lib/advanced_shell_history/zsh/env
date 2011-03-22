@@ -48,10 +48,7 @@ function precmd() {
   fi
   ah::original_precmd
 
-  local rval=${AH_PIPESTATUS[0]}
-  export AH_PIPESTATUS=( ${AH_PIPESTATUS[2,-1]} )
-
-  # Causes the exit code to be reset to what it was before logging.
-  # TODO(cpa): make this into an executable.
-  /bin/sh <( echo -e "#\!/bin/sh\nexit \$1" ) ${rval}
+  local rval=${AH_PIPESTATUS[1]}
+  AH_PIPESTATUS=( ${AH_PIPESTATUS[2,-1]} )
+  ash_exit ${rval}
 }

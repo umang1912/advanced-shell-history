@@ -35,7 +35,11 @@ Command::Command(const string command, int rval, int start_ts, int end_ts, int n
   values["command_no"] = Util::to_string(number);
   values["tty"] = Unix::tty();
   values["euid"] = Unix::euid();
-  values["cwd"] = Unix::cwd();
+  if (rval == 0 && command.find("cd") == 0) {
+    values["cwd"] = Unix::env("OLDPWD");
+  } else {
+    values["cwd"] = Unix::cwd();
+  }
   values["rval"] = Util::to_string(rval);
   values["start_time"] = Util::to_string(start_ts);
   values["end_time"] = Util::to_string(end_ts);
@@ -59,6 +63,7 @@ const string Command::get_name() const {
 
 const string Command::get_sql() const {
   stringstream ss;
+  // TODO(cpa): wrap this in a transaction... or nullify the end_time / duration before inserting command...
   ss << DBObject::get_sql();
   ss << "UPDATE sessions ";
   ss << "SET end_time = null, duration = null ";

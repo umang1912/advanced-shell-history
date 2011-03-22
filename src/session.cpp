@@ -56,7 +56,7 @@ Session::~Session() {
 
 
 const string Session::get_name() const {
-  return "session";
+  return "sessions";
 }
 
 

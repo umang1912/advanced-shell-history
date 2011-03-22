@@ -23,11 +23,11 @@ install: build
 src_tarball: clean
 	mkdir -p ${TMP_DIR}
 	rsync -Ca * ${TMP_DIR}
-	cd ${TMP_ROOT} && tar -czpf ${TMP_FILE} ./ash-${RVERSION}/
+	cd ${TMP_ROOT} && tar -czpf ${TMP_FILE} ./ash-${VERSION}/
 	rm -rf ${TMP_DIR}
-	mv ${TMP_FILE} ${SRC_DEST}
+	mv ${TMP_FILE} ${SRC_DEST}/ash-${RVERSION}.tar.gz
 
 clean:
-	cd src && make reallyclean
+	cd src && make distclean
 	rm -f files/usr/local/bin/ash_*
 	rm -rf ${TMP_DIR} ${TMP_FILE}

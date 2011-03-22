@@ -22,9 +22,6 @@ ${EXE}:	sqlite3.o ${OBJ}
 
 %.o:	%.cpp %.hpp
 	${CPP} -c ${FLAGS} -o ${@} ${<}
-#
-#database.o: sqlite3.o database.hpp database.cpp
-#	${CPP} -c ${FLAGS} -o ${@} database.cpp
 
 sqlite3.c:
 	wget ${SQLITE_URL}
@@ -39,10 +36,10 @@ sqlite3.o: sqlite3.c
 new:	clean all
 
 distclean:
-	rm -f ${OBJ}
+	rm -f ${OBJ} sqlite3.o
 
 clean:
 	rm -rf ${TRASH}
 
 reallyclean: clean
-	rm -rf sqlite3.o
+	rm -rf sqlite3.*

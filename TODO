@@ -1,4 +1,5 @@
 TODO
+  [ ] Create a history function in the common shell lib, redirect queries to a custom binary: ash_history.
   [ ] Makefile - build non-debug archetecture-specific binaries and bundle a tarball to be unpacked over /
   [ ] add a NOTICE file
   [ ] add better comments to the header and source files

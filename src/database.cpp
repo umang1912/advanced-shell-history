@@ -21,7 +21,7 @@ Database::Database(const char * filename)
   struct stat file;
   // Test that the file exists, if not, create it.
   if (stat(db_filename, &file)) {
-    FILE * created_file = fopen(db_filename, "w");
+    FILE * created_file = fopen(db_filename, "w+e");
     if (!created_file) {
       cout << "ERROR: failed to create new file: " << db_filename << endl;
       exit(1);
@@ -53,7 +53,13 @@ Database::~Database() {
 }
 
 
+int CreateTables(void * ignored, int rows, char ** cols, char ** col_names) {
+  return 0;
+}
+
+
 void Database::init_db() {
+  sqlite3_exec(db, DBObject::get_create_tables().c_str(), CreateTables, 0, 0);
   // TODO(cpa): create the schema.
   cout << "SUCCESS" << endl;
 }
@@ -98,7 +104,8 @@ int Database::get_session_id() {
   }
 
   Session session;
+  int session_id = select_int(session.get_sql().c_str());
   // TODO(cpa): execute the SQL to insert the session and return the new ID.
-  cout << "session sql = " << session.get_sql() << endl;
-  return -1;
+  // cout << "session sql = " << session.get_sql() << endl;
+  return session_id;
 }
