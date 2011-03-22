@@ -3,8 +3,7 @@
 # Author: cpa@google.com (Carl Anderson)
 #
 
-# TODO(cpa): make this an absolute path.
-source "${0%/*}/../common" || exit 1
+source "/usr/lib/advanced_shell_history/common" || exit 1
 
 
 # Display error and abort if PROMPT_COMMAND is readonly.

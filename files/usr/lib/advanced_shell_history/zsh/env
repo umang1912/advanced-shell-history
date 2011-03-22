@@ -3,8 +3,7 @@
 # Author: cpa@google.com (Carl Anderson)
 #
 
-# TODO(cpa): make this an absolute path.
-source "${0%/*}/../common" &>/dev/null || exit 1
+source "/usr/lib/advanced_shell_history/common" &>/dev/null || exit 1
 
 
 setopt extended_history

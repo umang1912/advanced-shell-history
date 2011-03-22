@@ -45,7 +45,7 @@ fi
 #
 function ah::end_session() {
   ah::log "${@}"
-  ash_log --end-session
+  ash_log --end-session --exit-code ${1}
 }
 
 # This is executed when the user types 'exit'
@@ -68,7 +68,9 @@ function ah::log() {
 
 # Protect the functions.
 readonly -f ah::notify
-readonly -f ah::init_db
-readonly -f ah::get_session_id
 readonly -f ah::end_session
 readonly -f ah::log
+
+export -f ah::notify
+export -f ah::end_session
+export -f ah::log

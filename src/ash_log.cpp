@@ -25,6 +25,7 @@ int main(int argc, char ** argv) {
   DBObject::register_table(Session::get_create_table());
   DBObject::register_table(Command::get_create_table());
 
+  string db_file = string(getenv("HOME")) + "/.history.db";
   string command, exit_code, start, finish, number, pipes;
   int c = 0;
   while (c != -1) {
@@ -39,7 +40,7 @@ int main(int argc, char ** argv) {
       case 's': start = optarg; break;
       case 'E': {
         Session session;
-        Database db = Database("/home/cpa/.history.db");
+        Database db = Database(db_file.c_str());
         // TODO(cpa): end the session
 /*
 UPDATE
@@ -54,7 +55,7 @@ WHERE
       }
       case 'S': {
         Session session;
-        Database db = Database("/home/cpa/.history.db");
+        Database db = Database(db_file.c_str());
         cout << db.get_session_id() << endl;
         exit(0);
       }
@@ -68,12 +69,13 @@ WHERE
     }
   }
   // TODO(cpa): parse the received arguments for sanity and log the command
-  Database db = Database("/home/cpa/.history.db");
+  Database db = Database(db_file.c_str());
   int ec = atoi(exit_code.c_str());
   int st = atoi(start.c_str());
   int fi = atoi(finish.c_str());
   int nu = atoi(number.c_str());
   Command com(command, ec, st, fi, nu);
 cout << com.get_sql() << endl;
-  return 0;
+  exit(ec);
+  return ec;
 }

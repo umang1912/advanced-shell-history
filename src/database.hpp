@@ -6,6 +6,7 @@ class sqlite3;  // Forward declaration.
 
 namespace ash {
 
+
 class Database {
   public:
     Database(const char * filename);
@@ -21,6 +22,7 @@ class Database {
     sqlite3 * db;
 };
 
-} // namespace ash
+
+}  // namespace ash
 
 #endif /* __ASH_DATABASE__ */
