@@ -37,9 +37,11 @@ const string DBObject::quote(const char * value) {
 const string DBObject::quote(const string & in) {
   if (in.empty()) return "null";
   string out = "'";
+  char c;
   for (string::const_iterator i = in.begin(), e = in.end(); i != e; ++i) {
-    out.push_back(*i);
-    if (*i == '\'') out.push_back('\'');
+    c = *i;
+    if (isprint(c)) out.push_back(c);
+    if (c == '\'') out.push_back('\'');
   }
   out.push_back('\'');
   return out;
