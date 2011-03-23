@@ -10,6 +10,7 @@ using namespace std;
 
 
 static struct option options[] = {
+  {"alert", 1, 0, 'a'},
   {"command", 1, 0, 'c'},
   {"exit-code", 1, 0, 'e'},
   {"finish", 1, 0, 'f'},
@@ -26,16 +27,17 @@ int main(int argc, char ** argv) {
   DBObject::register_table(Command::get_create_table());
 
   string db_file = string(getenv("HOME")) + "/.history.db";
-  string command, exit_code, start, finish, number, pipes;
+  string alert, command, exit_code, start, finish, number, pipes;
   bool end_session = false, start_session = false;
 
   int c = 0;
   while (c != -1) {
     int index = 0;
-    c = getopt_long(argc, argv, "c:e:f:n:p:s:ES", options, &index);
+    c = getopt_long(argc, argv, "a:c:e:f:n:p:s:ES", options, &index);
     switch (c) {
       case -1: break;
 
+      case 'a': alert = optarg; break;
       case 'c': command = optarg; break;
       case 'e': exit_code = optarg; break;
       case 'f': finish = optarg; break;
@@ -55,6 +57,7 @@ int main(int argc, char ** argv) {
         break;
     }
   }
+  // TODO(cpa): alert, if set.
   if (start_session) {
     Session session;
     Database db = Database(db_file.c_str());

@@ -4,17 +4,6 @@
 #
 
 
-##
-# Displays a user message unless an environment variable is set.
-#
-function ah::notify() {
-  if [[ -n "${AH_GET_OUT_OF_MY_FACE}" ]]; then
-    return
-  fi
-  echo "${@}"
-}
-
-
 # Put the history.db in HOME or use /dev/shm if no HOME exists.
 if [[ -d "${HOME}" ]]; then
   export AH_HISTORY_DB="${HOME}/.history.db"
@@ -27,13 +16,13 @@ readonly AH_HISTORY_DB
 # Ensure there is a HISTFILE.
 if [[ -z "${HISTFILE}" ]]; then
   export HISTFILE="${AH_HISTORY_DB%.db}"
-  ah::notify "WARN: HISTFILE undefined. Exporting HISTFILE as: '${HISTFILE}'."
+  ash_log -a "WARN: HISTFILE undefined. Exporting HISTFILE as: '${HISTFILE}'."
 fi
 if [[ ! -e "${HISTFILE}" ]] && ! touch "${HISTFILE}" &>/dev/null; then
-  ah::notify "Failed to create shell history file: '${HISTFILE}'."
+  ash_log -a "Failed to create shell history file: '${HISTFILE}'."
 fi
 if ! chmod u+rw "${HISTFILE}" &>/dev/null; then
-  ah::notify "Failed to make shell history file readable and writeable."
+  ash_log -a "Failed to make shell history file readable and writeable."
 fi
 
 
@@ -67,10 +56,8 @@ function ah::log() {
 
 
 # Protect the functions.
-readonly -f ah::notify
 readonly -f ah::end_session
 readonly -f ah::log
 
-export -f ah::notify
 export -f ah::end_session
 export -f ah::log

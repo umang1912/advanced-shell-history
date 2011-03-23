@@ -40,7 +40,7 @@ function precmd() {
   AH_PIPESTATUS=( ${?} ${pipestatus[@]} )
   if [[ -z ${AH_SESSION_ID} ]]; then
     export AH_SESSION_ID="$( ash_log --get-session-id )"
-    ah::notify "Advanced History is enabled (session: ${AH_SESSION_ID})."
+    ash_log -a "Advanced History is enabled (session: ${AH_SESSION_ID})."
     readonly AH_SESSION_ID
   else
     ah::log ${AH_PIPESTATUS[@]}
