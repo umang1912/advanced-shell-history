@@ -13,9 +13,11 @@ class Database {
     virtual ~Database();
     int get_session_id();
 
+    void exec(const char * query) const;
+    int select_int(const char * query) const;
+
   private:
     void init_db();
-    int select_int(const char * query) const;
 
   private:
     const char * db_filename;

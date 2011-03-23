@@ -27,38 +27,25 @@ int main(int argc, char ** argv) {
 
   string db_file = string(getenv("HOME")) + "/.history.db";
   string command, exit_code, start, finish, number, pipes;
+  bool end_session = false, start_session = false;
+
   int c = 0;
   while (c != -1) {
     int index = 0;
-    c = getopt_long(argc, argv, "c:e:f:n:p:s:S", options, &index);
+    c = getopt_long(argc, argv, "c:e:f:n:p:s:ES", options, &index);
     switch (c) {
+      case -1: break;
+
       case 'c': command = optarg; break;
       case 'e': exit_code = optarg; break;
       case 'f': finish = optarg; break;
       case 'n': number = optarg; break;
       case 'p': pipes = optarg; break;
       case 's': start = optarg; break;
-      case 'E': {
-        Session session;
-        Database db = Database(db_file.c_str());
-        // TODO(cpa): end the session
-/*
-UPDATE
-  sessions
-SET
-  end_time = ${end_ts},
-  duration = ${end_ts} - start_time
-WHERE
-  id = ${AH_SESSION_ID}
-*/
-        exit(0);
-      }
-      case 'S': {
-        Session session;
-        Database db = Database(db_file.c_str());
-        cout << db.get_session_id() << endl;
-        exit(0);
-      }
+
+      case 'E': end_session = true; break;
+      case 'S': start_session = true; break;
+
       case '?': {
         cout << "Question Mark???" << endl;
         break;
@@ -68,14 +55,27 @@ WHERE
         break;
     }
   }
+  if (start_session) {
+    Session session;
+    Database db = Database(db_file.c_str());
+    cout << db.get_session_id() << endl;
+    exit(0);
+  }
+  if (end_session) {
+    Session session;
+    Database db = Database(db_file.c_str());
+    db.exec(session.get_close_session_sql().c_str());
+    exit(0);
+  }
   // TODO(cpa): parse the received arguments for sanity and log the command
   Database db = Database(db_file.c_str());
   int ec = atoi(exit_code.c_str());
   int st = atoi(start.c_str());
   int fi = atoi(finish.c_str());
   int nu = atoi(number.c_str());
-  Command com(command, ec, st, fi, nu);
-cout << com.get_sql() << endl;
+  Command com(command, ec, st, fi, nu, pipes);
+  db.exec(com.get_sql().c_str());
+//cout << com.get_sql() << endl;
   exit(ec);
   return ec;
 }

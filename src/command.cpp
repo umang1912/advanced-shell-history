@@ -9,27 +9,27 @@ using std::stringstream;
 
 const string Command::get_create_table() {
   stringstream ss;
-  ss << "CREATE TABLE IF NOT EXISTS commands("
-     << "  id integer primary key autoincrement,"
-     << "  session_id integer not null,"
-     << "  shell_level integer not null,"
-     << "  command_no integer not null,"
-     << "  tty varchar(20) not null,"
-     << "  euid int(16) not null,"
-     << "  cwd varchar(256) not null,"
-     << "  rval int(5) not null,"
-     << "  start_time integer not null,"
-     << "  end_time integer not null,"
-     << "  duration integer not null,"
-     << "  pipe_cnt int(3) not null,"
-     << "  pipe_vals varchar(80) not null,"
-     << "  command varchar(1000) not null"
+  ss << "CREATE TABLE IF NOT EXISTS commands(\n"
+     << "  id integer primary key autoincrement,\n"
+     << "  session_id integer not null,\n"
+     << "  shell_level integer not null,\n"
+     << "  command_no integer not null,\n"
+     << "  tty varchar(20) not null,\n"
+     << "  euid int(16) not null,\n"
+     << "  cwd varchar(256) not null,\n"
+     << "  rval int(5) not null,\n"
+     << "  start_time integer not null,\n"
+     << "  end_time integer not null,\n"
+     << "  duration integer not null,\n"
+     << "  pipe_cnt int(3) not null,\n"
+     << "  pipe_vals varchar(80) not null,\n"
+     << "  command varchar(1000) not null\n"
      << ");";
   return ss.str();
 }
 
 
-Command::Command(const string command, int rval, int start_ts, int end_ts, int number) {
+Command::Command(const string command, const int rval, const int start_ts, const int end_ts, const int number, const string pipes) {
   values["session_id"] = Unix::env_int("AH_SESSION_ID");
   values["shell_level"] = Unix::env_int("SHLVL");
   values["command_no"] = Util::to_string(number);
@@ -44,8 +44,11 @@ Command::Command(const string command, int rval, int start_ts, int end_ts, int n
   values["start_time"] = Util::to_string(start_ts);
   values["end_time"] = Util::to_string(end_ts);
   values["duration"] = Util::to_string(end_ts - start_ts);
-  values["pipe_cnt"] = "null";
-  values["pipe_vals"] = "null";
+  int pipe_cnt = 1;
+  for (string::const_iterator i = pipes.begin(), e = pipes.end(); i != e; ++i)
+    if ((*i) == ' ') ++pipe_cnt;
+  values["pipe_cnt"] = Util::to_string(pipe_cnt);
+  values["pipe_vals"] = pipes;
   values["command"] = quote(command);
 }
 

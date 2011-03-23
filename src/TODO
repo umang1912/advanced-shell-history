@@ -11,8 +11,6 @@ db_object.cpp
   [ ] 
 
 database.cpp
-  [ ] initialize a database if none exists
-  [ ] execute arbitrary queries
   [ ] 
 
 ash_log.cpp

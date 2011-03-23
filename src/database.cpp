@@ -60,8 +60,6 @@ int CreateTables(void * ignored, int rows, char ** cols, char ** col_names) {
 
 void Database::init_db() {
   sqlite3_exec(db, DBObject::get_create_tables().c_str(), CreateTables, 0, 0);
-  // TODO(cpa): create the schema.
-  cout << "SUCCESS" << endl;
 }
 
 
@@ -79,6 +77,14 @@ int Database::select_int(const char * query) const {
     exit(1);
   }
   return result;
+}
+
+
+void Database::exec(const char * query) const {
+  if (sqlite3_exec(db, query, CreateTables, 0, 0)) {
+    cout << sqlite3_errmsg(db) << endl << query << endl;
+    exit(1);
+  }
 }
 
 

@@ -5,34 +5,38 @@
 
 using namespace ash;
 using std::stringstream;
+#include <iostream>
+using namespace std;
 
 
 const string Session::get_create_table() {
   stringstream ss;
-  ss << "CREATE TABLE IF NOT EXISTS sessions ("
-     << "  id integer primary key autoincrement,"
-     << "  hostname varchar(128) not null,"
-     << "  host_ip varchar(40) not null,"
-     << "  ppid int(5) not null,"
-     << "  pid int(5) not null,"
-     << "  start_time integer not null,"
-     << "  end_time integer,"
-     << "  duration integer,"
-     << "  tty varchar(20) not null,"
-     << "  uid int(16) not null,"
-     << "  euid int(16) not null,"
-     << "  logname varchar(48) not null,"
-     << "  shell varchar(50) not null,"
-     << "  sudo_user varchar(48),"
-     << "  sudo_uid int(16),"
-     << "  ssh_client varchar(60),"
-     << "  ssh_connection varchar(100)"
+  ss << "CREATE TABLE IF NOT EXISTS sessions ( \n"
+     << "  id integer primary key autoincrement, \n"
+     << "  hostname varchar(128) not null, \n"
+     << "  host_ip varchar(40) not null, \n"
+     << "  ppid int(5) not null, \n"
+     << "  pid int(5) not null, \n"
+     << "  start_time integer not null, \n"
+     << "  end_time integer, \n"
+     << "  duration integer, \n"
+     << "  tty varchar(20) not null, \n"
+     << "  uid int(16) not null, \n"
+     << "  euid int(16) not null, \n"
+     << "  logname varchar(48) not null, \n"
+     << "  shell varchar(50) not null, \n"
+     << "  sudo_user varchar(48), \n"
+     << "  sudo_uid int(16), \n"
+     << "  ssh_client varchar(60), \n"
+     << "  ssh_connection varchar(100) \n"
      << ");";
   return ss.str();
 }
 
 
 Session::Session() {
+  if (Unix::env("AH_SESSION_ID") != "null")
+    return;
   values["start_time"] = Unix::time();
   values["ppid"] = Unix::ppid();
   values["pid"] = Unix::pid();
@@ -69,3 +73,13 @@ const string Session::get_sql() const {
   return ss.str();
 }
 
+
+const string Session::get_close_session_sql() const {
+  stringstream ss;
+  ss << "UPDATE sessions \n"
+     << "SET \n"
+     << "  end_time = " << Unix::time() << ", \n"
+     << "  duration = " << Unix::time() << " - start_time \n"
+     << "WHERE id == " << Unix::env("AH_SESSION_ID") << "; ";
+  return ss.str();
+}
