@@ -11,7 +11,6 @@ class Database {
   public:
     Database(const char * filename);
     virtual ~Database();
-    int get_session_id();
 
     void exec(const char * query) const;
     int select_int(const char * query) const;

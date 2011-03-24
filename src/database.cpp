@@ -86,32 +86,3 @@ void Database::exec(const char * query) const {
     exit(1);
   }
 }
-
-
-int Database::get_session_id() {
-  stringstream ss;
-
-  // TODO(cpa): move this method into the Session ctor.
-  // First check the environment, return that if present.
-  char * id = getenv("AH_SESSION_ID");
-  if (id) {
-    ss << "select count(*) from sessions where id = " << id << ";";
-    if (select_int(ss.str().c_str()) == 0) {
-      cout << "ERROR: session_id(" << id << ") not found, creating new session." << endl << ss.str() << endl;
-      id = 0;
-    }
-    ss.str("");
-
-    // TODO(cpa): check that the session is still ongoing - basic sanity check
-
-    if (id) {
-      return atoi(id);
-    }
-  }
-
-  Session session;
-  int session_id = select_int(session.get_sql().c_str());
-  // TODO(cpa): execute the SQL to insert the session and return the new ID.
-  // cout << "session sql = " << session.get_sql() << endl;
-  return session_id;
-}
