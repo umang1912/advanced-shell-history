@@ -1,7 +1,11 @@
 TODO
+  [ ] add an option to remove loopback IPs from the session IP address
+  [ ] add a configuration file in /etc and a local one in ~ to override
+  [ ] make the flag parsing / option gathering more generic - get some code from antarus maybe?
   [ ] 
 
 session.cpp
+  [ ] add WINDOWID to the session
   [ ] 
 
 util.cpp

@@ -6,16 +6,16 @@
 
 # Put the history.db in HOME or use /dev/shm if no HOME exists.
 if [[ -d "${HOME}" ]]; then
-  export AH_HISTORY_DB="${HOME}/.history.db"
+  export ASH_HISTORY_DB="${HOME}/.history.db"
 else
-  export AH_HISTORY_DB=/dev/shm/.history_${UID}.db
+  export ASH_HISTORY_DB=/dev/shm/.history_${UID}.db
 fi
-readonly AH_HISTORY_DB
+readonly ASH_HISTORY_DB
 
 
 # Ensure there is a HISTFILE.
 if [[ -z "${HISTFILE}" ]]; then
-  export HISTFILE="${AH_HISTORY_DB%.db}"
+  export HISTFILE="${ASH_HISTORY_DB%.db}"
   ash_log -a "WARN: HISTFILE undefined. Exporting HISTFILE as: '${HISTFILE}'."
 fi
 if [[ ! -e "${HISTFILE}" ]] && ! touch "${HISTFILE}" &>/dev/null; then
@@ -33,8 +33,9 @@ fi
 #   rval: The numeric exit code from the last user-entered command.
 #
 function ah::end_session() {
-echo "Ending session ${AH_SESSION_ID} with args: ${@}"
+echo "Ending session ${ASH_SESSION_ID} with args: ${@}"
   ah::log "${@}"
+echo "Ending session now..."
   ash_log --end-session --exit-code ${1}
 }
 

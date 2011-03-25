@@ -2,6 +2,8 @@
 #define __ASH_ASH_LOG__
 
 
+#define ASH_SESSION_ID "ASH_SESSION_ID"
+
 #include "database.hpp"
 #include "db_object.hpp"
 #include   "session.hpp"

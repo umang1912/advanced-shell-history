@@ -69,7 +69,7 @@ int main(int argc, char ** argv) {
   if (start_session) {
     Database db = Database(db_file.c_str());
     stringstream ss;
-    char * id = getenv("AH_SESSION_ID");
+    char * id = getenv(ASH_SESSION_ID);
     if (id) {
       ss << "select count(*) from sessions where id = " << id << ";";
       if (db.select_int(ss.str().c_str()) == 0) {
@@ -91,7 +91,7 @@ int main(int argc, char ** argv) {
   }
 
   if (!command.empty()) {
-    // TODO(cpa): parse the received arguments for sanity and log the command
+    // TODO(cpa): parse the received arguments for sanity
     Database db = Database(db_file.c_str());
     int ec = atoi(exit_code.c_str());
     int st = atoi(start.c_str());

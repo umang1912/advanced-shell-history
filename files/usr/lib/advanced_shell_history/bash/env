@@ -31,9 +31,9 @@ readonly HISTTIMEFORMAT
 #
 function ah::begin_session() {
   export PROMPT_COMMAND="ah::precmd \${?} \${PIPESTATUS[@]}"
-  export AH_SESSION_ID="$( ash_log --get-session-id )"
-  ash_log -a "Advanced History is enabled (session: ${AH_SESSION_ID})."
-  readonly AH_SESSION_ID PROMPT_COMMAND
+  export ASH_SESSION_ID="$( ash_log --get-session-id )"
+  ash_log -a "Advanced History is enabled (session: ${ASH_SESSION_ID})."
+  readonly ASH_SESSION_ID PROMPT_COMMAND
 }
 
 
@@ -43,12 +43,12 @@ function ah::begin_session() {
 #
 function ah::precmd() {
   ah::log ${@}
-  if typeset -p AH_PROMPT_COMMAND &>/dev/null; then
-    "${AH_PROMPT_COMMAND}"
+  if typeset -p ASH_PROMPT_COMMAND &>/dev/null; then
+    "${ASH_PROMPT_COMMAND}"
   fi
   # Causes the exit code to be reset to what it was before logging.
   local rval=${1} && shift
-  AH_PIPESTATUS=( ${@} )
+  ASH_PIPESTATUS=( ${@} )
   ash_exit ${rval}
 }
 

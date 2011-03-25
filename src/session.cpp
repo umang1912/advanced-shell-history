@@ -35,7 +35,7 @@ const string Session::get_create_table() {
 
 
 Session::Session() {
-  if (Unix::env("AH_SESSION_ID") != "null")
+  if (Unix::env(ASH_SESSION_ID) != "null")
     return;
   values["start_time"] = Unix::time();
   values["ppid"] = Unix::ppid();
@@ -80,6 +80,6 @@ const string Session::get_close_session_sql() const {
      << "SET \n"
      << "  end_time = " << Unix::time() << ", \n"
      << "  duration = " << Unix::time() << " - start_time \n"
-     << "WHERE id == " << Unix::env("AH_SESSION_ID") << "; ";
+     << "WHERE id == " << Unix::env(ASH_SESSION_ID) << "; ";
   return ss.str();
 }

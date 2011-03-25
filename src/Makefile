@@ -36,10 +36,10 @@ sqlite3.o: sqlite3.c
 new:	clean all
 
 distclean:
-	rm -f ${OBJ} sqlite3.o
+	rm -f ${TRASH} sqlite3.o
 
 clean:
-	rm -rf ${TRASH}
+	rm -f ${TRASH}
 
 reallyclean: clean
-	rm -rf sqlite3.*
+	rm -f sqlite3.*

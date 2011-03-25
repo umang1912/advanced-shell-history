@@ -5,10 +5,30 @@ Save your command line history in a sqlite3 DB!
 
 
 Features:
+  * saves extra command details:
+    * exit code
+    * start and stop times (and command duration)
+    * current working directory of the command
+    * session details such as tty, pid, ppid, ssh connection details
+  * works with multiple shells (zsh and bash)
+  * saves history into a sqlite3 database
+
 
 Caveats:
+  * this is not meant to be a security auditing tool - it's for user
+    convenience and meant to replace shell builtin history.
+  * for bash users, this overrides your PROMPT_COMMAND and changes the 
+    default options of your builtin history.  Hopefully both are an 
+    improvement.
+  * for zsh users, this overrides your precmd function.  the shell script
+    attempts to rename your previous precmd function and continue to hook
+    into it.
+  * all users will notice that the PIPESTATUS / pipestatus variables have
+    been renamed to ASH_PIPESTATUS.  Because these variables are transient
+    and logged, they cannot be easily restored.  Instead they are copied.
 
 Bugs:
-
+  * doesn't capture exec'ed commands: example: exec rm /tmp/foo # is lost
 
 Author: cpa@google.com (Carl Anderson)
+Date: 2011-03-24

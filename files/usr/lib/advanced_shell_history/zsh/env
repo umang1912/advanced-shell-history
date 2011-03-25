@@ -37,17 +37,17 @@ source <( typeset -f precmd | sed -e 's/^precmd/ah::original_precmd/' )
 # has finished.
 #
 function precmd() {
-  AH_PIPESTATUS=( ${?} ${pipestatus[@]} )
-  if [[ -z ${AH_SESSION_ID} ]]; then
-    export AH_SESSION_ID="$( ash_log --get-session-id )"
-    ash_log -a "Advanced History is enabled (session: ${AH_SESSION_ID})."
-    readonly AH_SESSION_ID
+  ASH_PIPESTATUS=( ${?} ${pipestatus[@]} )
+  if [[ -z ${ASH_SESSION_ID} ]]; then
+    export ASH_SESSION_ID="$( ash_log --get-session-id )"
+    ash_log -a "Advanced History is enabled (session: ${ASH_SESSION_ID})."
+    readonly ASH_SESSION_ID
   else
-    ah::log ${AH_PIPESTATUS[@]}
+    ah::log ${ASH_PIPESTATUS[@]}
   fi
   ah::original_precmd
 
-  local rval=${AH_PIPESTATUS[1]}
-  AH_PIPESTATUS=( ${AH_PIPESTATUS[2,-1]} )
+  local rval=${ASH_PIPESTATUS[1]}
+  ASH_PIPESTATUS=( ${ASH_PIPESTATUS[2,-1]} )
   ash_exit ${rval}
 }

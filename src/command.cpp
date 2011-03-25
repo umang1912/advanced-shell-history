@@ -31,7 +31,7 @@ const string Command::get_create_table() {
 
 
 Command::Command(const string command, const int rval, const int start_ts, const int end_ts, const int number, const string pipes) {
-  values["session_id"] = Unix::env_int("AH_SESSION_ID");
+  values["session_id"] = Unix::env_int(ASH_SESSION_ID);
   values["shell_level"] = Unix::env_int("SHLVL");
   values["command_no"] = Util::to_string(number);
   values["tty"] = Unix::tty();
@@ -72,6 +72,6 @@ const string Command::get_sql() const {
   ss << DBObject::get_sql();
   ss << "UPDATE sessions ";
   ss << "SET end_time = null, duration = null ";
-  ss << "WHERE id = " << Unix::env_int("AH_SESSION_ID") << ";";
+  ss << "WHERE id = " << Unix::env_int(ASH_SESSION_ID) << ";";
   return ss.str();
 }
