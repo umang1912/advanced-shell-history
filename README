@@ -16,7 +16,7 @@ Features:
 
 Caveats:
   * this is not meant to be a security auditing tool - it's for user
-    convenience and meant to replace shell builtin history.
+    convenience and meant to enhance shell builtin history.
   * for bash users, this overrides your PROMPT_COMMAND and changes the 
     default options of your builtin history.  Hopefully both are an 
     improvement.

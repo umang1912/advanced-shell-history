@@ -1,11 +1,12 @@
 TODO
   [ ] Create a history function in the common shell lib, redirect queries to a custom binary: ash_history.
-  [ ] Makefile - build non-debug archetecture-specific binaries and bundle a tarball to be unpacked over /
-  [ ] add a NOTICE file
+  [ ] Makefile - build non-debug archetecture-specific binaries - better optimization
   [ ] add better comments to the header and source files
-  [ ] add hooks into .bashrc files upon install?
-  [ ] write up better documentation
+  [ ] doxygen
+  [ ] write up better documentation - how to install, how to use, db schema, etc.
   [ ] create a Google Sites page
   [ ] set up the initial repository on code.google.com
+  [ ] dash support - other shells?
+  [ ] add config options in /etc/ash/advanced_shell_history.conf
   [ ] 
 
