@@ -17,21 +17,46 @@
 #ifndef __ASH_FLAGS__
 #define __ASH_FLAGS__
 
+#include <getopt.h>
+#include <list>
+#include <map>
+#include <string>
+using std::list;
+using std::map;
+using std::string;
+
 
 #define DEFINE_int(long_name, short_name, default_val, desc) \
-static IntFlag FLAGS_ ## long_name(#long_name, short_name, default_val, desc)
+static int FLAGS_ ## long_name; \
+static IntFlag FLAGS_OPT_ ## long_name(#long_name, short_name, &FLAGS_ ## long_name, default_val, desc)
 
 #define DEFINE_string(long_name, short_name, default_val, desc) \
-static StringFlag FLAGS_ ## long_name(#long_name, short_name, default_val, desc)
+static string FLAGS_ ## long_name; \
+static StringFlag FLAGS_OPT_ ## long_name(#long_name, short_name, &FLAGS_ ## long_name, default_val, desc)
 
 #define DEFINE_bool(long_name, short_name, default_val, desc) \
-static BoolFlag FLAGS_ ## long_name(#long_name, short_name, default_val, desc)
+static bool FLAGS_ ## long_name; \
+static BoolFlag FLAGS_OPT_ ## long_name(#long_name, short_name, &FLAGS_ ## long_name, default_val, desc, true)
+
+#define DEFINE_flag(long_name, short_name, desc) \
+static bool FLAGS_ ## long_name; \
+static BoolFlag FLAGS_OPT_ ## long_name(#long_name, short_name, &FLAGS_ ## long_name, false, desc, false)
 
 
 class Flag {
+  private:
+    static string codes;
+    static list<struct option> options;
+    static map<const char, Flag *> short_names;
+    static map<const string, Flag *> long_names;
+
   public:
-    Flag(const char * long_name, const char short_name, const char * desc);
     static int parse(int * argc, char *** argv, const bool remove_flags);
+
+  public:
+    Flag(const char * long_name, const char short_name, const char * desc, const bool has_arg=false);
+    virtual ~Flag();
+    virtual void set(const char * optarg) = 0;
 
   private:
     const char * long_name;
@@ -42,28 +67,31 @@ class Flag {
 
 class IntFlag : public Flag {
   public:
-    IntFlag(const char * ln, const char sn, const int dv, const char * ds);
+    IntFlag(const char * ln, const char sn, int * val, const int dv, const char * ds);
+    virtual void set(const char * optarg);
 
   private:
-    const int default_value;
+    int * value;
 };
 
 
 class StringFlag : public Flag {
   public:
-    StringFlag(const char * ln, const char sn, const char * dv, const char * ds);
+    StringFlag(const char * ln, const char sn, string * val, const char * dv, const char * ds);
+    virtual void set(const char * optarg);
 
   private:
-    const char * default_value;
+    string * value;
 };
 
 
 class BoolFlag : public Flag {
   public:
-    BoolFlag(const char * ln, const char an, const bool dv, const char * ds);
+    BoolFlag(const char * ln, const char an, bool * val, const bool dv, const char * ds, const bool has_arg);
+    virtual void set(const char * optarg);
 
   private:
-    const bool default_value;
+    bool * value;
 };
 
 
