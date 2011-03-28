@@ -14,13 +14,22 @@
    limitations under the License.
 */
 
+/*
+   This class provides flags for programs, much in the same way that Google
+   gflags does, although with fewer bells and whistles.
+*/
+
 #ifndef __ASH_FLAGS__
 #define __ASH_FLAGS__
 
 #include <getopt.h>
+
+#include <iostream>
 #include <list>
 #include <map>
 #include <string>
+
+using std::ostream;
 using std::list;
 using std::map;
 using std::string;
@@ -43,52 +52,87 @@ static bool FLAGS_ ## long_name; \
 static BoolFlag FLAGS_OPT_ ## long_name(#long_name, short_name, &FLAGS_ ## long_name, false, desc, false)
 
 
+/**
+ * 
+ */
 class Flag {
+  // STATIC
   private:
+    static string program_name;
     static string codes;
     static list<struct option> options;
+    static list<Flag *> instances;
     static map<const char, Flag *> short_names;
     static map<const string, Flag *> long_names;
 
   public:
     static int parse(int * argc, char *** argv, const bool remove_flags);
+    static void show_help();
 
+  // NON-STATIC
   public:
     Flag(const char * long_name, const char short_name, const char * desc, const bool has_arg=false);
     virtual ~Flag();
     virtual void set(const char * optarg) = 0;
+    virtual ostream & insert(ostream & out) const;
 
   private:
     const char * long_name;
     const char short_name;
     const char * description;
+
+  // DISABLED
+  private:
+    Flag(const Flag & other);
+    Flag & operator = (const Flag & other);
 };
 
 
+/**
+ * Inserts a Flag into an ostream.
+ */
+ostream & operator << (ostream & out, const Flag & flag);
+
+
+/**
+ * 
+ */
 class IntFlag : public Flag {
   public:
     IntFlag(const char * ln, const char sn, int * val, const int dv, const char * ds);
+    virtual ~IntFlag() {}
     virtual void set(const char * optarg);
+    virtual ostream & insert(ostream & out) const;
 
   private:
     int * value;
 };
 
 
+/**
+ * 
+ */
 class StringFlag : public Flag {
   public:
     StringFlag(const char * ln, const char sn, string * val, const char * dv, const char * ds);
+    virtual ~StringFlag() {}
     virtual void set(const char * optarg);
+    virtual ostream & insert(ostream & out) const;
 
   private:
     string * value;
 };
 
 
+/**
+ * 
+ */
 class BoolFlag : public Flag {
   public:
     BoolFlag(const char * ln, const char an, bool * val, const bool dv, const char * ds, const bool has_arg);
+    virtual ~BoolFlag() {}
     virtual void set(const char * optarg);
+    virtual ostream & insert(ostream & out) const;
 
   private:
     bool * value;

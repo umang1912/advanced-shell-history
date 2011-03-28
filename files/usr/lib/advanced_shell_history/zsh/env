@@ -51,7 +51,7 @@ source <( typeset -f precmd | sed -e 's/^precmd/ah::original_precmd/' )
 function precmd() {
   ASH_PIPESTATUS=( ${?} ${pipestatus[@]} )
   if [[ -z ${ASH_SESSION_ID} ]]; then
-    export ASH_SESSION_ID="$( ash_log --get-session-id )"
+    export ASH_SESSION_ID="$( ash_log --get_session_id )"
     ash_log -a "Advanced History is enabled (session: ${ASH_SESSION_ID})."
     readonly ASH_SESSION_ID
   else

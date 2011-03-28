@@ -26,6 +26,8 @@ Caveats:
   * all users will notice that the PIPESTATUS / pipestatus variables have
     been renamed to ASH_PIPESTATUS.  Because these variables are transient
     and logged, they cannot be easily restored.  Instead they are copied.
+  * when you build this, it may download a version of sqlite3 (if it's not
+    already included in the tarball or the svn repo).
 
 Bugs:
   * doesn't capture exec'ed commands: example: exec rm /tmp/foo # is lost

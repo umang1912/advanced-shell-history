@@ -14,75 +14,43 @@
    limitations under the License.
 */
 
-#include <getopt.h>  /* for getopt_long */
-#include <stdlib.h>  /* for exit */
+#include <stdlib.h>  /* for getenv, exit */
 
 #include <iostream>  /* for cout, endl */
-#include <sstream>
+#include <sstream>   /* for stringstream */
 
 #include "ash_log.hpp"
+
+
+DEFINE_string(alert, 'a', 0, "A message to display to the user.");
+DEFINE_string(command, 'c', 0, "The command to log.");
+DEFINE_int(command_exit, 'e', 0, "The exit code of the command to log.");
+DEFINE_string(command_pipe_status, 'p', 0, "The pipe states of the command to log.");
+DEFINE_int(command_start, 's', 0, "The timestamp when the command started.");
+DEFINE_int(command_finish, 'f', 0, "The timestamp when the command stopped.");
+DEFINE_int(command_number, 'n', 0, "The command number according to shell history.");
+DEFINE_int(exit, 'x', 0, "The exit code to use when exiting this program.");
+DEFINE_flag(get_session_id, 'S', "Begins a session and / or emits the session ID.");
+DEFINE_flag(end_session, 'E', "Ends the current session.");
 
 
 using namespace ash;
 using namespace std;
 
 
-static struct option options[] = {
-  {"alert", 1, 0, 'a'},
-  {"command", 1, 0, 'c'},
-  {"command-exit", 1, 0, 'e'},
-  {"finish", 1, 0, 'f'},
-  {"number", 1, 0, 'n'},
-  {"pipe-status", 1, 0, 'p'},
-  {"start", 1, 0, 's'},
-  {"exit", 1, 0, 'x'},
-  {"end-session", 0, 0, 'E'},
-  {"get-session-id", 0, 0, 'S'}
-};
-
-
 int main(int argc, char ** argv) {
+  Flag::parse(&argc, &argv, true);
+  // TODO(cpa): check the remaining args to make sure something else wasn't there
   DBObject::register_table(Session::get_create_table());
   DBObject::register_table(Command::get_create_table());
 
   string db_file = string(getenv("HOME")) + "/.history.db";
-  string alert, command, exit_code, start, finish, number, pipes, to_exit;
-  bool end_session = false, start_session = false;
 
-  int c = 0;
-  while (c != -1) {
-    int index = 0;
-    c = getopt_long(argc, argv, "a:c:e:f:n:p:s:x:ES", options, &index);
-    switch (c) {
-      case -1: break;
-
-      case 'a': alert = optarg; break;
-      case 'c': command = optarg; break;
-      case 'e': exit_code = optarg; break;
-      case 'f': finish = optarg; break;
-      case 'n': number = optarg; break;
-      case 'p': pipes = optarg; break;
-      case 's': start = optarg; break;
-      case 'x': to_exit = optarg; break;
-
-      case 'E': end_session = true; break;
-      case 'S': start_session = true; break;
-
-      case '?': {
-        cout << "Question Mark???" << endl;
-        break;
-      }
-      default:
-        cout << "AWESOME: " << c << endl;
-        break;
-    }
+  if (!FLAGS_alert.empty()) {
+    cout << FLAGS_alert << endl;
   }
 
-  if (!alert.empty()) {
-    cout << alert << endl;
-  }
-
-  if (start_session) {
+  if (FLAGS_get_session_id) {
     Database db = Database(db_file.c_str());
     stringstream ss;
     char * id = getenv(ASH_SESSION_ID);
@@ -106,27 +74,19 @@ int main(int argc, char ** argv) {
     }
   }
 
-  if (!command.empty()) {
-    // TODO(cpa): parse the received arguments for sanity
+  if (!FLAGS_command.empty()) {
     Database db = Database(db_file.c_str());
-    int ec = atoi(exit_code.c_str());
-    int st = atoi(start.c_str());
-    int fi = atoi(finish.c_str());
-    int nu = atoi(number.c_str());
-    Command com(command, ec, st, fi, nu, pipes);
+    Command com(FLAGS_command, FLAGS_command_exit, FLAGS_command_start,
+      FLAGS_command_finish, FLAGS_command_number, FLAGS_command_pipe_status);
     db.exec(com.get_sql().c_str());
   }
 
-  if (end_session) {
-cout << "Ending session" << endl;
+  if (FLAGS_end_session) {
     Session session;
     Database db = Database(db_file.c_str());
     db.exec(session.get_close_session_sql().c_str());
   }
 
-  if (!to_exit.empty()) {
-    exit(atoi(to_exit.c_str()));
-  }
-
+  exit(FLAGS_exit);
   return 0;
 }

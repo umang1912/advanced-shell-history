@@ -44,10 +44,8 @@ fi
 #   rval: The numeric exit code from the last user-entered command.
 #
 function ah::end_session() {
-echo "Ending session ${ASH_SESSION_ID} with args: ${@}"
   ah::log "${@}"
-echo "Ending session now..."
-  ash_log --end-session --exit-code ${1}
+  ash_log --end_session --exit ${1}
 }
 
 # This is executed when the user types 'exit'
