@@ -2,7 +2,7 @@
 
 EXE	:= ash_log
 OBJ	:= $(addsuffix .o,${EXE}) command.o database.o db_object.o flags.o session.o unix.o util.o
-TRASH	:= ${OBJ} ${EXE} ash_exit
+TRASH	:= ${OBJ} ${EXE}
 CPP	:= g++
 FLAGS	:= -g -Wall -O2
 
@@ -12,10 +12,7 @@ SQLITE_URL := http://www.sqlite.org/${SQLITE_ZIP}
 
 
 .PHONY:	all
-all:	${EXE} ash_exit
-
-ash_exit: ash_exit.cpp
-	${CPP} ${FLAGS} ash_exit.cpp -o ash_exit
+all:	${EXE}
 
 ${EXE}:	sqlite3.o ${OBJ}
 	${CPP} ${FLAGS} -o ${@} ${<} ${OBJ}

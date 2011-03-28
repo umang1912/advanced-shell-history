@@ -61,7 +61,7 @@ function ah::precmd() {
   # Causes the exit code to be reset to what it was before logging.
   local rval=${1} && shift
   ASH_PIPESTATUS=( ${@} )
-  ash_exit ${rval}
+  ash_log --exit ${rval}
 }
 
 

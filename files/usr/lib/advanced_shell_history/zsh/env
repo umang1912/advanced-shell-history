@@ -61,5 +61,5 @@ function precmd() {
 
   local rval=${ASH_PIPESTATUS[1]}
   ASH_PIPESTATUS=( ${ASH_PIPESTATUS[2,-1]} )
-  ash_exit ${rval}
+  ash_log --exit ${rval}
 }

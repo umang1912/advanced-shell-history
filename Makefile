@@ -28,7 +28,7 @@ all:	build
 
 build:
 	cd src && make
-	cp src/ash_log src/ash_exit files/usr/local/bin
+	cp src/ash_log files/usr/local/bin
 
 install: build
 	sudo rsync -Ca files/* /
