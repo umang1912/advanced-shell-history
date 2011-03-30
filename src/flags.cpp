@@ -20,7 +20,6 @@
 #include <stdlib.h>  /* for atoi */
 #include <string.h>  /* for strdup */
 
-#include <iomanip>
 #include <iostream>
 
 #include "flags.hpp"
@@ -47,18 +46,18 @@ DEFINE_flag(help, 0, "Display flags for this command.");
 /**
  * 
  */
-void Flag::show_help() {
+void Flag::show_help(ostream & out) {
   char * program_name = strdup(prog_name.c_str());
-  cout << "\nUsage: " << basename(program_name);
+  out << "\nUsage: " << basename(program_name);
 
   list<Flag *> & flags = Flag::instances;
   if (flags.empty()) return;
 
-  cout << " [options]";
+  out << " [options]";
   for (list<Flag *>::iterator i = flags.begin(); i != flags.end(); ++i) {
-    cout << "\n" << **i;
+    out << "\n" << **i;
   }
-  cout << endl;
+  out << "\n" << endl;
 }
 
 
@@ -91,19 +90,21 @@ int Flag::parse(int * p_argc, char *** p_argv, const bool remove_flags) {
         Flag * flag = Flag::long_names[long_name];
         if (flag) flag -> set(optarg);
         if (flag == &FLAGS_OPT_help) {
-          Flag::show_help();
+          Flag::show_help(cout);
         }
         break;
       }
 
       case '?': {  // unknown option.
-        // TODO(cpa): do something sensible here...
-        cout << "QUESTION MARK" << endl; break;
+        Flag::show_help(cerr);
+        break;
+//cout << "QUESTION MARK" << endl; break;
       }
 
       default: {  // short option
         if (Flag::short_names.find(c) == Flag::short_names.end()) {
-          cout << "ERROR: failed to find a flag matching '" << c << "'" << endl;
+          // This should never happen.
+          cerr << "ERROR: failed to find a flag matching '" << c << "'" << endl;
         } else {
           Flag * flag = Flag::short_names[c];
           if (flag) flag -> set(optarg);
@@ -113,8 +114,14 @@ int Flag::parse(int * p_argc, char *** p_argv, const bool remove_flags) {
     }
   }
 
-  // TODO(cpa): check optind < argc - see manpage...
-  cout << "optind = " << optind << ", argc = " << argc << endl;
+  // TODO(cpa): trim the non-argument params from argv.
+  if (optind < argc) {
+cout << "optind = " << optind << ", argc = " << argc << endl;
+    while (optind < argc) {
+cout << argv[optind] << endl;
+      ++optind;
+    }
+  }
 
   delete [] options;
   return 0;
@@ -127,7 +134,7 @@ int Flag::parse(int * p_argc, char *** p_argv, const bool remove_flags) {
 template <typename T>
 void safe_add(map<const T, Flag *> & known, const T key, Flag * value) {
   if (known.find(key) != known.end()) {
-    cout << "ERROR: ambiguous flags defined: duplicate key: "
+    cerr << "ERROR: ambiguous flags defined: duplicate key: "
          << "'" << key << "'\n" << *known[key] << "\n" << *value << endl;
   }
   known[key] = value;
@@ -160,7 +167,7 @@ Flag::Flag(const char * ln, const char sn, const char * ds, const bool has_arg)
   if (all_isgraph(long_name)) {
     safe_add(Flag::long_names, string(long_name), this);
   } else {
-    cout << "WARNING: Flag long name '" << long_name
+    cerr << "WARNING: Flag long name '" << long_name
          << "' is not legal and will be ignored." << endl;
   }
 
@@ -181,7 +188,7 @@ Flag::Flag(const char * ln, const char sn, const char * ds, const bool has_arg)
         Flag::codes.push_back(':');
       }
     } else {
-      cout << "WARNING: Flag short name character '" << short_name
+      cerr << "WARNING: Flag short name character '" << short_name
            << "' is not legal and will be ignored." << endl;
     }
   }
@@ -305,7 +312,7 @@ void BoolFlag::set(const char * optarg) {
     } else if (opt == "false") {
       *value = false;
     } else {
-      cout << "ERROR: boolean flags must be either true or false.  Got '"
+      cerr << "ERROR: boolean flags must be either true or false.  Got '"
            << optarg << "'" << endl;
     }
   } else {

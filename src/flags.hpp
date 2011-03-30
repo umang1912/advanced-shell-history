@@ -67,7 +67,7 @@ class Flag {
 
   public:
     static int parse(int * argc, char *** argv, const bool remove_flags);
-    static void show_help();
+    static void show_help(ostream & out);
 
   // NON-STATIC
   public:

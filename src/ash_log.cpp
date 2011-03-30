@@ -16,7 +16,7 @@
 
 #include <stdlib.h>  /* for getenv, exit */
 
-#include <iostream>  /* for cout, endl */
+#include <iostream>  /* for cerr, cout, endl */
 #include <sstream>   /* for stringstream */
 
 #include "ash_log.hpp"
@@ -41,13 +41,14 @@ using namespace std;
 int main(int argc, char ** argv) {
   Flag::parse(&argc, &argv, true);
   // TODO(cpa): check the remaining args to make sure something else wasn't there
+  // TODO(cpa): make sure at least one arg was given - show usage if no args
   DBObject::register_table(Session::get_create_table());
   DBObject::register_table(Command::get_create_table());
 
   string db_file = string(getenv("HOME")) + "/.history.db";
 
   if (!FLAGS_alert.empty()) {
-    cout << FLAGS_alert << endl;
+    cerr << FLAGS_alert << endl;
   }
 
   if (FLAGS_get_session_id) {
@@ -57,7 +58,7 @@ int main(int argc, char ** argv) {
     if (id) {
       ss << "select count(*) from sessions where id = " << id << ";";
       if (db.select_int(ss.str().c_str()) == 0) {
-        cout << "ERROR: session_id(" << id << ") not found, creating new session." << endl << ss.str() << endl;
+        cerr << "ERROR: session_id(" << id << ") not found, creating new session." << endl << ss.str() << endl;
         id = 0;
       }
       ss.str("");
@@ -75,6 +76,7 @@ int main(int argc, char ** argv) {
   }
 
   if (!FLAGS_command.empty()) {
+    // TODO(cpa): make sure all the required flags are present.
     Database db = Database(db_file.c_str());
     Command com(FLAGS_command, FLAGS_command_exit, FLAGS_command_start,
       FLAGS_command_finish, FLAGS_command_number, FLAGS_command_pipe_status);
@@ -85,8 +87,9 @@ int main(int argc, char ** argv) {
     Session session;
     Database db = Database(db_file.c_str());
     db.exec(session.get_close_session_sql().c_str());
+    // TODO(cpa): alert if there is currently no session ID in the environment or in the DB
   }
 
-  exit(FLAGS_exit);
-  return 0;
+  // TODO(cpa): warn if FLAGS_exit is > 255
+  return FLAGS_exit;
 }

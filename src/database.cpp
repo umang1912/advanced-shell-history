@@ -39,7 +39,7 @@ Database::Database(const char * filename)
   if (stat(db_filename, &file)) {
     FILE * created_file = fopen(db_filename, "w+e");
     if (!created_file) {
-      cout << "ERROR: failed to create new file: " << db_filename << endl;
+      cerr << "ERROR: failed to create new file: " << db_filename << endl;
       exit(1);
     }
     fclose(created_file);
@@ -47,7 +47,7 @@ Database::Database(const char * filename)
 
   // Open the DB, if failure, abort.
   if (sqlite3_open(db_filename, &db)) {
-    cout << "Failed to open " << db_filename << "\nError: " << sqlite3_errmsg(db) << endl;
+    cerr << "Failed to open " << db_filename << "\nError: " << sqlite3_errmsg(db) << endl;
     exit(1);
   }
 
@@ -89,7 +89,7 @@ int SelectInt(void * result, int rows, char ** cols, char ** column_names) {
 int Database::select_int(const char * query) const {
   int result = -1;
   if (sqlite3_exec(db, query, SelectInt, &result, 0)) {
-    cout << sqlite3_errmsg(db) << endl << query << endl;
+    cerr << sqlite3_errmsg(db) << endl << query << endl;
     exit(1);
   }
   return result;
@@ -98,7 +98,7 @@ int Database::select_int(const char * query) const {
 
 void Database::exec(const char * query) const {
   if (sqlite3_exec(db, query, CreateTables, 0, 0)) {
-    cout << sqlite3_errmsg(db) << endl << query << endl;
+    cerr << sqlite3_errmsg(db) << endl << query << endl;
     exit(1);
   }
 }
