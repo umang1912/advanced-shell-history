@@ -20,12 +20,12 @@ source "/usr/lib/advanced_shell_history/common" || exit 1
 
 # Display error and abort if PROMPT_COMMAND is readonly.
 if readonly -p | grep -q "^declare -[[:alpha:]]\+ PROMPT_COMMAND="; then
-  if [[ "${PROMPT_COMMAND//ah::/}" == "${PROMPT_COMMAND}" ]]; then
+  if [[ "${PROMPT_COMMAND//ash::/}" == "${PROMPT_COMMAND}" ]]; then
     ash_log -a "Make PROMPT_COMMAND writable to save advanced command history."
     return
   fi
 fi
-export PROMPT_COMMAND="ah::begin_session"
+export PROMPT_COMMAND="ash::begin_session"
 
 # HISTCONTROL is emptied primarily to remove the options that de-dupe identical
 # successive commands and remove comands with leading spaces from history.
@@ -41,8 +41,8 @@ readonly HISTTIMEFORMAT
 ##
 # This is invoked when a new user session begins.
 #
-function ah::begin_session() {
-  export PROMPT_COMMAND="ah::precmd \${?} \${PIPESTATUS[@]}"
+function ash::begin_session() {
+  export PROMPT_COMMAND="ash::precmd \${?} \${PIPESTATUS[@]}"
   export ASH_SESSION_ID="$( ash_log --get_session_id )"
   ash_log -a "Advanced History is enabled (session: ${ASH_SESSION_ID})."
   readonly ASH_SESSION_ID PROMPT_COMMAND
@@ -53,8 +53,8 @@ function ah::begin_session() {
 # Log the previous command and execute the previous PROMPT_COMMAND (if any)
 # afterward.  The previous command exit code is reset after this function.
 #
-function ah::precmd() {
-  ah::log ${@}
+function ash::precmd() {
+  ash::log ${@}
   if typeset -p ASH_PROMPT_COMMAND &>/dev/null; then
     "${ASH_PROMPT_COMMAND}"
   fi
@@ -66,9 +66,9 @@ function ah::precmd() {
 
 
 ##
-# Invoked by ah::log.
+# Invoked by ash::log.
 #
-function ah::last_command() {
+function ash::last_command() {
   local cmd_no start_ts end_ts="$( date +%s )" cmd
   read -r cmd_no start_ts cmd <<< "$( builtin history 1 )"
   echo ${cmd_no} ${start_ts} ${end_ts} "${cmd}"
@@ -76,10 +76,10 @@ function ah::last_command() {
 
 
 # Protect the functions.
-readonly -f ah::begin_session
-readonly -f ah::last_command
-readonly -f ah::precmd
+readonly -f ash::begin_session
+readonly -f ash::last_command
+readonly -f ash::precmd
 
 # Export functions used by subshells (not begin_session).
-export -f ah::last_command
-export -f ah::precmd
+export -f ash::last_command
+export -f ash::precmd

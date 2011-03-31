@@ -15,11 +15,11 @@
 #   limitations under the License.
 #
 
-# Put the history.db in HOME or use /dev/shm if no HOME exists.
+# Put the history.db in HOME or use ${TMPDIR} if no HOME exists.
 if [[ -d "${HOME}" ]]; then
   export ASH_HISTORY_DB="${HOME}/.history.db"
 else
-  export ASH_HISTORY_DB=/dev/shm/.history_${UID}.db
+  export ASH_HISTORY_DB=${TMPDIR}/.history_${UID}.db
 fi
 readonly ASH_HISTORY_DB
 
@@ -43,13 +43,13 @@ fi
 # Args:
 #   rval: The numeric exit code from the last user-entered command.
 #
-function ah::end_session() {
-  ah::log "${@}"
+function ash::end_session() {
+  ash::log "${@}"
   ash_log --end_session --exit ${1}
 }
 
 # This is executed when the user types 'exit'
-trap 'ah::end_session ${?} ${PIPESTATUS[@]} ${pipestatus[@]}' EXIT TERM
+trap 'ash::end_session ${?} ${PIPESTATUS[@]} ${pipestatus[@]}' EXIT TERM
 
 # This avoids logging duplicate commands when the user presses Ctrl-C while
 # entering a command.
@@ -64,21 +64,21 @@ export ASH_SKIP=/bin/false
 #   rval: The numeric exit code from the last user-entered command.
 #   pipes: The set of pipe exit codes (one or more codes).
 #
-function ah::log() {
+function ash::log() {
   if ${ASH_SKIP}; then
     ASH_SKIP=/bin/false
     return
   fi
 
   local no start end cmd rval="${1}" && shift
-  read -r no start end cmd <<< "$( ah::last_command )"
+  read -r no start end cmd <<< "$( ash::last_command )"
   ash_log -e ${rval} -s ${start} -f ${end} -n ${no} -p "${@}" -c "${cmd}"
 }
 
 
 # Protect the functions.
-readonly -f ah::end_session
-readonly -f ah::log
+readonly -f ash::end_session
+readonly -f ash::log
 
-export -f ah::end_session
-export -f ah::log
+export -f ash::end_session
+export -f ash::log
