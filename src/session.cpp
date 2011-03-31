@@ -29,8 +29,8 @@ const string Session::get_create_table() {
   stringstream ss;
   ss << "CREATE TABLE IF NOT EXISTS sessions ( \n"
      << "  id integer primary key autoincrement, \n"
-     << "  hostname varchar(128) not null, \n"
-     << "  host_ip varchar(40) not null, \n"
+     << "  hostname varchar(128), \n"
+     << "  host_ip varchar(40), \n"
      << "  ppid int(5) not null, \n"
      << "  pid int(5) not null, \n"
      << "  start_time integer not null, \n"
@@ -39,8 +39,9 @@ const string Session::get_create_table() {
      << "  tty varchar(20) not null, \n"
      << "  uid int(16) not null, \n"
      << "  euid int(16) not null, \n"
-     << "  logname varchar(48) not null, \n"
+     << "  logname varchar(48), \n"
      << "  shell varchar(50) not null, \n"
+     << "  windowid integer, \n"
      << "  sudo_user varchar(48), \n"
      << "  sudo_uid int(16), \n"
      << "  ssh_client varchar(60), \n"
@@ -63,6 +64,7 @@ Session::Session() {
   values["hostname"] = Unix::host_name();
   values["host_ip"] = Unix::host_ip();
   values["shell"] = Unix::shell();
+  values["windowid"] = Unix::env_int("WINDOWID");
   values["sudo_user"] = Unix::env("SUDO_USER");
   values["sudo_uid"] = Unix::env("SUDO_UID");
   values["ssh_client"] = Unix::env("SSH_CLIENT");
