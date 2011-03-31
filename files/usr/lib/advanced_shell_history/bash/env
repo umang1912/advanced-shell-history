@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#   Copyright 2011 Carl Anderson 
+#   Copyright 2011 Carl Anderson
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ readonly HISTTIMEFORMAT
 function ash::begin_session() {
   export PROMPT_COMMAND="ash::precmd \${?} \${PIPESTATUS[@]}"
   export ASH_SESSION_ID="$( ash_log --get_session_id )"
-  ash_log -a "Advanced History is enabled (session: ${ASH_SESSION_ID})."
+  ash_log -a "Advanced Shell History is enabled (session: ${ASH_SESSION_ID})."
   readonly ASH_SESSION_ID PROMPT_COMMAND
 }
 

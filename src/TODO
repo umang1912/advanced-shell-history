@@ -4,7 +4,6 @@ TODO
   [ ] 
 
 session.cpp
-  [ ] add WINDOWID to the session
   [ ] 
 
 util.cpp

@@ -13,7 +13,6 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #
-# TODO(cpa): add a target to make a deb package
 
 REV := $(shell svn up | cut -d' ' -f3 | cut -d. -f1 | sed -e 's:^:.r:' )
 VERSION  := 0.1
@@ -28,10 +27,12 @@ all:	build
 
 build:
 	cd src && make
-	cp src/ash_log files/usr/local/bin
+	cp -a src/ash_log files/usr/local/bin
 
 install: build
 	sudo rsync -Ca files/* /
+
+src_tarball_minimal: mrproper src_tarball
 
 src_tarball: clean
 	mkdir -p ${TMP_DIR}
@@ -39,6 +40,9 @@ src_tarball: clean
 	cd ${TMP_ROOT} && tar -czpf ${TMP_FILE} ./ash-${VERSION}/
 	rm -rf ${TMP_DIR}
 	mv ${TMP_FILE} ${SRC_DEST}/ash-${RVERSION}.tar.gz
+
+mrproper: clean
+	rm src/sqlite3.*
 
 clean:
 	cd src && make distclean

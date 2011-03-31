@@ -52,7 +52,7 @@ function precmd() {
   ASH_PIPESTATUS=( ${?} ${pipestatus[@]} )
   if [[ -z ${ASH_SESSION_ID} ]]; then
     export ASH_SESSION_ID="$( ash_log --get_session_id )"
-    ash_log -a "Advanced History is enabled (session: ${ASH_SESSION_ID})."
+    ash_log -a "Advanced Shell History is enabled (session: ${ASH_SESSION_ID})."
     readonly ASH_SESSION_ID
   else
     ash::log ${ASH_PIPESTATUS[@]}
