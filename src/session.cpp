@@ -21,10 +21,11 @@
 
 using namespace ash;
 using std::stringstream;
-#include <iostream>
-using namespace std;
 
 
+/**
+ * 
+ */
 const string Session::get_create_table() {
   stringstream ss;
   ss << "CREATE TABLE IF NOT EXISTS sessions ( \n"
@@ -41,7 +42,6 @@ const string Session::get_create_table() {
      << "  euid int(16) not null, \n"
      << "  logname varchar(48), \n"
      << "  shell varchar(50) not null, \n"
-     << "  windowid integer, \n"
      << "  sudo_user varchar(48), \n"
      << "  sudo_uid int(16), \n"
      << "  ssh_client varchar(60), \n"
@@ -51,6 +51,9 @@ const string Session::get_create_table() {
 }
 
 
+/**
+ * 
+ */
 Session::Session() {
   if (Unix::env(ASH_SESSION_ID) != "null")
     return;
@@ -64,7 +67,6 @@ Session::Session() {
   values["hostname"] = Unix::host_name();
   values["host_ip"] = Unix::host_ip();
   values["shell"] = Unix::shell();
-  values["windowid"] = Unix::env_int("WINDOWID");
   values["sudo_user"] = Unix::env("SUDO_USER");
   values["sudo_uid"] = Unix::env("SUDO_UID");
   values["ssh_client"] = Unix::env("SSH_CLIENT");
@@ -72,16 +74,25 @@ Session::Session() {
 }
 
 
+/**
+ * 
+ */
 Session::~Session() {
   // Nothing to do here.
 }
 
 
+/**
+ * 
+ */
 const string Session::get_name() const {
   return "sessions";
 }
 
 
+/**
+ * 
+ */
 const string Session::get_sql() const {
   stringstream ss;
   ss << "BEGIN TRANSACTION; ";
@@ -92,6 +103,9 @@ const string Session::get_sql() const {
 }
 
 
+/**
+ * 
+ */
 const string Session::get_close_session_sql() const {
   stringstream ss;
   ss << "UPDATE sessions \n"

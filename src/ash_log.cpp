@@ -39,7 +39,11 @@ using namespace std;
 
 
 int main(int argc, char ** argv) {
+  for (int i = 0; i < argc; ++i)
+cout << "argv[" << i << "] = '" << argv[i] << "'" << endl;
   Flag::parse(&argc, &argv, true);
+  for (int i = 0; i < argc; ++i)
+cout << "argv[" << i << "] = '" << argv[i] << "'" << endl;
   // TODO(cpa): check the remaining args to make sure something else wasn't there
   // TODO(cpa): make sure at least one arg was given - show usage if no args
   DBObject::register_table(Session::get_create_table());
@@ -90,6 +94,5 @@ int main(int argc, char ** argv) {
     // TODO(cpa): alert if there is currently no session ID in the environment or in the DB
   }
 
-  // TODO(cpa): warn if FLAGS_exit is > 255
   return FLAGS_exit;
 }

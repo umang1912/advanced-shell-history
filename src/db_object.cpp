@@ -24,9 +24,15 @@ using namespace ash;
 using namespace std;
 
 
+/**
+ * 
+ */
 list<string> DBObject::create_tables;
 
 
+/**
+ * 
+ */
 const string DBObject::get_create_tables() {
   stringstream ss;
   ss << "PRAGMA foreign_keys=OFF;"
@@ -40,16 +46,25 @@ const string DBObject::get_create_tables() {
 }
 
 
+/**
+ * 
+ */
 void DBObject::register_table(const string & create_statement) {
   create_tables.push_back(create_statement);
 }
 
 
+/**
+ * 
+ */
 const string DBObject::quote(const char * value) {
   return value ? quote(string(value)) : "null";
 }
 
 
+/**
+ * 
+ */
 const string DBObject::quote(const string & in) {
   if (in.empty()) return "null";
   string out = "'";
@@ -64,16 +79,25 @@ const string DBObject::quote(const string & in) {
 }
 
 
+/**
+ * 
+ */
 DBObject::DBObject() {
   // Nothing to do here.
 }
 
 
+/**
+ * 
+ */
 DBObject::~DBObject() {
   // Nothing to do here.
 }
 
 
+/**
+ * 
+ */
 const string DBObject::get_sql() const {
   typedef map<string, string>::const_iterator c_iter;
 

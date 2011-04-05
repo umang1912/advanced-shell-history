@@ -49,6 +49,9 @@ const string proc_stat(int target) {
 }
 
 
+/**
+ * 
+ */
 const string Unix::cwd() {
   static string filename = "/proc/" + Unix::pid() + "/cwd";
   stringstream ss;
@@ -67,11 +70,17 @@ const string Unix::cwd() {
 }
 
 
+/**
+ * 
+ */
 const string Unix::ppid() {
   return proc_stat(3);
 }
 
 
+/**
+ * 
+ */
 const string Unix::shell() {
   string token = proc_stat(1);
   if (!token.empty() && token[0] == '(' && token[token.length() - 1] == ')') {
@@ -81,26 +90,41 @@ const string Unix::shell() {
 }
 
 
+/**
+ * 
+ */
 const string Unix::euid() {
   return Util::to_string(geteuid());
 }
 
 
+/**
+ * 
+ */
 const string Unix::pid() {
   return Util::to_string(getppid());
 }
 
 
+/**
+ * 
+ */
 const string Unix::time() {
   return Util::to_string(::time(0));
 }
 
 
+/**
+ * 
+ */
 const string Unix::uid() {
   return Util::to_string(getuid());
 }
 
 
+/**
+ * 
+ */
 const string Unix::host_ip() {
   struct ifaddrs * addrs;
   if (getifaddrs(&addrs)) {
@@ -138,6 +162,9 @@ const string Unix::host_ip() {
 }
 
 
+/**
+ * 
+ */
 const string Unix::host_name() {
   char buffer[1024];
   if (gethostname(buffer, sizeof(buffer))) {
@@ -147,11 +174,17 @@ const string Unix::host_name() {
 }
 
 
+/**
+ * 
+ */
 const string Unix::login_name() {
   return DBObject::quote(getlogin());
 }
 
 
+/**
+ * 
+ */
 const string Unix::tty() {
   string tty = DBObject::quote(ttyname(0));
   if (tty.find("/dev/") == 1) {
@@ -161,11 +194,17 @@ const string Unix::tty() {
 }
 
 
+/**
+ * 
+ */
 const string Unix::env(const char * name) {
   return DBObject::quote(getenv(name));
 }
 
 
+/**
+ * 
+ */
 const string Unix::env_int(const char * name) {
   return Util::to_string(atoi(getenv(name)));
 }

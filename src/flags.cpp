@@ -91,14 +91,14 @@ int Flag::parse(int * p_argc, char *** p_argv, const bool remove_flags) {
         if (flag) flag -> set(optarg);
         if (flag == &FLAGS_OPT_help) {
           Flag::show_help(cout);
+          exit(0);
         }
         break;
       }
 
       case '?': {  // unknown option.
         Flag::show_help(cerr);
-        break;
-//cout << "QUESTION MARK" << endl; break;
+        exit(1);
       }
 
       default: {  // short option
@@ -114,12 +114,10 @@ int Flag::parse(int * p_argc, char *** p_argv, const bool remove_flags) {
     }
   }
 
-  // TODO(cpa): trim the non-argument params from argv.
-  if (optind < argc) {
-cout << "optind = " << optind << ", argc = " << argc << endl;
-    while (optind < argc) {
-cout << argv[optind] << endl;
-      ++optind;
+  // Trim the non-argument params from argv.
+  if (remove_flags) {
+    for (*p_argc = 0; optind < argc; ++optind, ++(*p_argc)) {
+      argv[*p_argc] = argv[optind];
     }
   }
 
@@ -156,8 +154,8 @@ bool all_isgraph(const char * input) {
 /**
  * 
  */
-Flag::Flag(const char * ln, const char sn, const char * ds, const bool has_arg)
-  : long_name(ln), short_name(sn), description(ds)
+Flag::Flag(const char * ln, const char sn, const char * ds, const bool ha)
+  : long_name(ln), short_name(sn), description(ds), has_arg(ha)
 {
   Flag::instances.push_back(this);
 
@@ -173,6 +171,9 @@ Flag::Flag(const char * ln, const char sn, const char * ds, const bool has_arg)
 
   // Keep track of the longest name for later help output formatting.
   string temp(long_name);
+  if (has_arg) {
+    temp += "=VALUE";
+  }
   if (temp.length() > longest_long_name) {
     longest_long_name = temp.length();
   }
@@ -196,7 +197,7 @@ Flag::Flag(const char * ln, const char sn, const char * ds, const bool has_arg)
 
 
 Flag::~Flag() {
-  // TODO(cpa): delete the option structs, if this is the --help option ???
+  // Nothing to do.
 }
 
 
@@ -210,8 +211,13 @@ ostream & Flag::insert(ostream & out) const {
     out << "    ";
 
   if (long_name) {
+    int padding = 2 + longest_long_name - string(long_name).length();
     out << "  --" << long_name;
-    out << string(2 + longest_long_name - string(long_name).length(), ' ');
+    if (has_arg) {
+      out << "=VALUE";
+      padding -= 6;
+    }
+    out << string(padding, ' ');
   }
 
   if (description) out << description;

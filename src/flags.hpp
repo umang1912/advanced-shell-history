@@ -80,6 +80,7 @@ class Flag {
     const char * long_name;
     const char short_name;
     const char * description;
+    const bool has_arg;
 
   // DISABLED
   private:

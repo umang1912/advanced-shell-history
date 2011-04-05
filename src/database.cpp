@@ -31,6 +31,9 @@ using namespace ash;
 using namespace std;
 
 
+/**
+ * 
+ */
 Database::Database(const char * filename)
   :db_filename(filename), db(0)
 {
@@ -39,7 +42,7 @@ Database::Database(const char * filename)
   if (stat(db_filename, &file)) {
     FILE * created_file = fopen(db_filename, "w+e");
     if (!created_file) {
-      cerr << "ERROR: failed to create new file: " << db_filename << endl;
+      cerr << "ERROR: failed to create new DB file: " << db_filename << endl;
       exit(1);
     }
     fclose(created_file);
@@ -61,6 +64,9 @@ Database::Database(const char * filename)
 }
 
 
+/**
+ * 
+ */
 Database::~Database() {
   if (db) {
     sqlite3_close(db);
@@ -69,11 +75,17 @@ Database::~Database() {
 }
 
 
+/**
+ * 
+ */
 int CreateTables(void * ignored, int rows, char ** cols, char ** col_names) {
   return 0;
 }
 
 
+/**
+ * 
+ */
 void Database::init_db() {
   sqlite3_exec(db, DBObject::get_create_tables().c_str(), CreateTables, 0, 0);
 }
@@ -86,6 +98,9 @@ int SelectInt(void * result, int rows, char ** cols, char ** column_names) {
 }
 
 
+/**
+ * 
+ */
 int Database::select_int(const char * query) const {
   int result = -1;
   if (sqlite3_exec(db, query, SelectInt, &result, 0)) {
@@ -96,6 +111,9 @@ int Database::select_int(const char * query) const {
 }
 
 
+/**
+ * 
+ */
 void Database::exec(const char * query) const {
   if (sqlite3_exec(db, query, CreateTables, 0, 0)) {
     cerr << sqlite3_errmsg(db) << endl << query << endl;
