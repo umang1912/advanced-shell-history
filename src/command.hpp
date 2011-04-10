@@ -19,7 +19,7 @@
 
 #include <string>
 
-#include "db_object.hpp"
+#include "database.hpp"
 
 using std::string;
 

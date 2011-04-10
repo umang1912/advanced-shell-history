@@ -55,8 +55,6 @@ const string Session::get_create_table() {
  * 
  */
 Session::Session() {
-  if (Unix::env(ASH_SESSION_ID) != "null")
-    return;
   values["start_time"] = Unix::time();
   values["ppid"] = Unix::ppid();
   values["pid"] = Unix::pid();

@@ -17,6 +17,7 @@
 #include <sys/stat.h>  /* for stat */
 #include <stdio.h>     /* for fopen */
 #include <stdlib.h>
+
 #include <iostream>
 #include <sstream>
 
@@ -34,13 +35,13 @@ using namespace std;
 /**
  * 
  */
-Database::Database(const char * filename)
+Database::Database(const string & filename)
   :db_filename(filename), db(0)
 {
   struct stat file;
   // Test that the file exists, if not, create it.
-  if (stat(db_filename, &file)) {
-    FILE * created_file = fopen(db_filename, "w+e");
+  if (stat(db_filename.c_str(), &file)) {
+    FILE * created_file = fopen(db_filename.c_str(), "w+e");
     if (!created_file) {
       cerr << "ERROR: failed to create new DB file: " << db_filename << endl;
       exit(1);
@@ -49,7 +50,7 @@ Database::Database(const char * filename)
   }
 
   // Open the DB, if failure, abort.
-  if (sqlite3_open(db_filename, &db)) {
+  if (sqlite3_open(db_filename.c_str(), &db)) {
     cerr << "Failed to open " << db_filename << "\nError: " << sqlite3_errmsg(db) << endl;
     exit(1);
   }
@@ -79,6 +80,7 @@ Database::~Database() {
  * 
  */
 int CreateTables(void * ignored, int rows, char ** cols, char ** col_names) {
+  // Nothing to do in this callback.
   return 0;
 }
 
@@ -87,7 +89,8 @@ int CreateTables(void * ignored, int rows, char ** cols, char ** col_names) {
  * 
  */
 void Database::init_db() {
-  sqlite3_exec(db, DBObject::get_create_tables().c_str(), CreateTables, 0, 0);
+  const string & create_tables = DBObject::get_create_tables();
+  sqlite3_exec(db, create_tables.c_str(), CreateTables, 0, 0);
 }
 
 
@@ -101,9 +104,9 @@ int SelectInt(void * result, int rows, char ** cols, char ** column_names) {
 /**
  * 
  */
-int Database::select_int(const char * query) const {
+int Database::select_int(const string & query) const {
   int result = -1;
-  if (sqlite3_exec(db, query, SelectInt, &result, 0)) {
+  if (sqlite3_exec(db, query.c_str(), SelectInt, &result, 0)) {
     cerr << sqlite3_errmsg(db) << endl << query << endl;
     exit(1);
   }
@@ -114,9 +117,115 @@ int Database::select_int(const char * query) const {
 /**
  * 
  */
-void Database::exec(const char * query) const {
-  if (sqlite3_exec(db, query, CreateTables, 0, 0)) {
+void Database::exec(const string & query) const {
+  if (sqlite3_exec(db, query.c_str(), CreateTables, 0, 0)) {
     cerr << sqlite3_errmsg(db) << endl << query << endl;
     exit(1);
   }
+}
+
+
+/*********
+ * DB_OBJECT CODE BELOW:
+ ****/
+
+
+/**
+ * 
+ */
+list<string> DBObject::create_tables;
+
+
+/**
+ * 
+ */
+const string DBObject::get_create_tables() {
+  stringstream ss;
+  ss << "PRAGMA foreign_keys=OFF;"
+     << "BEGIN TRANSACTION;";
+  typedef list<string>::iterator it;
+  for (it i = create_tables.begin(), e = create_tables.end(); i != e; ++i) {
+    ss << *i << "; ";
+  }
+  ss << "COMMIT;";
+  return ss.str();
+}
+
+
+/**
+ * 
+ */
+void DBObject::register_table(const string & create_statement) {
+  create_tables.push_back(create_statement);
+}
+
+
+/**
+ * 
+ */
+const string DBObject::quote(const char * value) {
+  return value ? quote(string(value)) : "null";
+}
+
+
+/**
+ * 
+ */
+const string DBObject::quote(const string & in) {
+  if (in.empty()) return "null";
+  string out = "'";
+  char c;
+  for (string::const_iterator i = in.begin(), e = in.end(); i != e; ++i) {
+    c = *i;
+    if (isprint(c)) out.push_back(c);
+    if (c == '\'') out.push_back('\'');
+  }
+  out.push_back('\'');
+  return out;
+}
+
+
+/**
+ * 
+ */
+DBObject::DBObject() {
+  // Nothing to do here.
+}
+
+
+/**
+ * 
+ */
+DBObject::~DBObject() {
+  // Nothing to do here.
+}
+
+
+/**
+ * 
+ */
+const string DBObject::get_sql() const {
+  typedef map<string, string>::const_iterator c_iter;
+
+  stringstream ss;
+  ss << "INSERT INTO " << get_name() << " (";
+
+  // Insert the column names.
+  for (c_iter i = values.begin(), e = values.end(); i != e; ) {
+    ss << (i -> first);
+    if (++i == e) break;
+    ss << ", ";
+  }
+
+  ss << ") VALUES (";
+  // Insert the values.
+  for (c_iter i = values.begin(), e = values.end(); i != e; ) {
+    ss << (i -> second);
+    if (++i == e) break;
+    ss << ", ";
+  }
+
+  ss << "); ";
+
+  return ss.str();
 }

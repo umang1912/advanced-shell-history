@@ -20,7 +20,7 @@
 #include <map>
 #include <string>
 
-#include "db_object.hpp"
+#include "database.hpp"
 
 using std::map;
 using std::string;

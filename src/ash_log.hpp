@@ -18,14 +18,16 @@
 #define __ASH_ASH_LOG__
 
 
+/** This is the shell environment variable that holds the session ID. */
 #define ASH_SESSION_ID "ASH_SESSION_ID"
+
 
 #include "flags.hpp"
 #include "database.hpp"
-#include "db_object.hpp"
 #include   "session.hpp"
 #include   "command.hpp"
 #include "util.hpp"
 #include "unix.hpp"
 
-#endif /* __ASH_ASH_LOG__ */
+
+#endif  /* __ASH_ASH_LOG__ */

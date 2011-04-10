@@ -23,13 +23,16 @@ using namespace ash;
 using std::stringstream;
 
 
+/**
+ * 
+ */
 const string Command::get_create_table() {
   stringstream ss;
   ss << "CREATE TABLE IF NOT EXISTS commands(\n"
      << "  id integer primary key autoincrement,\n"
      << "  session_id integer not null,\n"
      << "  shell_level integer not null,\n"
-     << "  command_no integer not null,\n"
+     << "  command_no integer,\n"
      << "  tty varchar(20) not null,\n"
      << "  shlvl integer not null,\n"
      << "  euid int(16) not null,\n"
@@ -38,14 +41,17 @@ const string Command::get_create_table() {
      << "  start_time integer not null,\n"
      << "  end_time integer not null,\n"
      << "  duration integer not null,\n"
-     << "  pipe_cnt int(3) not null,\n"
-     << "  pipe_vals varchar(80) not null,\n"
+     << "  pipe_cnt int(3),\n"
+     << "  pipe_vals varchar(80),\n"
      << "  command varchar(1000) not null\n"
      << ");";
   return ss.str();
 }
 
 
+/**
+ * 
+ */
 Command::Command(const string command, const int rval, const int start_ts, const int end_ts, const int number, const string pipes) {
   values["session_id"] = Unix::env_int(ASH_SESSION_ID);
   values["shell_level"] = Unix::env_int("SHLVL");
@@ -71,20 +77,27 @@ Command::Command(const string command, const int rval, const int start_ts, const
 }
 
 
+/**
+ * 
+ */
 Command::~Command() {
   // Nothing to do.
 }
 
 
-// TODO(cpa): rename this table_name or something
+/**
+ * 
+ */
 const string Command::get_name() const {
   return "commands";
 }
 
 
+/**
+ * 
+ */
 const string Command::get_sql() const {
   stringstream ss;
-  // TODO(cpa): wrap this in a transaction... or nullify the end_time / duration before inserting command...
   ss << DBObject::get_sql();
   ss << "UPDATE sessions ";
   ss << "SET end_time = null, duration = null ";

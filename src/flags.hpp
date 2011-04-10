@@ -22,7 +22,7 @@
 #ifndef __ASH_FLAGS__
 #define __ASH_FLAGS__
 
-#include <getopt.h>
+#include <getopt.h>  /* for struct option */
 
 #include <iostream>
 #include <list>
@@ -140,4 +140,4 @@ class BoolFlag : public Flag {
 };
 
 
-#endif /* __ASH_FLAGS__ */
+#endif  /* __ASH_FLAGS__ */

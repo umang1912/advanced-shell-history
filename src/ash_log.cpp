@@ -39,13 +39,21 @@ using namespace std;
 
 
 int main(int argc, char ** argv) {
-  for (int i = 0; i < argc; ++i)
-cout << "argv[" << i << "] = '" << argv[i] << "'" << endl;
+  // Show usage if no args.
+  if (argc == 1) {
+    Flag::show_help(cerr);
+    exit(1);
+  }
+
   Flag::parse(&argc, &argv, true);
-  for (int i = 0; i < argc; ++i)
-cout << "argv[" << i << "] = '" << argv[i] << "'" << endl;
-  // TODO(cpa): check the remaining args to make sure something else wasn't there
-  // TODO(cpa): make sure at least one arg was given - show usage if no args
+
+  // Abort if unrecognized flags were used on the command line.
+  if (argc != 0) {
+    cerr << "unrecognized option: " << argv[0] << endl;
+    Flag::show_help(cerr);
+    exit(1);
+  }
+
   DBObject::register_table(Session::get_create_table());
   DBObject::register_table(Command::get_create_table());
 
@@ -60,15 +68,14 @@ cout << "argv[" << i << "] = '" << argv[i] << "'" << endl;
     stringstream ss;
     char * id = getenv(ASH_SESSION_ID);
     if (id) {
-      ss << "select count(*) from sessions where id = " << id << ";";
+      ss << "select count(*) from sessions where id = " << id
+         << " and duration is null;";
       if (db.select_int(ss.str().c_str()) == 0) {
-        cerr << "ERROR: session_id(" << id << ") not found, creating new session." << endl << ss.str() << endl;
+        cerr << "ERROR: session_id(" << id << ") not found, "
+             << "creating new session." << endl << ss.str() << endl;
         id = 0;
       }
       ss.str("");
-
-      // TODO(cpa): check that the session is still ongoing - basic sanity check
-
     }
 
     if (id) {
@@ -79,8 +86,14 @@ cout << "argv[" << i << "] = '" << argv[i] << "'" << endl;
     }
   }
 
-  if (!FLAGS_command.empty()) {
-    // TODO(cpa): make sure all the required flags are present.
+  const bool command_flag_used = !FLAGS_command.empty()
+    || FLAGS_command_exit
+    || !FLAGS_command_pipe_status.empty()
+    || FLAGS_command_start
+    || FLAGS_command_finish
+    || FLAGS_command_number;
+
+  if (command_flag_used) {
     Database db = Database(db_file.c_str());
     Command com(FLAGS_command, FLAGS_command_exit, FLAGS_command_start,
       FLAGS_command_finish, FLAGS_command_number, FLAGS_command_pipe_status);

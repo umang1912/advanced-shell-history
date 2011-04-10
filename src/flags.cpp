@@ -15,12 +15,9 @@
 */
 
 #include <ctype.h>   /* for isgraph */
-#include <getopt.h>  /* for getopt_long */
 #include <libgen.h>  /* for basename */
 #include <stdlib.h>  /* for atoi */
 #include <string.h>  /* for strdup */
-
-#include <iostream>
 
 #include "flags.hpp"
 

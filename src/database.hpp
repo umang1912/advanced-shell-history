@@ -18,6 +18,13 @@
 #define __ASH_DATABASE__
 
 
+#include <list>
+#include <map>
+#include <string>
+using std::list;
+using std::map;
+using std::string;
+
 class sqlite3;  // Forward declaration.
 
 namespace ash {
@@ -25,21 +32,48 @@ namespace ash {
 
 class Database {
   public:
-    Database(const char * filename);
+    Database(const string & filename);
     virtual ~Database();
 
-    void exec(const char * query) const;
-    int select_int(const char * query) const;
-
-  private:
+    void exec(const string & query) const;
+    int select_int(const string & query) const;
     void init_db();
 
   private:
-    const char * db_filename;
+    const string db_filename;
     sqlite3 * db;
+};
+
+
+/* abstract */
+class DBObject {
+  // STATIC:
+  public:
+    static const string quote(const char * value);
+    static const string quote(const string & value);
+    static const string get_create_tables();
+    static void register_table(const string & create_statement);
+
+  protected:
+    static list<string> create_tables;
+
+  // NON-STATIC:
+  protected:
+    DBObject();
+    virtual ~DBObject();
+
+    virtual const string get_name() const = 0;  // abstract
+    virtual const string get_sql() const;
+
+    map<string, string> values;
+
+  // DISALLOWED:
+  private:
+    DBObject(const DBObject & other);  // disabled
+    DBObject & operator =(const DBObject & other);  // disabled
 };
 
 
 }  // namespace ash
 
-#endif /* __ASH_DATABASE__ */
+#endif  /* __ASH_DATABASE__ */

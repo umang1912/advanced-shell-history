@@ -59,7 +59,6 @@ const string Unix::cwd() {
   int bytes_read = readlink(filename.c_str(), buffer, sizeof(buffer));
   switch (bytes_read) {
     case -1:
-      // TODO(cpa): log a warning.
       return DBObject::quote(0);
     case 0:
       return DBObject::quote(ss.str());
@@ -128,7 +127,7 @@ const string Unix::uid() {
 const string Unix::host_ip() {
   struct ifaddrs * addrs;
   if (getifaddrs(&addrs)) {
-    return null;  // TODO(cpa): log warning here
+    return null;
   }
 
   int ips = 0;
