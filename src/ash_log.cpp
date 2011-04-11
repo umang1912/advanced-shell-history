@@ -30,6 +30,7 @@ DEFINE_int(command_start, 's', 0, "The timestamp when the command started.");
 DEFINE_int(command_finish, 'f', 0, "The timestamp when the command stopped.");
 DEFINE_int(command_number, 'n', 0, "The command number according to shell history.");
 DEFINE_int(exit, 'x', 0, "The exit code to use when exiting this program.");
+
 DEFINE_flag(get_session_id, 'S', "Begins a session and / or emits the session ID.");
 DEFINE_flag(end_session, 'E', "Ends the current session.");
 
@@ -41,6 +42,7 @@ using namespace std;
 int main(int argc, char ** argv) {
   // Show usage if no args.
   if (argc == 1) {
+    Flag::parse(&argc, &argv, true);
     Flag::show_help(cerr);
     exit(1);
   }
@@ -64,13 +66,13 @@ int main(int argc, char ** argv) {
   }
 
   if (FLAGS_get_session_id) {
-    Database db = Database(db_file.c_str());
+    Database db = Database(db_file);
     stringstream ss;
     char * id = getenv(ASH_SESSION_ID);
     if (id) {
       ss << "select count(*) from sessions where id = " << id
          << " and duration is null;";
-      if (db.select_int(ss.str().c_str()) == 0) {
+      if (db.select_int(ss.str()) == 0) {
         cerr << "ERROR: session_id(" << id << ") not found, "
              << "creating new session." << endl << ss.str() << endl;
         id = 0;
@@ -82,7 +84,7 @@ int main(int argc, char ** argv) {
       cout << id << endl;
     } else {
       Session session;
-      cout << db.select_int(session.get_sql().c_str()) << endl;
+      cout << db.select_int(session.get_sql()) << endl;
     }
   }
 
@@ -94,16 +96,16 @@ int main(int argc, char ** argv) {
     || FLAGS_command_number;
 
   if (command_flag_used) {
-    Database db = Database(db_file.c_str());
+    Database db = Database(db_file);
     Command com(FLAGS_command, FLAGS_command_exit, FLAGS_command_start,
       FLAGS_command_finish, FLAGS_command_number, FLAGS_command_pipe_status);
-    db.exec(com.get_sql().c_str());
+    db.exec(com.get_sql());
   }
 
   if (FLAGS_end_session) {
     Session session;
-    Database db = Database(db_file.c_str());
-    db.exec(session.get_close_session_sql().c_str());
+    Database db = Database(db_file);
+    db.exec(session.get_close_session_sql());
     // TODO(cpa): alert if there is currently no session ID in the environment or in the DB
   }
 
