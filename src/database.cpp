@@ -25,7 +25,6 @@
 #include "sqlite3.h"
 
 // TODO(cpa): instead of exiting, throw an exception where i'm currently exiting.
-// TODO(cpa): create an include file that holds all the queries I want to use???
 
 
 using namespace ash;
@@ -57,7 +56,10 @@ Database::Database(const string & filename)
 
   // Init the DB if it is missing the main tables.
 // TODO(cpa): this query can be built from the names of classes extending DBObject...
-  char query[] = "select count(*) from sqlite_master where tbl_name in (\"sessions\", \"commands\");";
+  char query[] =
+      "select count(*) "
+      "from sqlite_master "
+      "where tbl_name in (\"sessions\", \"commands\");";
   if (select_int(query) != 2) {
     init_db();
   }
@@ -79,7 +81,7 @@ Database::~Database() {
 /**
  * 
  */
-int CreateTables(void * ignored, int rows, char ** cols, char ** col_names) {
+int NOOPCallback(void * ignored, int rows, char ** cols, char ** col_names) {
   // Nothing to do in this callback.
   return 0;
 }
@@ -90,7 +92,7 @@ int CreateTables(void * ignored, int rows, char ** cols, char ** col_names) {
  */
 void Database::init_db() {
   const string & create_tables = DBObject::get_create_tables();
-  sqlite3_exec(db, create_tables.c_str(), CreateTables, 0, 0);
+  sqlite3_exec(db, create_tables.c_str(), NOOPCallback, 0, 0);
 }
 
 
@@ -101,13 +103,33 @@ int SelectInt(void * result, int rows, char ** cols, char ** column_names) {
 }
 
 
+typedef int (*callback)(void*,int,char**,char**);
+
+bool retry_execute(const string & query, sqlite3 * db, callback c, void * result, int retries = 0) {
+  if (retries == 0)
+    return false;
+  if (sqlite3_exec(db, query.c_str(), c, result, 0)) {
+    if (retries == 1)
+      cerr << "Failed to execute: " << sqlite3_errmsg(db) << endl << query << endl;
+    return retry_execute(query, db, c, result, retries - 1);
+  }
+  return true;
+}
+
+
+bool executed(const string & query, sqlite3 * db, callback c, void * result) {
+  if (sqlite3_exec(db, query.c_str(), c, result, 0))
+    return retry_execute(query, db, c, result, 5);
+  return true;
+}
+
+
 /**
- * 
+ * Executes a query expecting a single int return value.
  */
 int Database::select_int(const string & query) const {
   int result = -1;
-  if (sqlite3_exec(db, query.c_str(), SelectInt, &result, 0)) {
-    cerr << sqlite3_errmsg(db) << endl << query << endl;
+  if (!executed(query, db, SelectInt, &result)) {
     exit(1);
   }
   return result;
@@ -118,7 +140,7 @@ int Database::select_int(const string & query) const {
  * 
  */
 void Database::exec(const string & query) const {
-  if (sqlite3_exec(db, query.c_str(), CreateTables, 0, 0)) {
+  if (sqlite3_exec(db, query.c_str(), NOOPCallback, 0, 0)) {
     cerr << sqlite3_errmsg(db) << endl << query << endl;
     exit(1);
   }

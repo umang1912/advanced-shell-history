@@ -14,34 +14,29 @@
    limitations under the License.
 */
 
-#ifndef __ASH_UNIX__
-#define __ASH_UNIX__
+#ifndef __ASH_CONFIG__
+#define __ASH_CONFIG__
 
-#include <string>
 
+#include<map>
+#include<string>
+
+using std::map;
 using std::string;
+
 
 namespace ash {
 
+class Config {
+  public:
+    static void load(const string & filename);
+    static Config & instance();
+    // TODO(cpa): add an operator [] for accessing the config values
 
-struct Unix {
-  static const string cwd();
-  static const string env(const char * name);
-  static const string env_int(const char * name);
-  static const string euid();
-  static const string host_ip();
-  static const string host_name();
-  static const string login_name();
-  static const string pid();
-  static const string ppid();
-  static const string shell();
-  static const string time();
-  static const string time_zone();
-  static const string tty();
-  static const string uid();
+  private:
+    map<string, string> values;
 };
 
+} // namespace ash
 
-}; // namespace ash
-
-#endif /* __ASH_UNIX__ */
+#endif /* __ASH_CONFIG__ */

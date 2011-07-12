@@ -34,6 +34,7 @@ const string Session::get_create_table() {
      << "  host_ip varchar(40), \n"
      << "  ppid int(5) not null, \n"
      << "  pid int(5) not null, \n"
+     << "  time_zone str(3) not null, \n"
      << "  start_time integer not null, \n"
      << "  end_time integer, \n"
      << "  duration integer, \n"
@@ -55,6 +56,7 @@ const string Session::get_create_table() {
  * 
  */
 Session::Session() {
+  values["time_zone"] = Unix::time_zone();
   values["start_time"] = Unix::time();
   values["ppid"] = Unix::ppid();
   values["pid"] = Unix::pid();

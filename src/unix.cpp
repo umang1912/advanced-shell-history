@@ -116,6 +116,19 @@ const string Unix::time() {
 /**
  * 
  */
+const string Unix::time_zone() {
+  stringstream ss;
+  char zone_buffer[5];
+  time_t now = ::time(0);
+  strftime(zone_buffer, 5, "%Z", localtime(&now));
+  ss << zone_buffer;
+  return DBObject::quote(ss.str());
+}
+
+
+/**
+ * 
+ */
 const string Unix::uid() {
   return Util::to_string(getuid());
 }

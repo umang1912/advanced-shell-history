@@ -1,19 +1,15 @@
 TODO
   [ ] add an option to remove loopback IPs from the session IP address
-  [ ] add a configuration file in /etc and a local one in ~ to override
+  [ ] make the date more useable by adding a date table and linking to the date table
   [ ] 
 
-session.cpp
+config.cpp
+  [ ] support ~/.history.conf and /etc/history.conf ##  config = new Config(home_file, etc_file)
+  [ ] support operator [] ##  if (config["foo"] == "") { ...
+  [ ] make the config object globally available?
   [ ] 
 
-util.cpp
-  [ ] 
-
-db_object.cpp
-  [ ] 
 
 database.cpp
-  [ ] 
-
-ash_log.cpp
+  [ ] complete the insert retry logic - maybe add a random nano sleep or something
   [ ] 

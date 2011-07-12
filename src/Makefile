@@ -17,17 +17,13 @@
 LOGGER	:= ash_log
 QUERIER	:= ash_query
 EXES	:= ${LOGGER} ${QUERIER}
-OBJ_L	:= $(addsuffix .o,${LOGGER}) command.o database.o flags.o session.o unix.o util.o
-OBJ_Q	:= $(addsuffix .o,${QUERIER}) database.o flags.o
+OBJ_L	:= ${LOGGER}.o command.o config.o database.o flags.o session.o unix.o util.o
+OBJ_Q	:= ${QUERIER}.o database.o flags.o
 OBJS	:= ${OBJ_L} ${OBJ_Q}
 TRASH	:= ${OBJS} ${EXES}
 CPP	:= g++
 C	:= gcc
 FLAGS	:= -g -Wall -O2
-
-SQLITE_DIR := sqlite-amalgamation-3070500
-SQLITE_ZIP := ${SQLITE_DIR}.zip
-SQLITE_URL := http://www.sqlite.org/${SQLITE_ZIP}
 
 
 .PHONY:	all
@@ -43,10 +39,7 @@ ${LOGGER}: sqlite3.o ${OBJ_L}
 	${CPP} -c ${FLAGS} -o ${@} ${<}
 
 sqlite3.c:
-	wget ${SQLITE_URL}
-	unzip ${SQLITE_ZIP}
-	mv ${SQLITE_DIR}/sqlite3.* .
-	rm -rf ${SQLITE_DIR} ${SQLITE_ZIP}
+	./fetch_sqlite.sh
 	
 sqlite3.o: sqlite3.c
 	${C} -DSQLITE_OMIT_LOAD_EXTENSION -DSQLITE_THREADSAFE=0 -c sqlite3.c
