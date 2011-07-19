@@ -27,7 +27,8 @@ all:	build
 
 build:
 	cd src && make
-	cp -a src/ash_log files/usr/local/bin
+	chmod 555 src/ash_log src/ash_query
+	cp -af src/ash_log src/ash_query files/usr/local/bin
 
 install: build
 	sudo rsync -Ca files/* /

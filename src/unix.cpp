@@ -23,7 +23,9 @@
 #include <time.h>       /* for time */
 #include <unistd.h>     /* for getppid */
 
-#include "ash_log.hpp"
+#include "database.hpp"
+#include "unix.hpp"
+#include "util.hpp"
 
 
 using namespace ash;

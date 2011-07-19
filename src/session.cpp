@@ -17,6 +17,8 @@
 #include <sstream>
 
 #include "ash_log.hpp"
+#include "session.hpp"
+#include "unix.hpp"
 
 
 using namespace ash;

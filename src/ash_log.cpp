@@ -20,6 +20,11 @@
 #include <sstream>   /* for stringstream */
 
 #include "ash_log.hpp"
+#include "command.hpp"
+#include "config.hpp"
+#include "flags.hpp"
+#include "session.hpp"
+#include "unix.hpp"
 
 
 DEFINE_string(alert, 'a', 0, "A message to display to the user.");
@@ -40,12 +45,17 @@ using namespace std;
 
 
 int main(int argc, char ** argv) {
-  // Show usage if no args.
+  // Show usage if executed with no args.
   if (argc == 1) {
     Flag::parse(&argc, &argv, true);
     Flag::show_help(cerr);
     exit(1);
   }
+
+cerr << "DEBUG: argv = '[0]='" << argv[0] << "'";
+for (int i = 1; i < argc; ++i)
+  cerr << ",[" << i << "]='" << argv[i] << "'";
+cerr << endl;
 
   Flag::parse(&argc, &argv, true);
 
@@ -54,6 +64,12 @@ int main(int argc, char ** argv) {
     cerr << "unrecognized option: " << argv[0] << endl;
     Flag::show_help(cerr);
     exit(1);
+  }
+
+  // Load the config file for this executable.
+  Config & config = Config::instance();
+  if (config.has("DEBUG")) {
+    cout << "THIS IS A TEST DEBUG MESSAGE" << endl;
   }
 
   DBObject::register_table(Session::get_create_table());

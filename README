@@ -14,6 +14,15 @@ Features:
   * saves history into a sqlite3 database
 
 
+HOW DOES THIS WORK:
+
+This program operates on the assumption that your shell gives you the ability
+to execute a custom operation before a prompt is redrawn on your terminal.
+Bash provides the PROMPT_COMMAND environment variable while zsh gives us the
+precmd environment function.  Both are repurposed by this program to log the
+previous command into a local database before each new prompt is displayed.
+
+
 Caveats:
   * this is not meant to be a security auditing tool - it's for user
     convenience and meant to enhance shell builtin history.

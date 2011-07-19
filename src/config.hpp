@@ -29,12 +29,26 @@ namespace ash {
 
 class Config {
   public:
-    static void load(const string & filename);
     static Config & instance();
-    // TODO(cpa): add an operator [] for accessing the config values
+
+
+  public:
+    bool has(const string & key) const;
+    int get_int(const string & key) const;
+    string get_string(const string & key) const;
+
+  private:
+    Config();
+
 
   private:
     map<string, string> values;
+    bool is_loaded;
+
+
+  private:  // DISALLOWED:
+    Config(const Config & other);
+    Config & operator=(const Config & other);
 };
 
 } // namespace ash

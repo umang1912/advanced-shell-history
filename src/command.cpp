@@ -17,6 +17,9 @@
 #include <sstream>
 
 #include "ash_log.hpp"
+#include "command.hpp"
+#include "unix.hpp"
+#include "util.hpp"
 
 
 using namespace ash;
@@ -72,7 +75,7 @@ Command::Command(const string command, const int rval, const int start_ts, const
   for (string::const_iterator i = pipes.begin(), e = pipes.end(); i != e; ++i)
     if ((*i) == ' ') ++pipe_cnt;
   values["pipe_cnt"] = Util::to_string(pipe_cnt);
-  values["pipe_vals"] = pipes;
+  values["pipe_vals"] = quote(pipes);
   values["command"] = quote(command);
 }
 

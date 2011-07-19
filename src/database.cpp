@@ -21,7 +21,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "ash_log.hpp"
+#include "database.hpp"
 #include "sqlite3.h"
 
 // TODO(cpa): instead of exiting, throw an exception where i'm currently exiting.

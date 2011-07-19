@@ -17,7 +17,7 @@
 #include <sstream>
 #include <string>
 
-#include "ash_log.hpp"
+#include "util.hpp"
 
 
 using namespace ash;

@@ -1,7 +1,6 @@
 TODO
   [ ] add an option to remove loopback IPs from the session IP address
   [ ] make the date more useable by adding a date table and linking to the date table
-  [ ] change all the .cpp files to only include the headers they need.
   [ ] 
 
 config.cpp

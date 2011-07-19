@@ -1,13 +1,12 @@
 TODO
   [ ] audit existing TODO comments in the code
   [ ] Create a history function in the common shell lib, redirect queries to a custom binary: ash_history.
-  [ ] add config options in /etc/ash/advanced_shell_history.conf
   [ ] create a Google Sites page
   [ ] add better comments to the header and source files
-  [ ] doxygen
   [ ] set up the initial repository on code.google.com
   [ ] Makefile - build non-debug archetecture-specific binaries - better optimization
   [ ] write up better documentation - how to install, how to use, db schema, etc.
-  [ ] dash support - other shells?
+  [ ] man pages for ash_log and ash_query
+  [ ] make an easy way to uninstall
   [ ] 
 

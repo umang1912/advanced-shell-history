@@ -1,6 +1,20 @@
 #!/bin/bash
 #
-# Copyright (c) Carl Anderson, 2011.  All rights reserved.
+#
+#   Copyright 2011 Carl Anderson
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+#
 #
 # This script attempts to fetch the SQLite3 amalgamation tarball using either
 # wget or curl (whichever is available).
@@ -18,6 +32,9 @@ function fatal() {
 }
 
 
+##
+# 
+#
 function fetch() {
   if [ -z "${FETCH_UTIL:-}" ]; then
     if which wget &>/dev/null; then
@@ -39,9 +56,13 @@ function fetch() {
 }
 
 
+##
+# 
+#
 function get_sqlite() {
   local download_url="http://sqlite.org/download.html"
   if [ -z "${SQLITE_VER:-}" ]; then
+    echo "Inspecting ${download_url} to guess latest version..."
     SQLITE_VER="$( fetch ${download_url} \
       | grep -m1 'href=.sqlite-amalgamation-[0-9]*\.zip.' \
       | sed -e 's:.*href=.sqlite-amalgamation-\([0-9]*\)\.zip.*:\1:' \

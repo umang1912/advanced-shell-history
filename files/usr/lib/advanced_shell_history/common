@@ -87,7 +87,8 @@ function ash::log() {
 
   local no start end cmd rval="${1}" && shift
   read -r no start end cmd <<< "$( ash::last_command )"
-  ash_log -e ${rval} -s ${start} -f ${end} -n ${no} -p "${@}" -c "${cmd}"
+  local pipes="${@// /_}"
+  ash_log -e ${rval} -s ${start} -f ${end} -n ${no} -p "${pipes}" -c "${cmd}"
 }
 
 
