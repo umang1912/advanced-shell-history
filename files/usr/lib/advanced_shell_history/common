@@ -14,6 +14,21 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #
+#
+# This file is intended to be common shell code for both zsh and bash.
+#
+
+# Source the config files to set all ASH_ shell variables.
+source <( grep "^[ ]*ASH_[^A-Za-z_]*='.*'.*$" \
+  /etc/ash/ash.conf \
+  /etc/ash/ash_log.conf \
+  /etc/ash/ash_query.conf \
+) || exit 1
+#
+# Note: the different config files are listed in a set order to force grep to
+#       read the more general options first.  This allows ash_*.conf to
+#       override values in ash.conf
+
 
 # Put the history.db in HOME or use ${TMPDIR} if no HOME exists.
 if [[ -d "${HOME}" ]]; then

@@ -15,6 +15,12 @@
 #   limitations under the License.
 #
 
+# Make sure we're running what we think we're running.
+if ! grep -qz '^zsh$' /proc/${$}/cmdline; then
+  echo "/proc/$$/cmdline implies you're not running zsh..."
+  exit 1
+fi
+
 source "/usr/lib/advanced_shell_history/common" &>/dev/null || exit 1
 
 
