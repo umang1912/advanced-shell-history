@@ -42,6 +42,6 @@ struct Unix {
 };
 
 
-}; // namespace ash
+}  // namespace ash
 
 #endif /* __ASH_UNIX__ */

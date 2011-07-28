@@ -21,6 +21,10 @@
 #include <iostream>
 #include <sstream>
 
+#ifdef __LP64__
+#define SQLITE_INT64_TYPE long int
+#endif
+
 #include "database.hpp"
 #include "sqlite3.h"
 

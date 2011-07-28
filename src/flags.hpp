@@ -16,7 +16,8 @@
 
 /*
    This class provides flags for programs, much in the same way that Google
-   gflags does, although with fewer bells and whistles.
+   gflags does, although with fewer bells and whistles and no major
+   dependencies.
 */
 
 #ifndef __ASH_FLAGS__
@@ -57,6 +58,10 @@ static BoolFlag FLAGS_OPT_ ## long_name(#long_name, short_name, &FLAGS_ ## long_
  */
 class Flag {
   // STATIC
+  public:
+    static int parse(int * argc, char *** argv, const bool remove_flags);
+    static void show_help(ostream & out);
+
   private:
     static string program_name;
     static string codes;
@@ -64,10 +69,6 @@ class Flag {
     static list<Flag *> instances;
     static map<const char, Flag *> short_names;
     static map<const string, Flag *> long_names;
-
-  public:
-    static int parse(int * argc, char *** argv, const bool remove_flags);
-    static void show_help(ostream & out);
 
   // NON-STATIC
   public:

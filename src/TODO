@@ -1,15 +1,17 @@
 TODO
-  [ ] add an option to remove loopback IPs from the session IP address
-  [ ] make the date more useable by adding a date table and linking to the date table
+  [ ] add an option to remove loopback IPs from the session IP address: ASH_SKIP_LOOPBACKS='true'
+  [ ] add an option to remove ipv4 or ipv6 addresses: ASH_HOST_IP_TYPES='v4,v6'
+  [ ] make the date more useable by adding a date table and linking to the date table - or find a way to include stored procedures in the DB that generate the date easily.
+  [ ] add an option to ignore non-commands: ASH_IGNORE_NON_COMMANDS='true'  # this avoids keeping passwords and/or junk commands in your database.
+  [ ] add a way to determine the actual binary / alias / function that was invoked for each command
+  [ ] add some kind of logging: ASH_LOG_FILE='/tmp/foo' and ASH_LOG_LEVEL='info'
+  [ ] add an automatic way of detecting object file dependencies based on #includes and insert them into the Makefile.
   [ ] 
 
 config.cpp
-  [ ] support ~/.history.conf and /etc/history.conf ##  config = new Config(home_file, etc_file)
-  [ ] support operator [] ##  if (config["foo"] == "") { ...
-  [ ] make the config object globally available?
+  [ ] support ~/.history.conf variables
   [ ] 
 
-
 database.cpp
-  [ ] complete the insert retry logic - maybe add a random nano sleep or something
+  [ ] complete the insert retry logic - maybe add a random nano sleep or something: ASH_MAX_RETRIES='5' and ASH_MAX_RETRY_MS='2000'
   [ ] 

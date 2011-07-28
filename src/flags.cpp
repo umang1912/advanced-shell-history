@@ -176,7 +176,8 @@ Flag::Flag(const char * ln, const char sn, const char * ds, const bool ha)
   }
 
   // Create an option struct and add it to the list.
-  Flag::options.push_back((struct option) {ln, has_arg ? 1 : 0, 0, sn});
+  struct option opt = {ln, has_arg ? 1 : 0, 0, sn};
+  Flag::options.push_back(opt);
 
   // Add the short_name to a flag_code string.
   if (short_name) {

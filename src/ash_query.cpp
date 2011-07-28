@@ -15,6 +15,7 @@
 */
 
 #include "ash_query.hpp"
+#include <iostream>
 
 using namespace ash;
 using namespace std;

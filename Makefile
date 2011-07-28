@@ -23,7 +23,10 @@ TMP_FILE := ${TMP_DIR}.tar.gz
 SRC_DEST := ..
 
 
-all:	build
+all:	version build
+
+version:
+	sed -i -e "/^VERSION :=/s/:= .*/:= ${RVERSION}/" src/Makefile
 
 build:
 	cd src && make
@@ -43,9 +46,9 @@ src_tarball: clean
 	mv ${TMP_FILE} ${SRC_DEST}/ash-${RVERSION}.tar.gz
 
 mrproper: clean
-	rm src/sqlite3.*
+	rm -f src/sqlite3.*
 
-clean:
+clean:	version
 	cd src && make distclean
 	rm -f files/usr/local/bin/ash_*
 	rm -rf ${TMP_DIR} ${TMP_FILE}

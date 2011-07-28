@@ -18,6 +18,11 @@
 #define __ASH_QUERY__
 
 
+#ifndef ASH_VERSION
+#define ASH_VERSION "unknown"
+#endif  /* ASH_VERSION */
+
+
 #include "flags.hpp"
 #include "database.hpp"
 

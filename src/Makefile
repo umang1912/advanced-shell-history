@@ -14,6 +14,7 @@
 #   limitations under the License.
 #
 
+VERSION := 0.1.r49
 LOGGER	:= ash_log
 QUERIER	:= ash_query
 EXES	:= ${LOGGER} ${QUERIER}
@@ -23,8 +24,7 @@ OBJS	:= ${OBJ_L} ${OBJ_Q}
 TRASH	:= ${OBJS} ${EXES}
 CPP	:= g++
 C	:= gcc
-FLAGS	:= -g -Wall -O2
-
+FLAGS	:= -g -Wall -O2 -DASH_VERSION="\"${VERSION}\"" -pedantic
 
 .PHONY:	all
 all:	${EXES}

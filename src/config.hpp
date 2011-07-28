@@ -17,9 +17,8 @@
 #ifndef __ASH_CONFIG__
 #define __ASH_CONFIG__
 
-
-#include<map>
-#include<string>
+#include <map>
+#include <string>
 
 using std::map;
 using std::string;
