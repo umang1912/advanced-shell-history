@@ -14,17 +14,17 @@
 #   limitations under the License.
 #
 
-VERSION := 0.1.r49
+VERSION := 0.1.r50
 LOGGER	:= ash_log
 QUERIER	:= ash_query
 EXES	:= ${LOGGER} ${QUERIER}
-OBJ_L	:= ${LOGGER}.o command.o config.o database.o flags.o session.o unix.o util.o
+OBJ_L	:= ${LOGGER}.o command.o config.o database.o flags.o logger.o session.o unix.o util.o
 OBJ_Q	:= ${QUERIER}.o database.o flags.o
 OBJS	:= ${OBJ_L} ${OBJ_Q}
 TRASH	:= ${OBJS} ${EXES}
 CPP	:= g++
 C	:= gcc
-FLAGS	:= -g -Wall -O2 -DASH_VERSION="\"${VERSION}\"" -pedantic
+FLAGS	:= -g -Wall -O2 -DASH_VERSION="\"${VERSION}\"" -ansi -pedantic
 
 .PHONY:	all
 all:	${EXES}

@@ -15,9 +15,12 @@
 */
 
 
-#include <iostream>
-#include <unistd.h>  /* for environ */
 #include "config.hpp"
+
+#include <stdlib.h>  /* for getenv */
+#include <unistd.h>  /* for environ */
+
+#include <iostream>
 
 using namespace ash;
 using namespace std;
@@ -33,18 +36,43 @@ Config::Config()
 }
 
 
+char * get_ash_env(const string & key) {
+  if (key.find("ASH_", 0, 4) == 0)
+    return getenv(key.c_str());
+  return getenv(("ASH_" + key).c_str());
+}
+
+
 bool Config::has(const string & key) const {
-  return false;
+  return get_ash_env(key) != NULL;
+}
+
+
+bool Config::sets(const string & key) const {
+  char * env = get_ash_env(key);
+  // TODO(cpa): convert env to lowercase
+  return env && "true" == string(env);
 }
 
 
 int Config::get_int(const string & key) const {
-  return 0;
+  char * env = get_ash_env(key);
+  // TODO(cpa): add extra error-checking here since atoi is fairly lax.
+  return env ? 0 : atoi(env);
+}
+
+
+const char * Config::get_cstring(const string & key) const {
+  char * env = get_ash_env(key);
+  // TODO(cpa): strip unprintables and unicode chars...
+  return env ? string(env).c_str() : "";
 }
 
 
 string Config::get_string(const string & key) const {
-  return "TODO(cpa)";
+  char * env = get_ash_env(key);
+  // TODO(cpa): strip unprintables and unicode chars...
+  return env ? string(env) : "";
 }
 
 

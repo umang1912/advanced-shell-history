@@ -33,7 +33,9 @@ class Config {
 
   public:
     bool has(const string & key) const;
+    bool sets(const string & key) const;
     int get_int(const string & key) const;
+    const char * get_cstring(const string & key) const;
     string get_string(const string & key) const;
 
   private:
