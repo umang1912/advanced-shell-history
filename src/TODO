@@ -4,7 +4,6 @@ TODO
   [ ] make the date more useable by adding a date table and linking to the date table - or find a way to include stored procedures in the DB that generate the date easily.
   [ ] add an option to ignore non-commands: ASH_IGNORE_NON_COMMANDS='true'  # this avoids keeping passwords and/or junk commands in your database.
   [ ] add a way to determine the actual binary / alias / function that was invoked for each command
-  [ ] add an automatic way of detecting object file dependencies based on #includes and insert them into the Makefile.
   [ ] add more logging throughout the code.
   [ ] 
 

@@ -23,6 +23,7 @@ TMP_FILE := ${TMP_DIR}.tar.gz
 SRC_DEST := ..
 
 
+.PHONY: all build clean install mrproper src_tarball src_tarball_minimal uninstall version
 all:	version build
 
 version:
@@ -35,6 +36,10 @@ build:
 
 install: build
 	sudo rsync -Ca files/* /
+
+uninstall:
+	sudo rm -rf /etc/ash /usr/lib/advanced_shell_history
+	sudo rm -f /usr/local/bin/ash_{log,query}
 
 src_tarball_minimal: mrproper src_tarball
 

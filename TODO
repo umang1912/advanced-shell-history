@@ -7,6 +7,5 @@ TODO
   [ ] Makefile - build non-debug archetecture-specific binaries - better optimization
   [ ] write up better documentation - how to install, how to use, db schema, etc.
   [ ] man pages for ash_log and ash_query
-  [ ] make an easy way to uninstall
   [ ] 
 
