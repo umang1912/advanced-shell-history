@@ -14,15 +14,12 @@
    limitations under the License.
 */
 
-#ifndef DISABLE_LOGGER
 #ifndef __ASH_LOGGER__
 #define __ASH_LOGGER__
 
 #include <fstream>
-#include <iostream>
-
-using std::ofstream;
 using std::ostream;
+using std::ofstream;
 
 namespace ash {
 
@@ -37,58 +34,26 @@ enum Severity {
 };
 
 
-/**
- * This helper class wraps an ofstream and provides a safe and easy way to
- * change / assign a new file target without having to worry about memory
- * leaks.
- */
-class Logger {
-  // STATIC:
+class Logger : public ostream {
   public:
-    static void set_log_file(const char * filename);
-    static void set_log_level(const Severity severity);
-    static void init(const char * filename=0, const Severity severity=DEBUG);
-    static ostream & log(const Severity severity);
-    static Severity parse(const char * text);
+    Logger(const Severity level);
+    ~Logger();
 
-  private:
-    static Logger null_stream, log_stream;
-    static Severity log_level;
-
-
-  // NON-STATIC:
-  private:
-    Logger()
-      : out(NULL)
-    {
-      attach(NULL);
+    template <typename insertable>
+    ostream & operator << (insertable something) {
+      return log << something;
     }
 
-    ~Logger() {
-      detatch();
-    }
-
-    void detatch() {
-      if (out) {
-        out -> flush();
-        out -> close();
-        delete out;
-        out = NULL;
-      }
-    }
-
-    void attach(const char * filename) {
-      if (out) detatch();
-      out = new ofstream(filename ? filename : "/dev/null");
-    }
-
-  public:
-    ostream & get() {
-      return *out;
+    typedef std::basic_ostream<char, std::char_traits<char> > StreamType;
+    typedef StreamType & (*Manipulator) (StreamType &);
+    ostream & operator << (const Manipulator & manipulate) {
+        manipulate(log);
+        return log;
     }
 
   private:
-    ofstream * out;
+    ofstream log;
+    Severity level;
 
   // DISALLOWED:
   private:
@@ -97,10 +62,11 @@ class Logger {
 };
 
 
-#define LOG(level) (Logger::log(level))
+#ifndef LOG
+#define LOG(level) (Logger(level))
+#endif
 
 
 }  // namespace: ash
 
 #endif  /* __ASH_LOGGER__ */
-#endif  /* DISABLE_LOGGER */

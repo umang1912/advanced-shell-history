@@ -15,6 +15,9 @@
 */
 
 #include "logger.hpp"
+#include "config.hpp"
+
+#include <stdlib.h>  /* for exit */
 
 #include <fstream>
 #include <string>
@@ -24,40 +27,10 @@ using namespace ash;
 using namespace std;
 
 
-Logger Logger::null_stream, Logger::log_stream;
-Severity Logger::log_level = DEBUG;
-
-
 /**
  * 
  */
-void Logger::set_log_file(const char * filename) {
-  log_stream.attach(filename);
-}
-
-
-/**
- * 
- */
-void Logger::set_log_level(const Severity severity) {
-  log_level = severity;
-}
-
-
-/**
- * 
- */
-void Logger::init(const char * filename, const Severity severity) {
-  log_level = severity;
-  log_stream.attach(filename);
-}
-
-
-/**
- * 
- */
-Severity Logger::parse(const char * text) {
-  string input(text);
+const Severity parse(const string & input) {
   if (input == "DEBUG") return DEBUG;
   if (input == "INFO") return INFO;
   if (input == "WARNING") return WARNING;
@@ -70,21 +43,46 @@ Severity Logger::parse(const char * text) {
 /**
  * 
  */
-ostream & Logger::log(const Severity severity) {
-  // Suppress logged events below the current threshold.
-  if (severity < log_level)
-    return null_stream.get();
+const char * get_target(const Severity level) {
+  Config & config = Config::instance();
 
-  // Log the severity and return the stream.
-  ostream & out = log_stream.get();
-  switch (severity) {
-    case DEBUG: return out << "DEBUG: ";
-    case INFO: return out << "INFO: ";
-    case WARNING: return out << "WARNING: ";
-    case ERROR: return out << "ERROR: ";
-    case FATAL: return out << "FATAL: ";
+  // Default to /dev/null if the visibility is too low for this Logger.
+  const Severity visible = parse(config.get_string("LOG_LEVEL", "DEBUG"));
+  if (level < visible) return "/dev/null";
+
+  // Use the configured target, if configured.
+  return config.get_cstring("LOG_FILE", "/dev/null");
+}
+
+
+const char * to_str(const Severity level) {
+  switch (level) {
+    case DEBUG: return "DEBUG";
+    case INFO: return "INFO";
+    case WARNING: return "WARNING";
+    case ERROR: return "ERROR";
+    case FATAL: return "FATAL";
     case UNKNOWN:  // fallthrough.
-    default:
-      return out << "UNKNOWN: ";
+    default: return "UNKNOWN";
   }
+}
+
+
+/**
+ * 
+ */
+Logger::Logger(const Severity lvl)
+  : log(get_target(lvl)), level(lvl)
+{
+  log << to_str(level) << ": ";
+}
+
+
+/**
+ * 
+ */
+Logger::~Logger() {
+  log << endl;
+  log.close();
+  if (level == FATAL) exit(1);
 }

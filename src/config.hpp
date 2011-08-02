@@ -30,13 +30,12 @@ class Config {
   public:
     static Config & instance();
 
-
   public:
     bool has(const string & key) const;
-    bool sets(const string & key) const;
-    int get_int(const string & key) const;
-    const char * get_cstring(const string & key) const;
-    string get_string(const string & key) const;
+    bool sets(const string & key, const bool dv=false) const;
+    int get_int(const string & key, const int dv=1) const;
+    const char * get_cstring(const string & key, const char * dv="") const;
+    string get_string(const string & key, const string & dv="") const;
 
   private:
     Config();

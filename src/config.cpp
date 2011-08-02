@@ -48,31 +48,31 @@ bool Config::has(const string & key) const {
 }
 
 
-bool Config::sets(const string & key) const {
+bool Config::sets(const string & key, const bool dv) const {
   char * env = get_ash_env(key);
   // TODO(cpa): convert env to lowercase
-  return env && "true" == string(env);
+  return env ? "true" == string(env) : dv;
 }
 
 
-int Config::get_int(const string & key) const {
+int Config::get_int(const string & key, const int dv) const {
   char * env = get_ash_env(key);
   // TODO(cpa): add extra error-checking here since atoi is fairly lax.
-  return env ? 0 : atoi(env);
+  return env ? dv : atoi(env);
 }
 
 
-const char * Config::get_cstring(const string & key) const {
+const char * Config::get_cstring(const string & key, const char * dv) const {
   char * env = get_ash_env(key);
   // TODO(cpa): strip unprintables and unicode chars...
-  return env ? string(env).c_str() : "";
+  return env ? string(env).c_str() : dv;
 }
 
 
-string Config::get_string(const string & key) const {
+string Config::get_string(const string & key, const string & dv) const {
   char * env = get_ash_env(key);
   // TODO(cpa): strip unprintables and unicode chars...
-  return env ? string(env) : "";
+  return env ? string(env) : dv;
 }
 
 

@@ -14,22 +14,25 @@
    limitations under the License.
 */
 
+#include "database.hpp"
+#include "config.hpp"
+#include "logger.hpp"
+
 #include <sys/stat.h>  /* for stat */
 #include <stdio.h>     /* for fopen */
 #include <stdlib.h>
+#include <unistd.h>    /* for usleep */
 
 #include <iostream>
 #include <sstream>
 
+// This hack silences a warning when compiling on a 64 bit platform with
+// -ansi and -pedantic flags enabled.
+// The original g++ complaint is that 'long long' is deprecated.
 #ifdef __LP64__
 #define SQLITE_INT64_TYPE long int
 #endif
-
-#include "database.hpp"
 #include "sqlite3.h"
-
-// TODO(cpa): instead of exiting, throw an exception where i'm currently exiting.
-
 
 using namespace ash;
 using namespace std;
@@ -42,12 +45,13 @@ Database::Database(const string & filename)
   :db_filename(filename), db(0)
 {
   struct stat file;
-  // Test that the file exists, if not, create it.
+  // TODO(cpa): load the history file name from Config.
+  // Test that the history file exists, if not, create it.
   if (stat(db_filename.c_str(), &file)) {
     FILE * created_file = fopen(db_filename.c_str(), "w+e");
     if (!created_file) {
-      cerr << "ERROR: failed to create new DB file: " << db_filename << endl;
-      exit(1);
+      LOG(FATAL) << "ERROR: failed to create new DB file: " << db_filename << endl;
+      exit(1);  // TODO(cpa): implement LOG(FATAL) so this isn't necessary.
     }
     fclose(created_file);
   }
@@ -59,15 +63,22 @@ Database::Database(const string & filename)
   }
 
   // Init the DB if it is missing the main tables.
-// TODO(cpa): this query can be built from the names of classes extending DBObject...
   char query[] =
       "select count(*) "
       "from sqlite_master "
-      "where tbl_name in (\"sessions\", \"commands\");";
-  if (select_int(query) != 2) {
-    init_db();
+      "where tbl_name in ('sessions', 'commands');";
+
+  int defined_tables = select_int(query);
+  if (defined_tables == 2) return;  // Normal case.
+
+  // Initialize the DB if it's not already set up.
+  init_db();
+
+  // Log a warning if there was an unexpected number of tables.
+  if (defined_tables > 2) {
+    LOG(DEBUG) << "Expected only 2 tables to be defined, found "
+        << defined_tables << " instead.";
   }
-  // TODO(cpa): maybe emit a warning if there are more tables than just the two...
 }
 
 
@@ -107,23 +118,52 @@ int SelectInt(void * result, int rows, char ** cols, char ** column_names) {
 }
 
 
+// Convenience type for the callback invoked after query execution.
 typedef int (*callback)(void*,int,char**,char**);
 
-bool retry_execute(const string & query, sqlite3 * db, callback c, void * result, int retries = 0) {
+
+/**
+ * RECURSIVE: Tries to execute the argument query, retrying a set number of
+ * times with a random sleep between each attempt.
+ */
+bool retry_execute(const string & query, sqlite3 * db, callback c,
+                   void * result, int retries, int sleep_ms, int rand_ms)
+{
   if (retries == 0)
-    return false;
+    return false;  // base case.
+  // TODO(cpa): sleep a random amount of ms.
   if (sqlite3_exec(db, query.c_str(), c, result, 0)) {
-    if (retries == 1)
-      cerr << "Failed to execute: " << sqlite3_errmsg(db) << endl << query << endl;
-    return retry_execute(query, db, c, result, retries - 1);
+    // Have we run out of attempts?
+    if (retries == 1) {
+      LOG(ERROR) << "Failed to execute: " << sqlite3_errmsg(db) << '\n'
+          << query << endl;
+    }
+    return retry_execute(query, db, c, result, retries - 1, sleep_ms, rand_ms);
   }
   return true;
 }
 
 
+/**
+ * Retries (if necessary) up to as many times as configured to execute the
+ * argument query.
+ */
 bool executed(const string & query, sqlite3 * db, callback c, void * result) {
-  if (sqlite3_exec(db, query.c_str(), c, result, 0))
-    return retry_execute(query, db, c, result, 5);
+  // If the first query fails, retry as many times as configured.
+  if (sqlite3_exec(db, query.c_str(), c, result, 0)) {
+    Config & config = Config::instance();
+
+    int retries = config.get_int("DB_MAX_RETRIES", -1);
+    if (retries < 0) retries = 5;
+
+    int fail_ms = config.get_int("DB_FAIL_TIMEOUT", -1);
+    if (fail_ms < 0) fail_ms = 0;
+
+    int random_ms = config.get_int("DB_FAIL_RANDOM_TIMEOUT", -1);
+    if (random_ms < 0) random_ms = 0;
+
+    return retry_execute(query, db, c, result, retries, fail_ms, random_ms);
+  }
   return true;
 }
 

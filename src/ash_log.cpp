@@ -51,17 +51,12 @@ int main(int argc, char ** argv) {
   // Load the config from the environment.
   Config & config = Config::instance();
 
-  // Set up the logger.
-  if (config.has("LOG_FILE"))
-    Logger::set_log_file(config.get_cstring("LOG_FILE"));
-  if (config.has("LOG_LEVEL"))
-    Logger::set_log_level(Logger::parse(config.get_cstring("LOG_LEVEL")));
-
   // Log the complete command, if debugging.
-  LOG(DEBUG) << "argv = '[0]='" << argv[0] << "'";
+  stringstream ss;
+  ss << "argv = '[0]='" << argv[0] << "'";
   for (int i = 1; i < argc; ++i)
-    LOG(DEBUG) << ",[" << i << "]='" << argv[i] << "'";
-  LOG(DEBUG) << endl;
+    ss << ",[" << i << "]='" << argv[i] << "'";
+  LOG(DEBUG) << ss.str();
 
   // Show usage if executed with no args.
   if (argc == 1 && !config.sets("HIDE_USAGE_FOR_NO_ARGS")) {
@@ -75,7 +70,7 @@ int main(int argc, char ** argv) {
 
   // Abort if unrecognized flags were used on the command line.
   if (argc != 0 && !config.sets("IGNORE_UNKNOWN_FLAGS")) {
-    LOG(ERROR) << "unrecognized flag: " << argv[0] << endl;
+    cerr << "unrecognized flag: " << argv[0] << endl;
     Flag::show_help(cerr);
     exit(1);
   }
@@ -97,7 +92,7 @@ int main(int argc, char ** argv) {
     return 0;
   }
 
-  // Display an alert: -a 'My alert'
+  // Display a user alert: -a 'My alert'
   if (!FLAGS_alert.empty()) {
     cerr << FLAGS_alert << endl;
   }

@@ -14,15 +14,15 @@
 #   limitations under the License.
 #
 
-VERSION := 0.1.r51
+VERSION := 0.1.r52
 LOGGER	:= ash_log
 QUERIER	:= ash_query
 EXES	:= ${LOGGER} ${QUERIER}
 OBJ_L	:= ${LOGGER}.o command.o config.o database.o flags.o logger.o session.o unix.o util.o
-OBJ_Q	:= ${QUERIER}.o database.o flags.o
+OBJ_Q	:= ${QUERIER}.o config.o database.o flags.o logger.o
 OBJS	:= ${OBJ_L} ${OBJ_Q}
 CPPS	:= $(shell ls *.cpp)
-TRASH	:= ${OBJS} ${EXES}
+TRASH	:= ${OBJS} ${EXES} core
 CPP	:= g++
 C	:= gcc
 FLAGS	:= -g -Wall -O2 -DASH_VERSION="\"${VERSION}\"" -ansi -pedantic
@@ -93,8 +93,8 @@ ash_log.o: ash_log.hpp command.hpp config.hpp flags.hpp logger.hpp session.hpp u
 ash_query.o: ash_query.hpp
 command.o: ash_log.hpp command.hpp unix.hpp util.hpp
 config.o: config.hpp
-database.o: database.hpp sqlite3.h
+database.o: database.hpp config.hpp logger.hpp sqlite3.h
 flags.o: flags.hpp
-logger.o: logger.hpp
+logger.o: logger.hpp config.hpp
 session.o: ash_log.hpp session.hpp unix.hpp
 unix.o: database.hpp unix.hpp util.hpp
