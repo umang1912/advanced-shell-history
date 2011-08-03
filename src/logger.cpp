@@ -15,6 +15,7 @@
 */
 
 #include "logger.hpp"
+
 #include "config.hpp"
 
 #include <stdlib.h>  /* for exit */
@@ -28,7 +29,7 @@ using namespace std;
 
 
 /**
- * 
+ * Converts a string representation of the enum value to the enum code.
  */
 const Severity parse(const string & input) {
   if (input == "DEBUG") return DEBUG;
@@ -41,20 +42,8 @@ const Severity parse(const string & input) {
 
 
 /**
- * 
+ * Converts a severity level to a string.
  */
-const char * get_target(const Severity level) {
-  Config & config = Config::instance();
-
-  // Default to /dev/null if the visibility is too low for this Logger.
-  const Severity visible = parse(config.get_string("LOG_LEVEL", "DEBUG"));
-  if (level < visible) return "/dev/null";
-
-  // Use the configured target, if configured.
-  return config.get_cstring("LOG_FILE", "/dev/null");
-}
-
-
 const char * to_str(const Severity level) {
   switch (level) {
     case DEBUG: return "DEBUG";
@@ -69,7 +58,24 @@ const char * to_str(const Severity level) {
 
 
 /**
- * 
+ * Returns the log file filename designated as the target for a given severity
+ * level.  This relies on environment variables ASH_LOG_LEVEL and ASH_LOG_FILE
+ * to be populated or it will return /dev/null as a default.
+ */
+const char * get_target(const Severity level) {
+  Config & config = Config::instance();
+
+  // Default to /dev/null if the visibility is too low for this Logger.
+  const Severity visible = parse(config.get_string("LOG_LEVEL", "DEBUG"));
+  if (level < visible) return "/dev/null";
+
+  // Use the configured target, if configured.
+  return config.get_cstring("LOG_FILE", "/dev/null");
+}
+
+
+/**
+ * Constructs a logger and adds the severity to the output.
  */
 Logger::Logger(const Severity lvl)
   : log(get_target(lvl)), level(lvl)
@@ -79,7 +85,8 @@ Logger::Logger(const Severity lvl)
 
 
 /**
- * 
+ * Destroys a Logger, flushing output and exiting the program if the severity
+ * level was FATAL.
  */
 Logger::~Logger() {
   log << endl;

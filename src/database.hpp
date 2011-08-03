@@ -21,6 +21,7 @@
 #include <list>
 #include <map>
 #include <string>
+
 using std::list;
 using std::map;
 using std::string;
@@ -30,6 +31,9 @@ class sqlite3;  // Forward declaration.
 namespace ash {
 
 
+/**
+ * This class abstracts a backing sqlite3 database.
+ */
 class Database {
   public:
     Database(const string & filename);

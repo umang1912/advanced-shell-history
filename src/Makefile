@@ -14,12 +14,12 @@
 #   limitations under the License.
 #
 
-VERSION := 0.1.r52
+VERSION := 0.1.r54
 LOGGER	:= ash_log
 QUERIER	:= ash_query
 EXES	:= ${LOGGER} ${QUERIER}
 OBJ_L	:= ${LOGGER}.o command.o config.o database.o flags.o logger.o session.o unix.o util.o
-OBJ_Q	:= ${QUERIER}.o config.o database.o flags.o logger.o
+OBJ_Q	:= ${QUERIER}.o config.o flags.o logger.o
 OBJS	:= ${OBJ_L} ${OBJ_Q}
 CPPS	:= $(shell ls *.cpp)
 TRASH	:= ${OBJS} ${EXES} core
@@ -90,11 +90,11 @@ Makefile: ${CPPS}
 #
 # DEPENDENCIES: (Do not edit this line!)
 ash_log.o: ash_log.hpp command.hpp config.hpp flags.hpp logger.hpp session.hpp unix.hpp
-ash_query.o: ash_query.hpp
+ash_query.o: ash_query.hpp flags.hpp
 command.o: ash_log.hpp command.hpp unix.hpp util.hpp
 config.o: config.hpp
 database.o: database.hpp config.hpp logger.hpp sqlite3.h
 flags.o: flags.hpp
 logger.o: logger.hpp config.hpp
-session.o: ash_log.hpp session.hpp unix.hpp
-unix.o: database.hpp unix.hpp util.hpp
+session.o: session.hpp ash_log.hpp unix.hpp
+unix.o: unix.hpp database.hpp util.hpp

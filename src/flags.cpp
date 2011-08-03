@@ -14,12 +14,12 @@
    limitations under the License.
 */
 
+#include "flags.hpp"
+
 #include <ctype.h>   /* for isgraph */
 #include <libgen.h>  /* for basename */
 #include <stdlib.h>  /* for atoi */
 #include <string.h>  /* for strdup */
-
-#include "flags.hpp"
 
 using namespace std;
 
@@ -41,7 +41,11 @@ DEFINE_flag(help, 0, "Display flags for this command.");
 
 
 /**
- * 
+ * Displays the default help output for all registered flags.
+ *   sh$ ash_log
+ *   Usage: ash_log [options]
+ *         --help  Display this message.
+ *   sh$ 
  */
 void Flag::show_help(ostream & out) {
   char * program_name = strdup(prog_name.c_str());
@@ -59,7 +63,8 @@ void Flag::show_help(ostream & out) {
 
 
 /**
- * 
+ * Parses the main method argc and argv values.  If the remove_flags argument is
+ * true - the flags and values are removed from the flag list.
  */
 int Flag::parse(int * p_argc, char *** p_argv, const bool remove_flags) {
   int argc = *p_argc;
@@ -124,7 +129,7 @@ int Flag::parse(int * p_argc, char *** p_argv, const bool remove_flags) {
 
 
 /**
- * 
+ * Adds a flag to the map of flag names to values.  Detects name collisions.
  */
 template <typename T>
 void safe_add(map<const T, Flag *> & known, const T key, Flag * value) {
@@ -200,7 +205,7 @@ Flag::~Flag() {
 
 
 /**
- * 
+ * Inserts this Flag into an ostream and then returns it.
  */
 ostream & Flag::insert(ostream & out) const {
   if (short_name)
@@ -224,7 +229,7 @@ ostream & Flag::insert(ostream & out) const {
 
 
 /**
- * 
+ * Inserts a Flag into the ostrea.
  */
 ostream & operator << (ostream & out, const Flag & flag) {
   return flag.insert(out);

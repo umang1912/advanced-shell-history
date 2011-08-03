@@ -14,19 +14,20 @@
    limitations under the License.
 */
 
-#include <sstream>
+#include "session.hpp"
 
 #include "ash_log.hpp"
-#include "session.hpp"
 #include "unix.hpp"
+
+#include <sstream>
 
 
 using namespace ash;
-using std::stringstream;
+using namespace std;
 
 
 /**
- * 
+ * Returns a query that can create the sessions table.
  */
 const string Session::get_create_table() {
   stringstream ss;
@@ -55,7 +56,7 @@ const string Session::get_create_table() {
 
 
 /**
- * 
+ * Initialize a Session object.
  */
 Session::Session() {
   values["time_zone"] = Unix::time_zone();
@@ -77,7 +78,7 @@ Session::Session() {
 
 
 /**
- * 
+ * This is required since it was declared virtual in the base class.
  */
 Session::~Session() {
   // Nothing to do here.
@@ -85,7 +86,7 @@ Session::~Session() {
 
 
 /**
- * 
+ * Return the name of the table backing this class.
  */
 const string Session::get_name() const {
   return "sessions";
@@ -93,20 +94,20 @@ const string Session::get_name() const {
 
 
 /**
- * 
+ * Returns a query to insert this Session object into the sessions table.
  */
 const string Session::get_sql() const {
   stringstream ss;
-  ss << "BEGIN TRANSACTION; ";
-  ss << DBObject::get_sql();
-  ss << "SELECT last_insert_rowid(); ";
-  ss << "COMMIT;";
+  ss << "BEGIN TRANSACTION; "
+     << DBObject::get_sql()
+     << "SELECT last_insert_rowid(); "
+     << "COMMIT;";
   return ss.str();
 }
 
 
 /**
- * 
+ * Returns a query to finalize this Session in the sessions table.
  */
 const string Session::get_close_session_sql() const {
   stringstream ss;

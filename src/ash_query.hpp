@@ -23,9 +23,4 @@
 #endif  /* ASH_VERSION */
 
 
-#include "flags.hpp"
-#include "database.hpp"
-
-
-#endif /* __ASH_QUERY__ */
-
+#endif  /* __ASH_QUERY__ */

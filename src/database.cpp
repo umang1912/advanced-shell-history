@@ -15,6 +15,7 @@
 */
 
 #include "database.hpp"
+
 #include "config.hpp"
 #include "logger.hpp"
 
@@ -39,10 +40,10 @@ using namespace std;
 
 
 /**
- * 
+ * Create a new Database, creating a new backing file if necessary.
  */
 Database::Database(const string & filename)
-  :db_filename(filename), db(0)
+  : db_filename(filename), db(0)
 {
   struct stat file;
   // TODO(cpa): load the history file name from Config.
@@ -50,16 +51,15 @@ Database::Database(const string & filename)
   if (stat(db_filename.c_str(), &file)) {
     FILE * created_file = fopen(db_filename.c_str(), "w+e");
     if (!created_file) {
-      LOG(FATAL) << "ERROR: failed to create new DB file: " << db_filename << endl;
-      exit(1);  // TODO(cpa): implement LOG(FATAL) so this isn't necessary.
+      LOG(FATAL) << "failed to create new DB file: " << db_filename << endl;
     }
     fclose(created_file);
   }
 
   // Open the DB, if failure, abort.
   if (sqlite3_open(db_filename.c_str(), &db)) {
-    cerr << "Failed to open " << db_filename << "\nError: " << sqlite3_errmsg(db) << endl;
-    exit(1);
+    LOG(FATAL) << "Failed to open " << db_filename << "\nError: "
+        << sqlite3_errmsg(db) << endl;
   }
 
   // Init the DB if it is missing the main tables.
@@ -67,6 +67,7 @@ Database::Database(const string & filename)
       "select count(*) "
       "from sqlite_master "
       "where tbl_name in ('sessions', 'commands');";
+  // TODO(cpa): make this more generic, or remove check altogether...
 
   int defined_tables = select_int(query);
   if (defined_tables == 2) return;  // Normal case.
@@ -76,14 +77,14 @@ Database::Database(const string & filename)
 
   // Log a warning if there was an unexpected number of tables.
   if (defined_tables > 2) {
-    LOG(DEBUG) << "Expected only 2 tables to be defined, found "
+    LOG(WARNING) << "Expected only 2 tables to be defined, found "
         << defined_tables << " instead.";
   }
 }
 
 
 /**
- * 
+ * Close the Database and free internal resources.
  */
 Database::~Database() {
   if (db) {
@@ -94,7 +95,7 @@ Database::~Database() {
 
 
 /**
- * 
+ * A No-Op callback that returns 0.
  */
 int NOOPCallback(void * ignored, int rows, char ** cols, char ** col_names) {
   // Nothing to do in this callback.
@@ -103,7 +104,7 @@ int NOOPCallback(void * ignored, int rows, char ** cols, char ** col_names) {
 
 
 /**
- * 
+ * Executes the create-tables query to initialize this database.
  */
 void Database::init_db() {
   const string & create_tables = DBObject::get_create_tables();
@@ -111,7 +112,9 @@ void Database::init_db() {
 }
 
 
-// Callback used in Database::select_int
+/**
+ * Callback used in Database::select_int.
+ */
 int SelectInt(void * result, int rows, char ** cols, char ** column_names) {
   *((int*) result) = atoi(cols[0]);
   return 0;
@@ -174,19 +177,18 @@ bool executed(const string & query, sqlite3 * db, callback c, void * result) {
 int Database::select_int(const string & query) const {
   int result = -1;
   if (!executed(query, db, SelectInt, &result)) {
-    exit(1);
+    LOG(FATAL) << "Failed to select an int from: " << query;
   }
   return result;
 }
 
 
 /**
- * 
+ * Execute a query or abort the program with the DB error message.
  */
 void Database::exec(const string & query) const {
   if (sqlite3_exec(db, query.c_str(), NOOPCallback, 0, 0)) {
-    cerr << sqlite3_errmsg(db) << endl << query << endl;
-    exit(1);
+    LOG(FATAL) << sqlite3_errmsg(db) << '\n' << query;
   }
 }
 
@@ -197,13 +199,13 @@ void Database::exec(const string & query) const {
 
 
 /**
- * 
+ * A list of the queries that create tables for the DB.
  */
 list<string> DBObject::create_tables;
 
 
 /**
- * 
+ * Returns a query that creates the table schema for the DB.
  */
 const string DBObject::get_create_tables() {
   stringstream ss;
@@ -219,7 +221,7 @@ const string DBObject::get_create_tables() {
 
 
 /**
- * 
+ * Adds a create-table query to the list of create-table queries.
  */
 void DBObject::register_table(const string & create_statement) {
   create_tables.push_back(create_statement);
@@ -227,7 +229,7 @@ void DBObject::register_table(const string & create_statement) {
 
 
 /**
- * 
+ * Returns a quoted string value using a char * input.
  */
 const string DBObject::quote(const char * value) {
   return value ? quote(string(value)) : "null";
@@ -235,7 +237,8 @@ const string DBObject::quote(const char * value) {
 
 
 /**
- * 
+ * Returns a quoted string suitable for insertion into the DB.
+ * Converts an empty string to null.
  */
 const string DBObject::quote(const string & in) {
   if (in.empty()) return "null";
@@ -252,7 +255,7 @@ const string DBObject::quote(const string & in) {
 
 
 /**
- * 
+ * Construct an empty DB Object.
  */
 DBObject::DBObject() {
   // Nothing to do here.
@@ -260,7 +263,7 @@ DBObject::DBObject() {
 
 
 /**
- * 
+ * REQUIRED since it was declared virtual.
  */
 DBObject::~DBObject() {
   // Nothing to do here.
@@ -268,7 +271,8 @@ DBObject::~DBObject() {
 
 
 /**
- * 
+ * Returns the SQL statement needed to insert a concrete instance of this
+ * class.
  */
 const string DBObject::get_sql() const {
   typedef map<string, string>::const_iterator c_iter;

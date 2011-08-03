@@ -26,6 +26,9 @@ using std::string;
 namespace ash {
 
 
+/**
+ * This class represents a user-entered command to be saved in the database.
+ */
 class Command : public DBObject {
   public:
     static const string get_create_table();
@@ -41,4 +44,4 @@ class Command : public DBObject {
 
 }  // namespace ash
 
-#endif /* __ASH_COMMAND__ */
+#endif  /* __ASH_COMMAND__ */

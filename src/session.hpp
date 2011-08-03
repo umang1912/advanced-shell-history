@@ -28,6 +28,9 @@ using std::string;
 namespace ash {
 
 
+/**
+ * This class encapsulates session-specific data.
+ */
 class Session : public DBObject {
   public:
     static const string get_create_table();
@@ -44,5 +47,5 @@ class Session : public DBObject {
 
 }  // namespace ash
 
-#endif /* __ASH_SESSION__ */
+#endif  /* __ASH_SESSION__ */
 

@@ -36,6 +36,37 @@ using std::map;
 using std::string;
 
 
+/**
+ * Clients of this library define flags like this:
+ *   DEFINE_int(example, "E", -1, "An example flag.");
+ *
+ * This example defines an integer-value flag that can either be specified
+ * on the command line by --example or -E.  The default value is -1 and when
+ * users invoke the command with the --help flag the "An example flag."
+ * description is printed.
+ *
+ * Clients must also parse the main method argc and argv as follows:
+ *   Flag::parse(&argc, &argv, true);
+ *
+ * Clients then use this flag in code by referencing it as follows:
+ *   if (FLAG_example > 42) return;
+ *
+ * Clients wishing to use flags that don't require values should use the
+ * DEFINE_flag macro.
+ *
+ * Clients wishing to not specify a single-character shortcut version should
+ * use 0 instead of a quoted character.  For example:
+ *   DEFINE_int(example, 0, -1, "An example flag (with no shortcut).");
+ *
+ * Clients wishing to only specify a single-character shortcut should name
+ * the flag the single-character they want.  For example:
+ *   DEFINE_int(e, 0, -1, "An example single-character-only flag.");
+ *
+ * Clients wishing to have the flag-related parameters stripped from argv and
+ * the count adjusted in argc should use the 'true' option for Flag::parse.
+ * By leaving this false, the flag-related arguments are left in argv.
+ */
+
 #define DEFINE_int(long_name, short_name, default_val, desc) \
 static int FLAGS_ ## long_name; \
 static IntFlag FLAGS_OPT_ ## long_name(#long_name, short_name, &FLAGS_ ## long_name, default_val, desc)
@@ -54,7 +85,8 @@ static BoolFlag FLAGS_OPT_ ## long_name(#long_name, short_name, &FLAGS_ ## long_
 
 
 /**
- * 
+ * This class makes it easy to implement command-line flags.  Class instances
+ * are created by the preprocessor macros defined above.
  */
 class Flag {
   // STATIC
@@ -74,8 +106,10 @@ class Flag {
   public:
     Flag(const char * long_name, const char short_name, const char * desc, const bool has_arg=false);
     virtual ~Flag();
-    virtual void set(const char * optarg) = 0;
+
     virtual ostream & insert(ostream & out) const;
+
+    virtual void set(const char * optarg) = 0;
 
   private:
     const char * long_name;
@@ -97,7 +131,7 @@ ostream & operator << (ostream & out, const Flag & flag);
 
 
 /**
- * 
+ * A command-line flag containing an integer value.
  */
 class IntFlag : public Flag {
   public:
@@ -112,7 +146,7 @@ class IntFlag : public Flag {
 
 
 /**
- * 
+ * A command-line flag containing a string value.
  */
 class StringFlag : public Flag {
   public:
@@ -127,7 +161,7 @@ class StringFlag : public Flag {
 
 
 /**
- * 
+ * A command-line flag containing a bool value.
  */
 class BoolFlag : public Flag {
   public:

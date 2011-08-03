@@ -29,6 +29,9 @@ using namespace std;
 extern char ** environ;  /* populated by unistd.h */
 
 
+/**
+ * Construct a Config object, setting defaults.
+ */
 Config::Config()
   :values(), is_loaded(false)
 {
@@ -36,6 +39,9 @@ Config::Config()
 }
 
 
+/**
+ * Returns a char * value for an environment variable prefixed with ASH_.
+ */
 char * get_ash_env(const string & key) {
   if (key.find("ASH_", 0, 4) == 0)
     return getenv(key.c_str());
@@ -43,11 +49,17 @@ char * get_ash_env(const string & key) {
 }
 
 
+/**
+ * Returns true if the environment actually contains this variable.
+ */
 bool Config::has(const string & key) const {
   return get_ash_env(key) != NULL;
 }
 
 
+/**
+ * Returns true if the environment contains this value and it equals 'true'.
+ */
 bool Config::sets(const string & key, const bool dv) const {
   char * env = get_ash_env(key);
   // TODO(cpa): convert env to lowercase
@@ -55,6 +67,9 @@ bool Config::sets(const string & key, const bool dv) const {
 }
 
 
+/**
+ * Returns the int value of the requested environment variable.
+ */
 int Config::get_int(const string & key, const int dv) const {
   char * env = get_ash_env(key);
   // TODO(cpa): add extra error-checking here since atoi is fairly lax.
@@ -62,20 +77,27 @@ int Config::get_int(const string & key, const int dv) const {
 }
 
 
+/**
+ * Returns the char * value of the requested environment variable.
+ */
 const char * Config::get_cstring(const string & key, const char * dv) const {
   char * env = get_ash_env(key);
-  // TODO(cpa): strip unprintables and unicode chars...
   return env ? string(env).c_str() : dv;
 }
 
 
+/**
+ * Returns the string value of the requested environment variable.
+ */
 string Config::get_string(const string & key, const string & dv) const {
   char * env = get_ash_env(key);
-  // TODO(cpa): strip unprintables and unicode chars...
   return env ? string(env) : dv;
 }
 
 
+/**
+ * Returns a singleton Config instance.
+ */
 Config & Config::instance() {
   static Config _instance;
   if (!_instance.is_loaded) {

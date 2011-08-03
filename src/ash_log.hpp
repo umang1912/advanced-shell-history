@@ -18,6 +18,7 @@
 #define __ASH_ASH_LOG__
 
 
+// This SHOULD be set by the command line g++ call in the Makefile.
 #ifndef ASH_VERSION
 #define ASH_VERSION "unknown"
 #endif  /* ASH_VERSION */

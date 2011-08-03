@@ -14,16 +14,19 @@
    limitations under the License.
 */
 
+#include "util.hpp"
+
 #include <sstream>
 #include <string>
-
-#include "util.hpp"
 
 
 using namespace ash;
 using namespace std;
 
 
+/**
+ * Converts an int to a string.
+ */
 string Util::to_string(int value) {
   static stringstream ss;
   ss.str("");

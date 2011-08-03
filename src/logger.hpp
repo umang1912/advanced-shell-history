@@ -24,6 +24,11 @@ using std::ofstream;
 namespace ash {
 
 
+/**
+ * The severity levels to which logged messages can be set.  This allows
+ * users to easily add logged messages that are intended only to be seen
+ * while debugging.
+ */
 enum Severity {
   DEBUG,
   INFO,
@@ -34,21 +39,33 @@ enum Severity {
 };
 
 
+/**
+ * This class extends the ostream base to take advantage of predefined
+ * templates while internally passing input to an ofstream which writes to
+ * a designated log file.
+ */
 class Logger : public ostream {
   public:
     Logger(const Severity level);
     ~Logger();
 
+    /**
+     * This templated method simply hands-off insertion to the underlying
+     * ofstream.
+     */
     template <typename insertable>
     ostream & operator << (insertable something) {
       return log << something;
     }
 
+    /**
+     * This is needed to handle the special case where a stream manipulator
+     * is inserted into a Logger first.  For example: LOG(INFO) << endl;
+     */
     typedef std::basic_ostream<char, std::char_traits<char> > StreamType;
     typedef StreamType & (*Manipulator) (StreamType &);
     ostream & operator << (const Manipulator & manipulate) {
-        manipulate(log);
-        return log;
+      return manipulate(log);
     }
 
   private:
@@ -62,6 +79,9 @@ class Logger : public ostream {
 };
 
 
+/**
+ * This macro allows users to use LOG(DEBUG) instead of Logger(DEBUG).
+ */
 #ifndef LOG
 #define LOG(level) (Logger(level))
 #endif

@@ -5,6 +5,7 @@ TODO
   [ ] add an option to ignore non-commands: ASH_IGNORE_NON_COMMANDS='true'  # this avoids keeping passwords and/or junk commands in your database.
   [ ] add a way to determine the actual binary / alias / function that was invoked for each command
   [ ] add more logging throughout the code.
+  [ ] audit each class, evaluating for style before initial commit
   [ ] 
 
 logger.cpp
@@ -14,5 +15,5 @@ config.cpp
   [ ] 
 
 database.cpp
-  [ ] complete the insert retry logic - maybe add a random nano sleep or something: ASH_MAX_RETRIES='5' and ASH_MAX_RETRY_MS='2000'
+  [ ] complete the insert retry logic - complete the usleep logic
   [ ] 

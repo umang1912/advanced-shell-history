@@ -24,11 +24,16 @@ using std::string;
 
 namespace ash {
 
+
+/**
+ * This class is intended to hold all the commonly-used helper methods.
+ */
 class Util {
   public:
     static string to_string(int);
 };
 
+
 } // namespace ash
 
-#endif /* __ASH_UTIL__ */
+#endif  /* __ASH_UTIL__ */

@@ -27,7 +27,7 @@ using std::stringstream;
 
 
 /**
- * 
+ * Returns a query that creates the command table in the database.
  */
 const string Command::get_create_table() {
   stringstream ss;
@@ -53,9 +53,11 @@ const string Command::get_create_table() {
 
 
 /**
- * 
+ * Initializes a Command object by gathering various system data.
  */
-Command::Command(const string command, const int rval, const int start_ts, const int end_ts, const int number, const string pipes) {
+Command::Command(const string command, const int rval, const int start_ts,
+                 const int end_ts, const int number, const string pipes)
+{
   values["session_id"] = Unix::env_int(ASH_SESSION_ID);
   values["shell_level"] = Unix::env_int("SHLVL");
   values["command_no"] = Util::to_string(number);
@@ -81,7 +83,7 @@ Command::Command(const string command, const int rval, const int start_ts, const
 
 
 /**
- * 
+ * Required since the base class declares a virtual dtor.
  */
 Command::~Command() {
   // Nothing to do.
@@ -89,7 +91,7 @@ Command::~Command() {
 
 
 /**
- * 
+ * Returns the name of the backing table.
  */
 const string Command::get_name() const {
   return "commands";
@@ -97,13 +99,13 @@ const string Command::get_name() const {
 
 
 /**
- * 
+ * Returns a query to insert this Command into the commands table.
  */
 const string Command::get_sql() const {
   stringstream ss;
-  ss << DBObject::get_sql();
-  ss << "UPDATE sessions ";
-  ss << "SET end_time = null, duration = null ";
-  ss << "WHERE id = " << Unix::env_int(ASH_SESSION_ID) << ";";
+  ss << DBObject::get_sql()
+     << "UPDATE sessions "
+     << "SET end_time = null, duration = null "
+     << "WHERE id = " << Unix::env_int(ASH_SESSION_ID) << ";";
   return ss.str();
 }

@@ -23,13 +23,19 @@
 using std::map;
 using std::string;
 
-
 namespace ash {
 
+
+/**
+ * This class contains all the environment variable values for variables named
+ * with a common prefix: ASH_
+ */
 class Config {
+  // STATIC:
   public:
     static Config & instance();
 
+  // NON-STATIC:
   public:
     bool has(const string & key) const;
     bool sets(const string & key, const bool dv=false) const;
@@ -40,17 +46,16 @@ class Config {
   private:
     Config();
 
-
   private:
     map<string, string> values;
     bool is_loaded;
-
 
   private:  // DISALLOWED:
     Config(const Config & other);
     Config & operator=(const Config & other);
 };
 
+
 } // namespace ash
 
-#endif /* __ASH_CONFIG__ */
+#endif  /* __ASH_CONFIG__ */

@@ -14,6 +14,11 @@
    limitations under the License.
 */
 
+#include "unix.hpp"
+
+#include "database.hpp"
+#include "util.hpp"
+
 #include <fstream>      /* for ifstream */
 #include <sstream>      /* for stringstream */
 
@@ -23,16 +28,9 @@
 #include <time.h>       /* for time */
 #include <unistd.h>     /* for getppid */
 
-#include "database.hpp"
-#include "unix.hpp"
-#include "util.hpp"
-
 
 using namespace ash;
 using namespace std;
-
-
-const string null = "null";
 
 
 /**
@@ -52,7 +50,7 @@ const string proc_stat(int target) {
 
 
 /**
- * 
+ * Returns the current working directory.
  */
 const string Unix::cwd() {
   static string filename = "/proc/" + Unix::pid() + "/cwd";
@@ -72,7 +70,7 @@ const string Unix::cwd() {
 
 
 /**
- * 
+ * Returns the parent process ID.
  */
 const string Unix::ppid() {
   return proc_stat(3);
@@ -80,7 +78,7 @@ const string Unix::ppid() {
 
 
 /**
- * 
+ * Returns the name of the running shell.
  */
 const string Unix::shell() {
   string token = proc_stat(1);
@@ -92,7 +90,7 @@ const string Unix::shell() {
 
 
 /**
- * 
+ * Returns the effective user ID.
  */
 const string Unix::euid() {
   return Util::to_string(geteuid());
@@ -100,7 +98,7 @@ const string Unix::euid() {
 
 
 /**
- * 
+ * Returns the process ID of the shell.
  */
 const string Unix::pid() {
   return Util::to_string(getppid());
@@ -108,7 +106,7 @@ const string Unix::pid() {
 
 
 /**
- * 
+ * Returns the current local UNIX epoch timestamp.
  */
 const string Unix::time() {
   return Util::to_string(::time(0));
@@ -116,7 +114,7 @@ const string Unix::time() {
 
 
 /**
- * 
+ * Returns the local time zone code.
  */
 const string Unix::time_zone() {
   stringstream ss;
@@ -129,7 +127,7 @@ const string Unix::time_zone() {
 
 
 /**
- * 
+ * Returns the user ID running the command.
  */
 const string Unix::uid() {
   return Util::to_string(getuid());
@@ -137,12 +135,12 @@ const string Unix::uid() {
 
 
 /**
- * 
+ * Returns a list of IP addresses owned on the machine running the commands.
  */
 const string Unix::host_ip() {
   struct ifaddrs * addrs;
   if (getifaddrs(&addrs)) {
-    return null;
+    return "null";
   }
 
   int ips = 0;
@@ -171,13 +169,13 @@ const string Unix::host_ip() {
     ss << buffer;
   }
   freeifaddrs(addrs);
-  if (ips == 0) return null;
+  if (ips == 0) return "null";
   return DBObject::quote(ss.str());
 }
 
 
 /**
- * 
+ * Returns the name of the host.
  */
 const string Unix::host_name() {
   char buffer[1024];
@@ -189,7 +187,7 @@ const string Unix::host_name() {
 
 
 /**
- * 
+ * Return the login name of the user entering commands.
  */
 const string Unix::login_name() {
   return DBObject::quote(getlogin());
@@ -197,7 +195,7 @@ const string Unix::login_name() {
 
 
 /**
- * 
+ * Returns the abbreviated controlling TTY; the leading /dev/ is stripped.
  */
 const string Unix::tty() {
   string tty = DBObject::quote(ttyname(0));
@@ -209,7 +207,7 @@ const string Unix::tty() {
 
 
 /**
- * 
+ * Returns the shell environment value for the argument variable.
  */
 const string Unix::env(const char * name) {
   return DBObject::quote(getenv(name));
@@ -217,7 +215,7 @@ const string Unix::env(const char * name) {
 
 
 /**
- * 
+ * Returns an integer-representation of a shell environment value.
  */
 const string Unix::env_int(const char * name) {
   return Util::to_string(atoi(getenv(name)));

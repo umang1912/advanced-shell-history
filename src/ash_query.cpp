@@ -1,3 +1,4 @@
+
 /*
    Copyright 2011 Carl Anderson
 
@@ -15,9 +16,11 @@
 */
 
 #include "ash_query.hpp"
+
+#include "flags.hpp"
+
 #include <iostream>
 
-using namespace ash;
 using namespace std;
 
 
