@@ -16,7 +16,7 @@
 #
 
 # Make sure we're running what we think we're running.
-if ! grep -qz '^zsh$' /proc/${$}/cmdline; then
+if ! grep -qz '^-\?zsh$' /proc/${$}/cmdline; then
   echo "/proc/$$/cmdline implies you're not running zsh..."
   return
 fi

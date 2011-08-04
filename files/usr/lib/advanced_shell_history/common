@@ -20,7 +20,7 @@
 
 # Source the config files to set all ASH_ shell variables.
 # TODO(cpa): strip non-printable characters from this via tr or sed.
-source <( grep "^[ ]*ASH_[^A-Za-z_]*='.*'.*$" /etc/ash/ash.conf ) || exit 1
+source <( grep "^[ ]*ASH_[A-Za-z_]*='.*'.*$" /etc/ash/ash.conf ) || exit 1
 #
 # Note: the different config files are listed in a set order to force grep to
 #       read the more general options first.  This allows ash_*.conf to

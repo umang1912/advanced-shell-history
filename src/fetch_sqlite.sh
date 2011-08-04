@@ -26,6 +26,9 @@ set -e
 set -u
 
 
+##
+# Logs a message and quits.
+#
 function fatal() {
   echo "${@}" >/dev/stderr
   exit 1
@@ -33,7 +36,11 @@ function fatal() {
 
 
 ##
-# 
+# Attempts to download a URL using either wget or curl.
+#
+# Args:
+#   1: url to fetch.
+#   2: [optional] file to save.
 #
 function fetch() {
   if [ -z "${FETCH_UTIL:-}" ]; then
@@ -48,16 +55,16 @@ function fetch() {
     fi
   fi
 
-  if [ -n "${FETCH_UTIL}" ]; then
-    ${FETCH_UTIL} "${1}" ${FETCH_OPT} "${2:-/dev/stdout}"
-  else
+  if [ -z "${FETCH_UTIL:-}" ]; then
     fatal "This script requires either curl or wget be installed."
   fi
+  ${FETCH_UTIL} "${1}" ${FETCH_OPT:-} "${2:-/dev/stdout}"
 }
 
 
 ##
-# 
+# Attempts to guess the most recent version of sqlite3 available and download
+# it.
 #
 function get_sqlite() {
   local download_url="http://sqlite.org/download.html"

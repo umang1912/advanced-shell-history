@@ -21,7 +21,8 @@
 
 #include <sys/stat.h>  /* for stat */
 #include <stdio.h>     /* for fopen */
-#include <stdlib.h>
+#include <stdlib.h>    /* for rand, srand */
+#include <time.h>      /* for time */
 #include <unistd.h>    /* for usleep */
 
 #include <iostream>
@@ -134,7 +135,17 @@ bool retry_execute(const string & query, sqlite3 * db, callback c,
 {
   if (retries == 0)
     return false;  // base case.
-  // TODO(cpa): sleep a random amount of ms.
+
+  // sleep a random amount of ms.
+  long int ms = sleep_ms;
+  if (rand_ms) {
+    srand(time(0));
+    ms += rand() % rand_ms;
+  }
+  if (usleep(ms * 1000) != 0) {
+    LOG(WARNING) << "Failed to sleep " << ms << " ms between failed queries.";
+  }
+
   if (sqlite3_exec(db, query.c_str(), c, result, 0)) {
     // Have we run out of attempts?
     if (retries == 1) {
