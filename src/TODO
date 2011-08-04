@@ -5,6 +5,7 @@ TODO
   [ ] add an option to ignore non-commands: ASH_IGNORE_NON_COMMANDS='true'  # this avoids keeping passwords and/or junk commands in your database.
   [ ] add a way to determine the actual binary / alias / function that was invoked for each command
   [ ] add more logging throughout the code.
+  [ ] design a shell history function that attempts to intercept
   [ ] 
 
 logger.cpp
@@ -14,4 +15,12 @@ config.cpp
   [ ] 
 
 database.cpp
+  [ ] 
+
+ash_query.cpp
+  [ ] implement a history dump function - dump everything on no-arguments.  Which columns should be shown?
+  [ ] design the query saving mechanism - read queries from where?  list saved queries how?
+  [ ] should there be different grouping options?
+  [ ] Suppose I want to see the most commonly-executed commands: in the cwd, on the system, for a session, with exit code <> 0, etc...
+  [ ] limit rows returned to x
   [ ] 

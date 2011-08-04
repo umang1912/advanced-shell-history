@@ -25,12 +25,19 @@ using namespace std;
 
 
 DEFINE_string(dir, 'd', 0, "A directory where a command was invoked.");
-DEFINE_int(exit, 'e', 0, "Show commands with this exit code.");
-DEFINE_string(query, 'q', 0, "A custom query to execute against the history database.");
+DEFINE_int(exit, 'e', 0, "Show commands matching this exit code.");
+DEFINE_int(exit_not, 0, 0, "Show commands not matching this exit code.");
+DEFINE_string(query, 'q', 0, "A custom query (or comma-separated list of queries) to execute.");
+DEFINE_int(rowcount, 'r', 0, "Limit the number of rows returned to this value (defaults to all).");
+DEFINE_int(session, 's', 0, "Limit history to a given session ID (defaults to current).");
 
 DEFINE_flag(cwd, 'C', "View history that occurred in the current dir.");
 DEFINE_flag(duration, 'D', "Show the duration of the command in the output.");
+DEFINE_flag(list, 'L', "Display all saved queries.");
 DEFINE_flag(recursive, 'R', "View history in the current dir or subdirs.");
+DEFINE_flag(version, 0, "Show the version and exit.");
+
+// TODO(cpa): also list the saved queries in the --help output...
 
 
 int main(int argc, char ** argv) {

@@ -7,5 +7,6 @@ TODO
   [ ] Makefile - build non-debug archetecture-specific binaries - better optimization
   [ ] write up better documentation - how to install, how to use, db schema, etc.
   [ ] man pages for ash_log and ash_query
+  [ ] add a command-time-only flag to ash::log and the other internal-mechanism functions to prevent curious users from invoking them.  Or at least they should see an error.  ASH_KEY="OK" ash::log 
   [ ] 
 
