@@ -4,23 +4,30 @@ Advanced Shell History
 Save your command line history in a sqlite3 DB!
 
 
-Features:
-  * saves extra command details:
+Features of this utility:
+  * Retains extra command details:
     * exit code
     * start and stop times (and command duration)
     * current working directory of the command
     * session details such as tty, pid, ppid, ssh connection details
   * works with multiple shells (zsh and bash)
   * saves history into a sqlite3 database
+  * provides a convenient tool to query the history database.
 
 
 HOW DOES THIS WORK:
 
 This program operates on the assumption that your shell gives you the ability
 to execute a custom operation before a prompt is redrawn on your terminal.
+
 Bash provides the PROMPT_COMMAND environment variable while zsh gives us the
 precmd environment function.  Both are repurposed by this program to log the
 previous command into a local database before each new prompt is displayed.
+
+Many people have never heard of this feature or found a great use for it.
+However, if you currently DO use this feature, you can still use this program.
+The code renames your existing hook and invokes it after saving the previous
+command.
 
 
 Caveats:
@@ -37,9 +44,11 @@ Caveats:
     and logged, they cannot be easily restored.  Instead they are copied.
   * when you build this, it may download a version of sqlite3 (if it's not
     already included in the tarball or the svn repo).
+  * this potentially changes your normal shell history settings to enable
+    options necessary for the magic to work.
 
 Bugs:
   * doesn't capture exec'ed commands: example: exec rm /tmp/foo # is lost
 
 Author: cpa@google.com (Carl Anderson)
-Date: 2011-03-24
+Last Update: 2011-08-04

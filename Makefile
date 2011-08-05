@@ -26,6 +26,8 @@ SRC_DEST := ..
 .PHONY: all build clean install mrproper src_tarball src_tarball_minimal uninstall version
 all:	version build
 
+new:	clean all
+
 version:
 	sed -i -e "/^VERSION :=/s/:= .*/:= ${RVERSION}/" src/Makefile
 
@@ -34,7 +36,7 @@ build:
 	chmod 555 src/ash_log src/ash_query
 	cp -af src/ash_log src/ash_query files/usr/local/bin
 
-install: build
+install: uninstall build
 	sudo rsync -Ca files/* /
 
 uninstall:

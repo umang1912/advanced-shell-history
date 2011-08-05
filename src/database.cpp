@@ -41,13 +41,24 @@ using namespace std;
 
 
 /**
+ * A list of the registered tables names for the DB.
+ */
+vector<string> DBObject::table_names;
+
+
+/**
+ * A list of the queries that create registered tables for the DB.
+ */
+list<string> DBObject::create_tables;
+
+
+/**
  * Create a new Database, creating a new backing file if necessary.
  */
 Database::Database(const string & filename)
   : db_filename(filename), db(0)
 {
   struct stat file;
-  // TODO(cpa): load the history file name from Config.
   // Test that the history file exists, if not, create it.
   if (stat(db_filename.c_str(), &file)) {
     FILE * created_file = fopen(db_filename.c_str(), "w+e");
@@ -64,22 +75,29 @@ Database::Database(const string & filename)
   }
 
   // Init the DB if it is missing the main tables.
-  char query[] =
-      "select count(*) "
-      "from sqlite_master "
-      "where tbl_name in ('sessions', 'commands');";
-  // TODO(cpa): make this more generic, or remove check altogether...
+  size_t registered = DBObject::table_names.size();
 
-  int defined_tables = select_int(query);
-  if (defined_tables == 2) return;  // Normal case.
+  stringstream ss;
+  ss << "select count(*) from sqlite_master where tbl_name in (";
+
+  // List the table names registered by the code.
+  if (registered > 0) ss << DBObject::quote(DBObject::table_names[0]);
+  for (size_t i = 1; i < registered; ++i)
+    ss << ", " << DBObject::quote(DBObject::table_names[i]);
+
+  ss << ");";
+  string query = ss.str();
+
+  size_t defined_tables = select_int(query.c_str());
+  if (defined_tables == registered) return;  // Normal case.
 
   // Initialize the DB if it's not already set up.
   init_db();
 
   // Log a warning if there was an unexpected number of tables.
-  if (defined_tables > 2) {
-    LOG(WARNING) << "Expected only 2 tables to be defined, found "
-        << defined_tables << " instead.";
+  if (defined_tables > registered) {
+    LOG(WARNING) << "Expected " << registered
+        << " tables to be defined, found " << defined_tables << " instead.";
   }
 }
 
@@ -210,12 +228,6 @@ void Database::exec(const string & query) const {
 
 
 /**
- * A list of the queries that create tables for the DB.
- */
-list<string> DBObject::create_tables;
-
-
-/**
  * Returns a query that creates the table schema for the DB.
  */
 const string DBObject::get_create_tables() {
@@ -234,8 +246,9 @@ const string DBObject::get_create_tables() {
 /**
  * Adds a create-table query to the list of create-table queries.
  */
-void DBObject::register_table(const string & create_statement) {
-  create_tables.push_back(create_statement);
+void DBObject::register_table(const string & name, const string & sql) {
+  table_names.push_back(name);
+  create_tables.push_back(sql);
 }
 
 
@@ -249,7 +262,7 @@ const string DBObject::quote(const char * value) {
 
 /**
  * Returns a quoted string suitable for insertion into the DB.
- * Converts an empty string to null.
+ * Converts an empty string to null.  Removes unprintable characters.
  */
 const string DBObject::quote(const string & in) {
   if (in.empty()) return "null";

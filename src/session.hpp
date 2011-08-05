@@ -33,7 +33,7 @@ namespace ash {
  */
 class Session : public DBObject {
   public:
-    static const string get_create_table();
+    static void register_table();
 
   public:
     Session();

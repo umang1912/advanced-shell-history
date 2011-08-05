@@ -21,10 +21,12 @@
 #include <list>
 #include <map>
 #include <string>
+#include <vector>
 
 using std::list;
 using std::map;
 using std::string;
+using std::vector;
 
 class sqlite3;  // Forward declaration.
 
@@ -56,10 +58,13 @@ class DBObject {
     static const string quote(const char * value);
     static const string quote(const string & value);
     static const string get_create_tables();
-    static void register_table(const string & create_statement);
+
+  protected:
+    static void register_table(const string & name, const string & sql);
 
   protected:
     static list<string> create_tables;
+    static vector<string> table_names;
 
   // NON-STATIC:
   protected:
@@ -75,6 +80,8 @@ class DBObject {
   private:
     DBObject(const DBObject & other);  // disabled
     DBObject & operator =(const DBObject & other);  // disabled
+
+  friend class Database;
 };
 
 

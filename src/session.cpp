@@ -27,11 +27,12 @@ using namespace std;
 
 
 /**
- * Returns a query that can create the sessions table.
+ * Registers this table for use in the Database.
  */
-const string Session::get_create_table() {
+void Session::register_table() {
+  string name = "sessions";
   stringstream ss;
-  ss << "CREATE TABLE IF NOT EXISTS sessions ( \n"
+  ss << "CREATE TABLE IF NOT EXISTS " << name << " ( \n"
      << "  id integer primary key autoincrement, \n"
      << "  hostname varchar(128), \n"
      << "  host_ip varchar(40), \n"
@@ -51,7 +52,7 @@ const string Session::get_create_table() {
      << "  ssh_client varchar(60), \n"
      << "  ssh_connection varchar(100) \n"
      << ");";
-  return ss.str();
+  DBObject::register_table(name, ss.str());
 }
 
 

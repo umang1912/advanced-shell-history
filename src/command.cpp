@@ -27,11 +27,12 @@ using std::stringstream;
 
 
 /**
- * Returns a query that creates the command table in the database.
+ * Registers this table for use in the Database.
  */
-const string Command::get_create_table() {
+void Command::register_table() {
+  string name = "commands";
   stringstream ss;
-  ss << "CREATE TABLE IF NOT EXISTS commands(\n"
+  ss << "CREATE TABLE IF NOT EXISTS " << name << " (\n"
      << "  id integer primary key autoincrement,\n"
      << "  session_id integer not null,\n"
      << "  shell_level integer not null,\n"
@@ -48,7 +49,7 @@ const string Command::get_create_table() {
      << "  pipe_vals varchar(80),\n"
      << "  command varchar(1000) not null\n"
      << ");";
-  return ss.str();
+  DBObject::register_table(name, ss.str());
 }
 
 

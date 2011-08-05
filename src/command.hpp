@@ -31,7 +31,7 @@ namespace ash {
  */
 class Command : public DBObject {
   public:
-    static const string get_create_table();
+    static void register_table();
 
   public:
     Command(const string command, const int rval, const int start, const int end, const int num, const string pipes);

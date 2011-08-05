@@ -75,12 +75,12 @@ int main(int argc, char ** argv) {
     exit(1);
   }
 
-  // Initialize the database backend.
-  DBObject::register_table(Session::get_create_table());
-  DBObject::register_table(Command::get_create_table());
+  // Register the tables expected in the program.
+  Session::register_table();
+  Command::register_table();
 
-  // TODO(cpa): get this from a config variable?
-  string db_file = string(getenv("HOME")) + "/.history.db";
+  // Get the filename backing the history database.
+  string db_file = config.get_string("HISTORY_DB");
 
   //
   // Process the command flags.
