@@ -41,11 +41,13 @@ DEFINE_flag(help, 0, "Display flags for this command.");
 
 
 /**
- * Displays the default help output for all registered flags.
- *   sh$ ash_log
+ * Inserts the default help output for all registered flags into the argument
+ * ostream.
+ *
+ *   sh$ ash_log --help
  *   Usage: ash_log [options]
  *         --help  Display this message.
- *   sh$ 
+ *   sh$
  */
 void Flag::show_help(ostream & out) {
   char * program_name = strdup(prog_name.c_str());
@@ -154,7 +156,13 @@ bool all_isgraph(const char * input) {
 
 
 /**
- * 
+ * Constructs a Flag object.
+ *
+ * Args:
+ *   ln: the long name of the flag (if any).
+ *   sn: a single character shor name of the flag (if any).
+ *   ds: the human-readable description of the flag.
+ *   ha: bool; true if this flag requires an argument, otherwise false.
  */
 Flag::Flag(const char * ln, const char sn, const char * ds, const bool ha)
   : long_name(ln), short_name(sn), description(ds), has_arg(ha)
@@ -199,6 +207,10 @@ Flag::Flag(const char * ln, const char sn, const char * ds, const bool ha)
 }
 
 
+/**
+ * Destroys a Flag - this is required because there are virtual functions in
+ * the class.
+ */
 Flag::~Flag() {
   // Nothing to do.
 }
@@ -237,7 +249,7 @@ ostream & operator << (ostream & out, const Flag & flag) {
 
 
 /**
- * 
+ * Initializes an IntFlag.
  */
 IntFlag::IntFlag(const char * ln, const char sn, int * val, const int dv, const char * ds)
   : Flag(ln, sn, ds, true), value(val)
@@ -247,7 +259,10 @@ IntFlag::IntFlag(const char * ln, const char sn, int * val, const int dv, const 
 
 
 /**
- * 
+ * Sets the value of this IntFlag.
+ *
+ *   Args:
+ *     optarg: the value to convert to an int using atoi.
  */
 void IntFlag::set(const char * optarg) {
   *value = atoi(optarg);
@@ -255,7 +270,7 @@ void IntFlag::set(const char * optarg) {
 
 
 /**
- * 
+ * Inserts this IntFlag into an ostream.
  */
 ostream & IntFlag::insert(ostream & out) const {
   Flag::insert(out);
@@ -267,7 +282,7 @@ ostream & IntFlag::insert(ostream & out) const {
 
 
 /**
- * 
+ * Initialize a StringFlag.
  */
 StringFlag::StringFlag(const char * ln, const char sn, string * val, const char * dv, const char * ds)
   : Flag(ln, sn, ds, true), value(val)
@@ -277,7 +292,7 @@ StringFlag::StringFlag(const char * ln, const char sn, string * val, const char 
 
 
 /**
- * 
+ * Set the value of this StringFlag.
  */
 void StringFlag::set(const char * optarg) {
   if (optarg) {
@@ -289,7 +304,7 @@ void StringFlag::set(const char * optarg) {
 
 
 /**
- * 
+ * Inserts this StringFlag into an ostream.
  */
 ostream & StringFlag::insert(ostream & out) const {
   Flag::insert(out);
@@ -301,7 +316,7 @@ ostream & StringFlag::insert(ostream & out) const {
 
 
 /**
- * 
+ * Initializes a BoolFlag.
  */
 BoolFlag::BoolFlag(const char * ln, const char sn, bool * val, const bool dv, const char * ds, const bool has_arg)
   : Flag(ln, sn, ds, has_arg), value(val)
@@ -311,7 +326,7 @@ BoolFlag::BoolFlag(const char * ln, const char sn, bool * val, const bool dv, co
 
 
 /**
- * 
+ * Sets the value of this flag by parsing the argument string.
  */
 void BoolFlag::set(const char * optarg) {
   if (optarg) {
@@ -331,7 +346,7 @@ void BoolFlag::set(const char * optarg) {
 
 
 /**
- * 
+ * Inserts this BoolFlag into the argument ostream.
  */
 ostream & BoolFlag::insert(ostream & out) const {
   return Flag::insert(out);
