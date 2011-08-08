@@ -17,9 +17,7 @@ database.cpp
   [ ] 
 
 ash_query.cpp
-  [ ] implement a history dump function - dump everything on no-arguments.  Which columns should be shown?
-  [ ] design the query saving mechanism - read queries from where?  list saved queries how?
+  [ ] implement a DEFAULT_QUERY setting.
   [ ] should there be different grouping options?
   [ ] Suppose I want to see the most commonly-executed commands: in the cwd, on the system, for a session, with exit code <> 0, etc...
-  [ ] limit rows returned to x
   [ ] 

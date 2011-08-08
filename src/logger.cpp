@@ -62,7 +62,7 @@ const char * to_str(const Severity level) {
  * level.  This relies on environment variables ASH_LOG_LEVEL and ASH_LOG_FILE
  * to be populated or it will return /dev/null as a default.
  */
-const char * get_target(const Severity level) {
+string get_target(const Severity level) {
   Config & config = Config::instance();
 
   // Default to /dev/null if the visibility is too low for this Logger.
@@ -70,7 +70,7 @@ const char * get_target(const Severity level) {
   if (level < visible) return "/dev/null";
 
   // Use the configured target, if configured.
-  return config.get_cstring("LOG_FILE", "/dev/null");
+  return config.get_string("LOG_FILE", "/dev/null");
 }
 
 
@@ -78,7 +78,7 @@ const char * get_target(const Severity level) {
  * Constructs a logger and adds the severity to the output.
  */
 Logger::Logger(const Severity lvl)
-  : log(get_target(lvl)), level(lvl)
+  : log(get_target(lvl).c_str()), level(lvl)
 {
   log << to_str(level) << ": ";
 }

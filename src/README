@@ -22,7 +22,7 @@ READ THIS FIRST - if you are interested in contributing code to this project!
 
 First, thank you for reading this and thank you for your interest.  For the
 benefit of all, I've written up a general set of code style guidelines to help
-make the finished product easy for newcomers to read.
+make the released code easy for newcomers to read and get up to speed with.
 
 
 
@@ -41,7 +41,7 @@ General
   * No trailing whitespace.
   * Use const and pass-by-reference wherever possible.
   * Files must have the complete copyright starting on the first possible line.
-  * Do not use exceptions.
+  * Do not use C++ exceptions.
 
 
 Comments
@@ -60,7 +60,8 @@ Comments
 
 
 Function Names
-  * use_underscores
+  * use_underscores for functions (not camelCase or StudlyCaps).
+  * default arguments are OK for simple types.
 
 
 Namespaces
@@ -78,11 +79,15 @@ Macro guards
     #ifndef __MY_FILE__
     #define __MY_FILE__
     ...
-    #endif /* __MY_FILE__ */
+    #endif  /* __MY_FILE__ */
   * Put no code outside of the macro guards.
 
 
 Class Declatations
+  Naming
+    * Classes are named using the StudlyCaps convention where each word is
+      capitalized (including the first).
+
   Fowrard Declarations
     * Use forward declarations in headers wherever possible.
     * Label forward declarations with a trailing comment.

@@ -23,7 +23,7 @@
 #include "session.hpp"
 #include "unix.hpp"
 
-#include <stdlib.h>  /* for getenv, exit */
+#include <stdlib.h>  /* for exit, getenv */
 
 #include <iostream>  /* for cerr, cout, endl */
 #include <sstream>   /* for stringstream */
@@ -47,6 +47,13 @@ using namespace ash;
 using namespace std;
 
 
+void usage(ostream & out) {
+  out << "\n\nThis program is not intended to be executed manually.  See the man page for more details.\n";
+  Flag::show_help(out);
+  exit(1);
+}
+
+
 int main(int argc, char ** argv) {
   // Load the config from the environment.
   Config & config = Config::instance();
@@ -60,31 +67,11 @@ int main(int argc, char ** argv) {
 
   // Show usage if executed with no args.
   if (argc == 1 && !config.sets("HIDE_USAGE_FOR_NO_ARGS")) {
-    Flag::parse(&argc, &argv, true);
-    Flag::show_help(cerr);
-    exit(1);
+    usage(cerr);
   }
 
   // Parse the flags.
   Flag::parse(&argc, &argv, true);
-
-  // Abort if unrecognized flags were used on the command line.
-  if (argc != 0 && !config.sets("IGNORE_UNKNOWN_FLAGS")) {
-    cerr << "unrecognized flag: " << argv[0] << endl;
-    Flag::show_help(cerr);
-    exit(1);
-  }
-
-  // Register the tables expected in the program.
-  Session::register_table();
-  Command::register_table();
-
-  // Get the filename backing the history database.
-  string db_file = config.get_string("HISTORY_DB");
-
-  //
-  // Process the command flags.
-  //
 
   // Display the version and stop: -V
   if (FLAGS_version) {
@@ -96,6 +83,16 @@ int main(int argc, char ** argv) {
   if (!FLAGS_alert.empty()) {
     cerr << FLAGS_alert << endl;
   }
+
+  // Get the filename backing the history database.
+  string db_file = config.get_string("HISTORY_DB");
+  if (db_file == "") {
+    usage(cerr << "\nExpected ASH_HISTORY_DB to be defined.");
+  }
+
+  // Register the tables expected in the program.
+  Session::register_table();
+  Command::register_table();
 
   // Emit the current session number, inserting one if none exists: -S
   if (FLAGS_get_session_id) {

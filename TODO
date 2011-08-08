@@ -5,5 +5,6 @@ TODO
   [ ] set up the initial repository on code.google.com
   [ ] write up better documentation - how to install, how to use, db schema, etc.
   [ ] man pages for ash_log and ash_query
+  [ ] detect when /usr/local/bin is NOT in the PATH
   [ ] 
 
