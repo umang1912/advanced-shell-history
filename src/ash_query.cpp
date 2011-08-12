@@ -66,7 +66,7 @@ int execute(const string & query_name) {
   Database db(db_file);
 
   // Get the query SQL using the name, making sure it is found.
-  string sql = Queries::get(query_name);
+  string sql = Queries::get_sql(query_name);
   if (sql == "") {
     cerr << "Unknown query name: '" << query_name << "'" << endl;
     return 1;

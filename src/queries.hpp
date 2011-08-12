@@ -13,32 +13,45 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-
 #ifndef __ASH_QUERIES__
 #define __ASH_QUERIES__
 
+#include <iostream>
+#include <list>
 #include <map>
 #include <string>
-using std::map;
-using std::string;
 
 namespace ash {
 
 
-/**
- * 
- */
+using std::list;
+using std::map;
+using std::ostream;
+using std::string;
+
+
 class Queries {
-  // STATIC:
+  public:
+    static void add(string & name, string & desc, string & sql);
+    static void insert(ostream & out);
+
+    static list<string> get_names();
+
+    static map<string, string> get_desc();
+    static string get_desc(const string & name);
+
+    static map<string, string> get_sql();
+    static string get_sql(const string & name);
+
   private:
-    static bool initialized;
+    static map<string, string> descriptions;
     static map<string, string> queries;
 
-  public:
-    static const string get(const string & query_name);
+  private:
+    Queries();
 };
 
 
 }  // namespace ash
 
-#endif  /* __ASH_QUERIES__ */
+#endif  // __ASH_QUERIES__

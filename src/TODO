@@ -5,6 +5,7 @@ TODO
   [ ] add a way to determine the actual binary / alias / function that was invoked for each command
   [ ] add more logging throughout the code.
   [ ] design a shell history function that attempts to intercept builtin history calls and redirect to builtin history wherever necessary ???
+  [ ] handle the case where a user presses presses enter without entering a command.
   [ ] 
 
 logger.cpp
