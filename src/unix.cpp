@@ -37,7 +37,7 @@ using namespace std;
  * Returns the i'th row of /proc/$$/stat.
  */
 const string proc_stat(int target) {
-  static string filename = "/proc/" + Unix::pid() + "/stat";
+  static string filename = "/proc/" + unix::pid() + "/stat";
   ifstream fin(filename.c_str());
   string token;
   for (int i = 0; fin.good(); ++i) {
@@ -52,8 +52,8 @@ const string proc_stat(int target) {
 /**
  * Returns the current working directory.
  */
-const string Unix::cwd() {
-  static string filename = "/proc/" + Unix::pid() + "/cwd";
+const string unix::cwd() {
+  static string filename = "/proc/" + unix::pid() + "/cwd";
   stringstream ss;
   char buffer[1024];
   int bytes_read = readlink(filename.c_str(), buffer, sizeof(buffer));
@@ -72,7 +72,7 @@ const string Unix::cwd() {
 /**
  * Returns the parent process ID.
  */
-const string Unix::ppid() {
+const string unix::ppid() {
   return proc_stat(3);
 }
 
@@ -80,7 +80,7 @@ const string Unix::ppid() {
 /**
  * Returns the name of the running shell.
  */
-const string Unix::shell() {
+const string unix::shell() {
   string token = proc_stat(1);
   if (!token.empty() && token[0] == '(' && token[token.length() - 1] == ')') {
     token = token.substr(1, token.length() - 2);
@@ -92,7 +92,7 @@ const string Unix::shell() {
 /**
  * Returns the effective user ID.
  */
-const string Unix::euid() {
+const string unix::euid() {
   return Util::to_string(geteuid());
 }
 
@@ -100,7 +100,7 @@ const string Unix::euid() {
 /**
  * Returns the process ID of the shell.
  */
-const string Unix::pid() {
+const string unix::pid() {
   return Util::to_string(getppid());
 }
 
@@ -108,7 +108,7 @@ const string Unix::pid() {
 /**
  * Returns the current local UNIX epoch timestamp.
  */
-const string Unix::time() {
+const string unix::time() {
   return Util::to_string(::time(0));
 }
 
@@ -116,7 +116,7 @@ const string Unix::time() {
 /**
  * Returns the local time zone code.
  */
-const string Unix::time_zone() {
+const string unix::time_zone() {
   stringstream ss;
   char zone_buffer[5];
   time_t now = ::time(0);
@@ -129,7 +129,7 @@ const string Unix::time_zone() {
 /**
  * Returns the user ID running the command.
  */
-const string Unix::uid() {
+const string unix::uid() {
   return Util::to_string(getuid());
 }
 
@@ -137,7 +137,7 @@ const string Unix::uid() {
 /**
  * Returns a list of IP addresses owned on the machine running the commands.
  */
-const string Unix::host_ip() {
+const string unix::host_ip() {
   struct ifaddrs * addrs;
   if (getifaddrs(&addrs)) {
     return "null";
@@ -177,7 +177,7 @@ const string Unix::host_ip() {
 /**
  * Returns the name of the host.
  */
-const string Unix::host_name() {
+const string unix::host_name() {
   char buffer[1024];
   if (gethostname(buffer, sizeof(buffer))) {
     // TOOD(cpa): log a warning
@@ -189,7 +189,7 @@ const string Unix::host_name() {
 /**
  * Return the login name of the user entering commands.
  */
-const string Unix::login_name() {
+const string unix::login_name() {
   return DBObject::quote(getlogin());
 }
 
@@ -197,7 +197,7 @@ const string Unix::login_name() {
 /**
  * Returns the abbreviated controlling TTY; the leading /dev/ is stripped.
  */
-const string Unix::tty() {
+const string unix::tty() {
   string tty = DBObject::quote(ttyname(0));
   if (tty.find("/dev/") == 1) {
     return "'" + tty.substr(6);
@@ -209,7 +209,7 @@ const string Unix::tty() {
 /**
  * Returns the shell environment value for the argument variable.
  */
-const string Unix::env(const char * name) {
+const string unix::env(const char * name) {
   return DBObject::quote(getenv(name));
 }
 
@@ -217,6 +217,6 @@ const string Unix::env(const char * name) {
 /**
  * Returns an integer-representation of a shell environment value.
  */
-const string Unix::env_int(const char * name) {
+const string unix::env_int(const char * name) {
   return Util::to_string(atoi(getenv(name)));
 }

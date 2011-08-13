@@ -16,18 +16,29 @@
 */
 #include "queries.hpp"
 
+#include <iostream>
+
+
+extern int yylex();
+extern "C" int yywrap();
+
+
 namespace ash {
+using namespace std;
+
 namespace query {
 
 // Temp variables for parsing.
-std::string * name, * desc, * sql;
+string * name, * desc, * sql;
+
+// The config files to parse for queries.
+list<string> files;
+
+// The file currently being parsed.
+string parsing;
 
 }  // namespace query
 
-using std::cout;
-using std::endl;
-using std::string;
-using std::map;
 
 map<string, string> Queries::descriptions;
 map<string, string> Queries::queries;
@@ -39,55 +50,119 @@ void Queries::add(string & name, string & desc, string & sql) {
 }
 
 
-void Queries::insert(ostream & out) {
-  map<string, string>::iterator i, e;
-  for (i = queries.begin(), e = queries.end(); i != e; ++i) {
-    out << i -> first << endl;
-    out << "  " << descriptions[i -> first] << endl;
-    out << "  " << i -> second << endl;
-  }
-}
-
-
 map<string, string> Queries::get_desc() {
+  Queries::lazy_load();
   return Queries::descriptions;
 }
 
 
+bool Queries::has(const string & name) {
+  Queries::lazy_load();
+  return
+    Queries::queries.find(name) != Queries::queries.end() &&
+    Queries::descriptions.find(name) != Queries::descriptions.end();
+}
+
+
 string Queries::get_desc(const string & name) {
-  if (Queries::descriptions.find(name) == Queries::descriptions.end())
-    return "";
-  return Queries::descriptions[name];
+  Queries::lazy_load();
+  return Queries::has(name) ? Queries::descriptions[name] : "";
 }
 
 
 map<string, string> Queries::get_sql() {
+  Queries::lazy_load();
   return Queries::queries;
 }
 
 
 string Queries::get_sql(const string & name) {
-  if (Queries::queries.find(name) == Queries::queries.end())
-    return "";
-  return Queries::queries[name];
+  Queries::lazy_load();
+  return Queries::has(name) ? Queries::queries[name] : "";
 }
 
 
+/**
+ * Loads the configured files looking for saved queries.
+ */
+void Queries::lazy_load() {
+  // Prevent multiple loads, but allow loads for on-demand use.
+  static bool loaded = false;
+  if (loaded) return;
+  loaded = true;
+
+  // Load these files, in this order.
+  query::files.push_back("/etc/ash/queries");
+  query::files.push_back(string(getenv("HOME")) + "/.ash/queries");
+
+  // Initialize the input file.  
+  yyin = 0;
+  if (yywrap()) {
+    cout << "FAILED TO FIND A FILE TO PARSE!" << endl;
+    exit(1);
+  }
+  
+  // Parse the input file.
+  if (yylex()) {
+    cout << "FAILED TO PARSE!" << endl;
+    exit(1);
+  }
+}
+
+
+/**
+ * Returns an ostream loaded with the filename and line number where a parse
+ * error was found.
+ */
+ostream & fail() {
+  cerr << "\nError parsing Advanced Shell History config file:\n"
+       << "  " << query::parsing << "\n"
+       << "ERROR: Line " << yylineno;
+  return cerr;
+}
+
+
+/**
+ * Aborts parsing with an error pointing to the erroneous line in the file.
+ */
 void fail(const char * message) {
-  printf("ERROR: Line %d - %s.\n\n", yylineno, message);
+  fail() << " - " << message << ".\n" << endl;
   exit(1);
 }
 
 
+/**
+ * Aborts parsing with an error pointing to the erroneous line in the file.
+ */
 void expected(const char * message) {
-  printf("ERROR: Line %d - Expected %s\n\n", yylineno, message);
+  fail() << " - Expected " << message << "\n" << endl;
   exit(1);
 }
 
 }  // namespace ash
 %}
 
+%option nomain
+%option nounput
 %option yylineno
+
+/**
+ * This parser relies on setting states of a finite-state-automata to control
+ * parsing and provide (hopefully) useful error messages that point to the
+ * exact line of code where a problem is found.
+ *
+ * States:
+ *   INITIAL := Looking for a query definition.
+ *   Q1      := Found a query definition, looking for a COLON.
+ *   Q2      := Found a query definition and COLON, looking for a LEFT_BRACE.
+ *   QUERY   := Found a query definition, colon and left brace, looking for 
+ *              a description field and a sql field.
+ *   D1      := Found a 'definition' keyword, looking for a COLON.
+ *   DESC    := Found a 'definition' and COLON, looking for a quoted string.
+ *   STR     := Found a double-quote, looking for a closing double quote.
+ *   SQL     := Found a 'sql' keyword, looking for a COLON, LEFT_BRACE and a
+                query definition all at once.
+ */
 %x Q1 Q2 QUERY D1 DESC STR SQL
 
 %%
@@ -175,13 +250,34 @@ void expected(const char * message) {
 
   /* FAIL BUCKET - this matches any character that is not covered above. */
 .			{
-			  std::cerr << "Unexpected character in file." << std::endl;
+			  ash::fail() << "Unexpected character." << std::endl;
 			  exit(1);
 			}
 %%
 
 
+/**
+ * This method is called by flex whenever the yyin stream is closed.  This
+ * gives us a chance to change the source file and resume parsing.
+ */
 int yywrap() {
-  printf("THAT'S A YYWRAP!!!\n");
+  using namespace ash;
+  using namespace std;
+
+  // Reset line number, since we're switching to a new file.
+  yyset_lineno(1);
+
+  // Close the old file, if it's actually open.
+  if (yyin != 0) fclose(yyin);
+
+  while (!query::files.empty()) {
+    query::parsing = query::files.front();
+    query::files.pop_front();
+    yyin = fopen(query::parsing.c_str(), "r");
+    if (yyin) return 0;
+    // TODO(cpa): LOG(DEBUG) << "The file couldn't be opened.";
+  }
+  // TODO(cpa): LOG(DEBUG) << "Done parsing config files.";
   return 1;
 }
+

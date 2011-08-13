@@ -59,16 +59,16 @@ void Command::register_table() {
 Command::Command(const string command, const int rval, const int start_ts,
                  const int end_ts, const int number, const string pipes)
 {
-  values["session_id"] = Unix::env_int(ASH_SESSION_ID);
-  values["shell_level"] = Unix::env_int("SHLVL");
+  values["session_id"] = unix::env_int(ASH_SESSION_ID);
+  values["shell_level"] = unix::env_int("SHLVL");
   values["command_no"] = Util::to_string(number);
-  values["tty"] = Unix::tty();
-  values["shlvl"] = Unix::env_int("SHLVL");
-  values["euid"] = Unix::euid();
+  values["tty"] = unix::tty();
+  values["shlvl"] = unix::env_int("SHLVL");
+  values["euid"] = unix::euid();
   if (rval == 0 && command.find("cd") == 0) {
-    values["cwd"] = Unix::env("OLDPWD");
+    values["cwd"] = unix::env("OLDPWD");
   } else {
-    values["cwd"] = Unix::cwd();
+    values["cwd"] = unix::cwd();
   }
   values["rval"] = Util::to_string(rval);
   values["start_time"] = Util::to_string(start_ts);
@@ -107,6 +107,6 @@ const string Command::get_sql() const {
   ss << DBObject::get_sql()
      << "UPDATE sessions "
      << "SET end_time = null, duration = null "
-     << "WHERE id = " << Unix::env_int(ASH_SESSION_ID) << ";";
+     << "WHERE id = " << unix::env_int(ASH_SESSION_ID) << ";";
   return ss.str();
 }

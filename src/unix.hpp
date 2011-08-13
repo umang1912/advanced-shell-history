@@ -22,34 +22,31 @@
 using std::string;
 
 namespace ash {
-
+namespace unix {
 
 /**
- * This class provides a variety of UNIX-related functions.
+ * This namespace provides a variety of UNIX-related functions.
  *
  * All functions return a quoted-string value, an int string value or a string
  * representation of the keyword "null".  All are intended to be inserted
  * directly into SQL queries.
  */
-class Unix {
-  public:
-    static const string cwd();
-    static const string env(const char * name);
-    static const string env_int(const char * name);
-    static const string euid();
-    static const string host_ip();
-    static const string host_name();
-    static const string login_name();
-    static const string pid();
-    static const string ppid();
-    static const string shell();
-    static const string time();
-    static const string time_zone();
-    static const string tty();
-    static const string uid();
-};
+const string cwd();
+const string env(const char * name);
+const string env_int(const char * name);
+const string euid();
+const string host_ip();
+const string host_name();
+const string login_name();
+const string pid();
+const string ppid();
+const string shell();
+const string time();
+const string time_zone();
+const string tty();
+const string uid();
 
-
+}  // namespace unix
 }  // namespace ash
 
 #endif  /* __ASH_UNIX__ */

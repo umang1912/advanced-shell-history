@@ -16,7 +16,6 @@
 #ifndef __ASH_QUERIES__
 #define __ASH_QUERIES__
 
-#include <iostream>
 #include <list>
 #include <map>
 #include <string>
@@ -26,14 +25,13 @@ namespace ash {
 
 using std::list;
 using std::map;
-using std::ostream;
 using std::string;
 
 
 class Queries {
   public:
     static void add(string & name, string & desc, string & sql);
-    static void insert(ostream & out);
+    static bool has(const string & name);
 
     static list<string> get_names();
 
@@ -42,6 +40,9 @@ class Queries {
 
     static map<string, string> get_sql();
     static string get_sql(const string & name);
+
+  private:
+    static void lazy_load();
 
   private:
     static map<string, string> descriptions;

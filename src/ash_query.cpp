@@ -49,7 +49,7 @@ DEFINE_flag(version, 0, "Show the version and exit.");
 int execute(const string & query_name) {
   Config & config = Config::instance();
 
-  // Get the filename backing the database to query.
+  // Get the filename backing the database we are about to query.
   string db_file(FLAGS_database);
   if (db_file == "") {
     if (config.get_string("HISTORY_DB") == "") {
@@ -111,8 +111,14 @@ int main(int argc, char ** argv) {
 
   // Display available query names, if requested.
   if (FLAGS_list) {
-//    Queries::show_help(cout);
-cout << "TODO(cpa): display the saved queries HERE..." << endl;
+    // TODO(cpa): include a heading: QUERY   DESCRIPTION, etc.
+    // TODO(cpa): indent and align the output using spaces (maybe printf).
+    map<string, string> queries = Queries::get_desc();
+    map<string, string>::iterator i, e;
+
+    for (i = queries.begin(), e = queries.end(); i != e; ++i) {
+      cout << i -> first << "\t\t" << i -> second << endl;
+    }
     return 0;
   }
 

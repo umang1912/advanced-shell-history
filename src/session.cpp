@@ -60,21 +60,21 @@ void Session::register_table() {
  * Initialize a Session object.
  */
 Session::Session() {
-  values["time_zone"] = Unix::time_zone();
-  values["start_time"] = Unix::time();
-  values["ppid"] = Unix::ppid();
-  values["pid"] = Unix::pid();
-  values["tty"] = Unix::tty();
-  values["uid"] = Unix::uid();
-  values["euid"] = Unix::euid();
-  values["logname"] = Unix::login_name();
-  values["hostname"] = Unix::host_name();
-  values["host_ip"] = Unix::host_ip();
-  values["shell"] = Unix::shell();
-  values["sudo_user"] = Unix::env("SUDO_USER");
-  values["sudo_uid"] = Unix::env("SUDO_UID");
-  values["ssh_client"] = Unix::env("SSH_CLIENT");
-  values["ssh_connection"] = Unix::env("SSH_CONNECTION");
+  values["time_zone"] = unix::time_zone();
+  values["start_time"] = unix::time();
+  values["ppid"] = unix::ppid();
+  values["pid"] = unix::pid();
+  values["tty"] = unix::tty();
+  values["uid"] = unix::uid();
+  values["euid"] = unix::euid();
+  values["logname"] = unix::login_name();
+  values["hostname"] = unix::host_name();
+  values["host_ip"] = unix::host_ip();
+  values["shell"] = unix::shell();
+  values["sudo_user"] = unix::env("SUDO_USER");
+  values["sudo_uid"] = unix::env("SUDO_UID");
+  values["ssh_client"] = unix::env("SSH_CLIENT");
+  values["ssh_connection"] = unix::env("SSH_CONNECTION");
 }
 
 
@@ -114,8 +114,8 @@ const string Session::get_close_session_sql() const {
   stringstream ss;
   ss << "UPDATE sessions \n"
      << "SET \n"
-     << "  end_time = " << Unix::time() << ", \n"
-     << "  duration = " << Unix::time() << " - start_time \n"
-     << "WHERE id == " << Unix::env(ASH_SESSION_ID) << "; ";
+     << "  end_time = " << unix::time() << ", \n"
+     << "  duration = " << unix::time() << " - start_time \n"
+     << "WHERE id == " << unix::env(ASH_SESSION_ID) << "; ";
   return ss.str();
 }

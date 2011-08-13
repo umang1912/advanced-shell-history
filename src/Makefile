@@ -14,7 +14,7 @@
 #   limitations under the License.
 #
 
-VERSION := 0.1.r61
+VERSION := 0.1.r62
 LOGGER	:= ash_log
 QUERIER	:= ash_query
 EXES	:= ${LOGGER} ${QUERIER}
@@ -40,7 +40,7 @@ ${LOGGER}: sqlite3.o ${OBJ_L}
 	${CPP} -c ${FLAGS} -o ${@} ${<}
 
 queries.cpp: queries.hpp queries.l
-	flex -o queries.cpp --nomain --nounput queries.l
+	flex -o queries.cpp queries.l
 
 sqlite3.c:
 	./fetch_sqlite.sh
