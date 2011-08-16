@@ -72,10 +72,14 @@ int execute(const string & query_name) {
     return 1;
   }
 
-  // TODO(cpa): execute the SQL and retain the ResultSet Object.
-  // TODO(cpa): create a Formatter to format the ResultSet.
-  // TODO(cpa): Insert the formatted results into cout and errors to (cerr).
-  return -1;
+  ResultSet * rs = db.exec(sql);
+  if (rs) {
+    cout << "TODO(cpa): display the results using a formatter" << endl;
+    // TODO(cpa): create a formatter object to format this stuff.
+    // TODO(cpa): insert the results into stdout.
+    delete rs;
+  }
+  return 0;
 }
 
 

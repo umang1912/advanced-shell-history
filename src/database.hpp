@@ -32,6 +32,37 @@ class sqlite3;  // Forward declaration.
 
 namespace ash {
 
+class Database;  // Forward declaration.
+
+
+/**
+ * This is the result of a query that selects multiple rows.
+ */
+class ResultSet {
+  public:
+    typedef list<string> HeadersType;
+    typedef vector<string> RowType;
+    typedef vector<RowType> DataType;
+
+  public:
+    ~ResultSet() {}
+
+  private:
+    ResultSet(const HeadersType & headers, const DataType & data);
+
+  public:
+    const HeadersType headers;
+    const DataType data;
+    const int rows, columns;
+
+  // DISALLOWED:
+  private:
+    ResultSet(const ResultSet & other);  // disallowed.
+    ResultSet & operator = (const ResultSet & other);  // disallowed.
+
+  friend class Database;
+};
+
 
 /**
  * This class abstracts a backing sqlite3 database.
@@ -41,7 +72,8 @@ class Database {
     Database(const string & filename);
     virtual ~Database();
 
-    void exec(const string & query) const;
+    ResultSet * exec(const string & query) const;
+
     int select_int(const string & query) const;
     void init_db();
 

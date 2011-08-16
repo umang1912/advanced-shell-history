@@ -26,7 +26,10 @@
 #include <unistd.h>    /* for usleep */
 
 #include <iostream>
+#include <list>
 #include <sstream>
+#include <string>
+#include <vector>
 
 // This hack silences a warning when compiling on a 64 bit platform with
 // -ansi and -pedantic flags enabled.
@@ -50,6 +53,19 @@ vector<string> DBObject::table_names;
  * A list of the queries that create registered tables for the DB.
  */
 list<string> DBObject::create_tables;
+
+
+/**
+ * Initialize a ResultSet.
+ */
+ResultSet::ResultSet(const HeadersType & h, const DataType & d)
+  : headers(h),
+    data(d),
+    rows(d.size()),
+    columns(h.size())
+{
+  // Nothing to do!
+}
 
 
 /**
@@ -127,6 +143,7 @@ int NOOPCallback(void * ignored, int rows, char ** cols, char ** col_names) {
  */
 void Database::init_db() {
   const string & create_tables = DBObject::get_create_tables();
+  // TODO(cpa): add error-checking here:
   sqlite3_exec(db, create_tables.c_str(), NOOPCallback, 0, 0);
 }
 
@@ -135,6 +152,7 @@ void Database::init_db() {
  * Callback used in Database::select_int.
  */
 int SelectInt(void * result, int rows, char ** cols, char ** column_names) {
+// TODO(cpa): templatize this method somehow?
   *((int*) result) = atoi(cols[0]);
   return 0;
 }
@@ -160,6 +178,7 @@ bool retry_execute(const string & query, sqlite3 * db, callback c,
     srand(time(0));
     ms += rand() % rand_ms;
   }
+  // TODO(cpa): use the sqlite3_sleep function and avoid importing usleep libraries.
   if (usleep(ms * 1000) != 0) {
     LOG(WARNING) << "Failed to sleep " << ms << " ms between failed queries.";
   }
@@ -202,6 +221,7 @@ bool executed(const string & query, sqlite3 * db, callback c, void * result) {
 
 /**
  * Executes a query expecting a single int return value.
+ * TODO(cpa): refactor code using this to use exec below.
  */
 int Database::select_int(const string & query) const {
   int result = -1;
@@ -215,11 +235,49 @@ int Database::select_int(const string & query) const {
 /**
  * Execute a query or abort the program with the DB error message.
  */
-void Database::exec(const string & query) const {
-  if (sqlite3_exec(db, query.c_str(), NOOPCallback, 0, 0)) {
-    LOG(FATAL) << sqlite3_errmsg(db) << '\n' << query;
+ResultSet * Database::exec(const string & query) const {
+  sqlite3_stmt * ps;
+  sqlite3_prepare_v2(db, query.c_str(), query.length(), &ps, 0);
+
+  ResultSet::HeadersType headers;
+  ResultSet::DataType results;
+  stringstream ss;
+  
+  unsigned int rows = 0, columns = sqlite3_column_count(ps);
+  for (rows = 0; true; ++rows) {
+    int result = sqlite3_step(ps);
+    switch (result) {
+      // TODO(cpa): add more cases to handle errors.
+      case SQLITE_ROW:
+        // build the list of header names, if this is the first row fetched.
+        if (headers.empty()) {
+          for (size_t c = 0; c < columns; ++c) {
+            ss.str("");
+            ss << sqlite3_column_name(ps, c);
+            headers.push_back(ss.str());
+          }
+        }
+        // Add the row data.
+        results.push_back(ResultSet::RowType());
+        for (size_t c = 0; c < columns; ++c) {
+          ss.str("");
+          ss << sqlite3_column_text(ps, c);
+          results.back().push_back(ss.str());
+        }
+      	continue;  // for loop
+      case SQLITE_DONE:
+        goto finalize;
+      default:
+        LOG(ERROR) << "unknown sqlite3_step code: " << result << endl;
+    }
   }
+
+finalize:
+  sqlite3_finalize(ps);
+
+  return rows ? new ResultSet(headers, results) : 0;
 }
+
 
 
 /*********
