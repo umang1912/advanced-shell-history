@@ -349,5 +349,9 @@ void BoolFlag::set(const char * optarg) {
  * Inserts this BoolFlag into the argument ostream.
  */
 ostream & BoolFlag::insert(ostream & out) const {
-  return Flag::insert(out);
+  Flag::insert(out);
+  if (has_arg) {
+    out << "  Default: " << (*value ? "true" : "false");
+  }
+  return out;
 }

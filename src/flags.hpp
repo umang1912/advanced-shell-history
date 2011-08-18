@@ -16,8 +16,8 @@
 
 /*
    This class provides flags for programs, much in the same way that Google
-   gflags does, although with fewer bells and whistles and no major
-   dependencies.
+   gflags does, although with fewer bells and whistles and no major system
+   dependencies (only getopt).
 */
 
 #ifndef __ASH_FLAGS__
@@ -69,19 +69,23 @@ using std::string;
 
 #define DEFINE_int(long_name, short_name, default_val, desc) \
 static int FLAGS_ ## long_name; \
-static IntFlag FLAGS_OPT_ ## long_name(#long_name, short_name, &FLAGS_ ## long_name, default_val, desc)
+static IntFlag FLAGS_OPT_ ## long_name(#long_name, short_name, \
+  &FLAGS_ ## long_name, default_val, desc)
 
 #define DEFINE_string(long_name, short_name, default_val, desc) \
 static string FLAGS_ ## long_name; \
-static StringFlag FLAGS_OPT_ ## long_name(#long_name, short_name, &FLAGS_ ## long_name, default_val, desc)
+static StringFlag FLAGS_OPT_ ## long_name(#long_name, short_name, \
+  &FLAGS_ ## long_name, default_val, desc)
 
 #define DEFINE_bool(long_name, short_name, default_val, desc) \
 static bool FLAGS_ ## long_name; \
-static BoolFlag FLAGS_OPT_ ## long_name(#long_name, short_name, &FLAGS_ ## long_name, default_val, desc, true)
+static BoolFlag FLAGS_OPT_ ## long_name(#long_name, short_name, \
+  &FLAGS_ ## long_name, default_val, desc, true)
 
 #define DEFINE_flag(long_name, short_name, desc) \
 static bool FLAGS_ ## long_name; \
-static BoolFlag FLAGS_OPT_ ## long_name(#long_name, short_name, &FLAGS_ ## long_name, false, desc, false)
+static BoolFlag FLAGS_OPT_ ## long_name(#long_name, short_name, \
+  &FLAGS_ ## long_name, false, desc, false)
 
 
 /**
@@ -104,7 +108,8 @@ class Flag {
 
   // NON-STATIC
   public:
-    Flag(const char * long_name, const char short_name, const char * desc, const bool has_arg=false);
+    Flag(const char * long_name, const char short_name, const char * desc,
+         const bool has_arg=false);
     virtual ~Flag();
 
     virtual ostream & insert(ostream & out) const;
@@ -115,6 +120,7 @@ class Flag {
     const char * long_name;
     const char short_name;
     const char * description;
+  protected:
     const bool has_arg;
 
   // DISABLED
@@ -135,7 +141,8 @@ ostream & operator << (ostream & out, const Flag & flag);
  */
 class IntFlag : public Flag {
   public:
-    IntFlag(const char * ln, const char sn, int * val, const int dv, const char * ds);
+    IntFlag(const char * ln, const char sn, int * val, const int dv,
+            const char * ds);
     virtual ~IntFlag() {}
     virtual void set(const char * optarg);
     virtual ostream & insert(ostream & out) const;
@@ -150,7 +157,8 @@ class IntFlag : public Flag {
  */
 class StringFlag : public Flag {
   public:
-    StringFlag(const char * ln, const char sn, string * val, const char * dv, const char * ds);
+    StringFlag(const char * ln, const char sn, string * val, const char * dv,
+               const char * ds);
     virtual ~StringFlag() {}
     virtual void set(const char * optarg);
     virtual ostream & insert(ostream & out) const;
@@ -165,7 +173,8 @@ class StringFlag : public Flag {
  */
 class BoolFlag : public Flag {
   public:
-    BoolFlag(const char * ln, const char an, bool * val, const bool dv, const char * ds, const bool has_arg);
+    BoolFlag(const char * ln, const char an, bool * val, const bool dv,
+             const char * ds, const bool has_arg);
     virtual ~BoolFlag() {}
     virtual void set(const char * optarg);
     virtual ostream & insert(ostream & out) const;

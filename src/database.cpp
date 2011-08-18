@@ -16,9 +16,6 @@
 
 #include "database.hpp"
 
-#include "config.hpp"
-#include "logger.hpp"
-
 #include <sys/stat.h>  /* for stat */
 #include <stdio.h>     /* for fopen */
 #include <stdlib.h>    /* for rand, srand */
@@ -30,6 +27,9 @@
 #include <sstream>
 #include <string>
 #include <vector>
+
+#include "config.hpp"
+#include "logger.hpp"
 
 // This hack silences a warning when compiling on a 64 bit platform with
 // -ansi and -pedantic flags enabled.
@@ -238,11 +238,11 @@ int Database::select_int(const string & query) const {
 ResultSet * Database::exec(const string & query) const {
   sqlite3_stmt * ps;
   sqlite3_prepare_v2(db, query.c_str(), query.length(), &ps, 0);
-
+// TODO(cpa): can i detect an error in the query here?
   ResultSet::HeadersType headers;
   ResultSet::DataType results;
   stringstream ss;
-  
+
   unsigned int rows = 0, columns = sqlite3_column_count(ps);
   for (rows = 0; true; ++rows) {
     int result = sqlite3_step(ps);
@@ -268,7 +268,9 @@ ResultSet * Database::exec(const string & query) const {
       case SQLITE_DONE:
         goto finalize;
       default:
-        LOG(ERROR) << "unknown sqlite3_step code: " << result << endl;
+        sqlite3_finalize(ps);
+        cerr << "unknown sqlite3_step code: " << result << endl;
+        LOG(FATAL) << "unknown sqlite3_step code: " << result << endl;
     }
   }
 
@@ -381,3 +383,4 @@ const string DBObject::get_sql() const {
 
   return ss.str();
 }
+

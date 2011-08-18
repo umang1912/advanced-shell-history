@@ -14,7 +14,7 @@
 #   limitations under the License.
 #
 
-VERSION := 0.1.r63
+VERSION := 0.1.r64
 LOGGER	:= ash_log
 QUERIER	:= ash_query
 EXES	:= ${LOGGER} ${QUERIER}
@@ -98,7 +98,7 @@ command.o: ash_log.hpp command.hpp unix.hpp util.hpp
 config.o: config.hpp
 database.o: database.hpp config.hpp logger.hpp sqlite3.h
 flags.o: flags.hpp
-formatter.o: formatter.hpp
+formatter.o: formatter.hpp database.hpp logger.hpp
 logger.o: logger.hpp config.hpp
 queries.o: queries.hpp
 session.o: session.hpp ash_log.hpp unix.hpp

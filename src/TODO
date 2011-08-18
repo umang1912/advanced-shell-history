@@ -5,7 +5,6 @@ TODO
   [ ] add a way to determine the actual binary / alias / function that was invoked for each command
   [ ] add more logging throughout the code.
   [ ] design a shell history function that attempts to intercept builtin history calls and redirect to builtin history wherever necessary ???
-  [ ] handle the case where a user presses presses enter without entering a command.
   [ ] add the 'type' output catching to the command logging and the DB schema.
   [ ] get rid of the need for ASH_SKIP, somehow - maybe use a command-scoped variable or only skip if a later-defined required variable is still unset...
   [ ] add a CFG level to CFG env vars, so all would start with ASH_CFG_ prefix.
@@ -23,8 +22,14 @@ database.cpp
   [ ] 
 
 ash_query.cpp
-  [ ] implement a DEFAULT_QUERY setting.
   [ ] should there be different grouping options?
   [ ] Suppose I want to see the most commonly-executed commands: in the cwd, on the system, for a session, with exit code <> 0, etc...
   [ ] If ASH_HISTORY_DB is undefined, assume they don't know what the command is - have a more inviting message.  If you are setting this up for the first time, please see http://sites.google.com/projects/advanced_shell_history/...
+  [ ] 
+
+
+BUGS
+  [ ] pressing Enter at the command line causes a duplicate row to be recorded in the DB
+  [ ] Unknown flag names are causing segmentation faults
+  [ ] ash_query and ash_log with no arguments shows the help output, but the program name in the usage line is just a single dot.
   [ ] 

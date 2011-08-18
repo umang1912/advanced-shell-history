@@ -25,6 +25,8 @@
 #include "queries.hpp"
 #include "session.hpp"
 
+#include <algorithm>
+#include <iomanip>
 #include <iostream>
 
 using namespace ash;
@@ -32,20 +34,51 @@ using namespace std;
 
 
 // TODO(cpa): add a flag to include the query with the result set
-// TODO(cpa): add a flag for suppressing column headings
-// TODO(cpa): add some formatting options (csv, tab delim, grouped, etc).
+// TODO(cpa): add some formatting options (\0 delim, tab delim, etc).
 
-//DEFINE_int(limit, 'l', 0, "Limit the number of rows returned.");
 DEFINE_string(database, 'd', 0, "A history database to query.");
+DEFINE_string(format, 'f', 0, "A format to display results.");
 DEFINE_string(query, 'q', 0, "The name of the saved query to execute.");
 
-DEFINE_flag(list, 'L', "Display all saved queries.");
+DEFINE_flag(list_formats, 'F', "Display all available formats.");
+DEFINE_flag(hide_headings, 'H', "Hide column headings from query results.");
+DEFINE_flag(list_queries, 'Q', "Display all saved queries.");
 DEFINE_flag(version, 0, "Show the version and exit.");
 
 
-// TODO(cpa): also list the saved queries in the --help output...
+typedef map<string, string> RowsType;
 
 
+/**
+ * Prints a mapping of string to string using a fixed width between columns.
+ */
+void display(ostream & out, const RowsType & rows, const string & name) {
+  RowsType::const_iterator i, e;
+  const size_t XX = 4;  // The number of spaces between columns.
+  size_t widths[2] = {name.size() + XX, string("Description").size() + XX};
+
+  // Calculate the required widths for each column.
+  for (i = rows.begin(), e = rows.end(); i != e; ++i) {
+    widths[0] = max(widths[0], XX + (i -> first).size());
+    widths[1] = max(widths[1], XX + (i -> second).size());
+  }
+
+  // Output the headings and the rows.
+  cout << left 
+       << setw(widths[0]) << name
+       << setw(widths[1]) << "Description" << endl;
+  for (i = rows.begin(), e = rows.end(); i != e; ++i) {
+    cout << left
+         << setw(widths[0]) << i -> first
+         << setw(widths[1]) << i -> second << endl;
+  }
+}
+
+
+/**
+ * Executes a query, printing the results to stdout according to the user-chosen
+ * output format.
+ */
 int execute(const string & query_name) {
   Config & config = Config::instance();
 
@@ -68,21 +101,34 @@ int execute(const string & query_name) {
   // Get the query SQL using the name, making sure it is found.
   string sql = Queries::get_sql(query_name);
   if (sql == "") {
-    cerr << "Unknown query name: '" << query_name << "'" << endl;
+    cerr << "\nUnknown query name: '" << query_name << "'" << endl;
+    display(cerr << '\n', Queries::get_desc(), "Query");
     return 1;
   }
 
-  ResultSet * rs = db.exec(sql);
-  if (rs) {
-    cout << "TODO(cpa): display the results using a formatter" << endl;
-    // TODO(cpa): create a formatter object to format this stuff.
-    // TODO(cpa): insert the results into stdout.
-    delete rs;
+  // Get the intended Formatter before executing the query.
+  string format = FLAGS_format == ""
+    ? config.get_string("DEFAULT_FORMAT")
+    : FLAGS_format;
+  Formatter * formatter = Formatter::lookup(format);
+  if (!formatter) {
+    cerr << "\nUnknown format: '" << format << "'" << endl;
+    display(cerr << '\n', Formatter::get_desc(), "Format");
+    return 1;
   }
+
+  // Execute the query and display any results.
+  ResultSet * rs = db.exec(sql);
+  formatter -> show_headings(!FLAGS_hide_headings);
+  formatter -> insert(rs, cout);
+  if (rs) delete rs;
   return 0;
 }
 
 
+/**
+ * Query the history database.
+ */
 int main(int argc, char ** argv) {
   // Load the config from the environment.
   Config & config = Config::instance();
@@ -114,18 +160,23 @@ int main(int argc, char ** argv) {
   }
 
   // Display available query names, if requested.
-  if (FLAGS_list) {
-    // TODO(cpa): include a heading: QUERY   DESCRIPTION, etc.
-    // TODO(cpa): indent and align the output using spaces (maybe printf).
-    map<string, string> queries = Queries::get_desc();
-    map<string, string>::iterator i, e;
-
-    for (i = queries.begin(), e = queries.end(); i != e; ++i) {
-      cout << i -> first << "\t\t" << i -> second << endl;
-    }
+  if (FLAGS_list_queries) {
+    display(cout, Queries::get_desc(), "Query");
     return 0;
   }
 
-  // Execute the requested command.
+  // Initialize the available formatters.
+  CsvFormatter::init();
+  GroupedFormatter::init();
+  SpacedFormatter::init();
+  
+  // Diaplay the available format names.
+  if (FLAGS_list_formats) {
+    display(cout, Formatter::get_desc(), "Format");
+    return 0;
+  }
+  
+  // Execute the requested query.
   return execute(FLAGS_query);
 }
+

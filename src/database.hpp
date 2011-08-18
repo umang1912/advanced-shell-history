@@ -53,7 +53,7 @@ class ResultSet {
   public:
     const HeadersType headers;
     const DataType data;
-    const int rows, columns;
+    const size_t rows, columns;
 
   // DISALLOWED:
   private:
@@ -120,3 +120,4 @@ class DBObject {
 }  // namespace ash
 
 #endif  /* __ASH_DATABASE__ */
+
