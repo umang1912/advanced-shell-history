@@ -16,8 +16,8 @@
 #
 
 # Make sure we are running the shell we think we are running.
-if ! grep -qz '^-\?zsh$' /proc/${$}/cmdline; then
-  echo "/proc/$$/cmdline implies you're not running zsh..."
+if ! ps ho cmd $$ | grep -q "zsh$"; then
+  echo "The shell process name implies you're not running zsh..."
   return
 fi
 

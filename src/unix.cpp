@@ -25,8 +25,10 @@
 #include <arpa/inet.h>  /* for inet_ntop */
 #include <ifaddrs.h>    /* for getifaddrs, freeifaddrs */
 #include <stdlib.h>     /* for getenv */
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <time.h>       /* for time */
-#include <unistd.h>     /* for getppid */
+#include <unistd.h>     /* for getppid, get_current_dir_name */
 
 
 using namespace ash;
@@ -53,19 +55,17 @@ const string proc_stat(int target) {
  * Returns the current working directory.
  */
 const string unix::cwd() {
-  static string filename = "/proc/" + unix::pid() + "/cwd";
-  stringstream ss;
-  char buffer[1024];
-  int bytes_read = readlink(filename.c_str(), buffer, sizeof(buffer));
-  switch (bytes_read) {
-    case -1:
-      return DBObject::quote(0);
-    case 0:
-      return DBObject::quote(ss.str());
-    default:
-      ss << string(buffer, bytes_read);
-  }
-  return DBObject::quote(ss.str());
+  char * c = get_current_dir_name();
+  if (!c) return DBObject::quote(0);
+  string cwd(c);
+  free(c);
+  return DBObject::quote(cwd);
+}
+
+
+bool exists(const char * dir) {
+  struct stat st;
+  return stat(dir, &st);
 }
 
 
@@ -73,7 +73,20 @@ const string unix::cwd() {
  * Returns the parent process ID.
  */
 const string unix::ppid() {
-  return proc_stat(3);
+  if (exists("/proc"))
+    return proc_stat(3);
+
+  stringstream ss;
+  ss << "/bin/ps ho ppid " << getppid();
+
+  char pp[100];
+  FILE * p = popen(ss.str().c_str(), "r");
+  if (p && fgets(pp, 100, p) != 0) {
+    ss.str("");
+    ss << atoi(pp);
+    return ss.str();
+  }
+  return "null";
 }
 
 
@@ -81,11 +94,26 @@ const string unix::ppid() {
  * Returns the name of the running shell.
  */
 const string unix::shell() {
-  string token = proc_stat(1);
-  if (!token.empty() && token[0] == '(' && token[token.length() - 1] == ')') {
-    token = token.substr(1, token.length() - 2);
+  if (exists("/proc")) {
+    string sh = proc_stat(1);
+    // If the shell name is wrapped in parentheses, strip them.
+    if (!sh.empty() && sh[0] == '(' && sh[sh.length() - 1] == ')') {
+      sh = sh.substr(1, sh.length() - 2);
+    }
+    return DBObject::quote(sh);
+  } else {
+    // This is common on OSX - no procfs.
+    stringstream ss;
+    ss << "/bin/ps ho cmd " << getppid();
+
+    char sh[100];
+    FILE * p = popen(ss.str().c_str(), "r");
+    if (p && fgets(sh, 100, p) != 0) {
+      // TODO(cpa): parse out the shell name from the command (space delimited?)
+      return DBObject::quote(string(sh));
+    }
   }
-  return DBObject::quote(token);
+  return "null";
 }
 
 

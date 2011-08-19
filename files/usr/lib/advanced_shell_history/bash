@@ -16,8 +16,8 @@
 #
 
 # Make sure we are running the shell we think we are running.
-if ! grep -qz '^-\?bash$' /proc/${$}/cmdline; then
-  echo "/proc/$$/cmdline implies you're not running bash..."
+if ! ps ho cmd $$ | grep -q "bash$"; then
+  echo "The shell process name implies you're not running bash..."
   return
 fi
 
