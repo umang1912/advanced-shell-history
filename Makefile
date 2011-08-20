@@ -37,13 +37,8 @@ build:
 	cp -af src/ash_log src/ash_query files/usr/local/bin
 
 install: uninstall build
-	cd files && sudo find -type f \
-	  | grep -v '\.svn' \
-	  | xargs -I{} dirname {} \
-	  | xargs -I{} mkdir -p /{}
-	cd files && sudo find -type f \
-	  | grep -v '\.svn' \
-	  | xargs -I{} cp -fa {} /{}
+	cd files && \
+	sudo tar -cpO $$( find -type f | grep -v '\.svn' ) | tar -xpC /
 
 uninstall:
 	sudo rm -rf /etc/ash /usr/lib/advanced_shell_history
