@@ -47,7 +47,7 @@ class Formatter {
     virtual ~Formatter();
 
     virtual void insert(const ResultSet * rs, ostream & out) const = 0;
-    
+
     void show_headings(bool show);
 
   protected:
@@ -91,9 +91,23 @@ class Formatter {
 FORMATTER(Spaced);
 
 
+/**
+ * Singleton class that converts a result set into output, delimiting all
+ * columns with commas.
+ */
 FORMATTER(Csv);
 
 
+/**
+ * Singleton class that converts a result set into output, delimiting all
+ * columns with commas.
+ */
+FORMATTER(Null);
+
+
+/**
+ * TODO(cpa): describe this class.
+ */
 FORMATTER(Grouped);
 
 

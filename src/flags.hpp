@@ -30,6 +30,8 @@
 #include <map>
 #include <string>
 
+namespace flag {
+
 using std::ostream;
 using std::list;
 using std::map;
@@ -69,22 +71,22 @@ using std::string;
 
 #define DEFINE_int(long_name, short_name, default_val, desc) \
 static int FLAGS_ ## long_name; \
-static IntFlag FLAGS_OPT_ ## long_name(#long_name, short_name, \
+static flag::IntFlag FLAGS_OPT_ ## long_name(#long_name, short_name, \
   &FLAGS_ ## long_name, default_val, desc)
 
 #define DEFINE_string(long_name, short_name, default_val, desc) \
 static string FLAGS_ ## long_name; \
-static StringFlag FLAGS_OPT_ ## long_name(#long_name, short_name, \
+static flag::StringFlag FLAGS_OPT_ ## long_name(#long_name, short_name, \
   &FLAGS_ ## long_name, default_val, desc)
 
 #define DEFINE_bool(long_name, short_name, default_val, desc) \
 static bool FLAGS_ ## long_name; \
-static BoolFlag FLAGS_OPT_ ## long_name(#long_name, short_name, \
+static flag::BoolFlag FLAGS_OPT_ ## long_name(#long_name, short_name, \
   &FLAGS_ ## long_name, default_val, desc, true)
 
 #define DEFINE_flag(long_name, short_name, desc) \
 static bool FLAGS_ ## long_name; \
-static BoolFlag FLAGS_OPT_ ## long_name(#long_name, short_name, \
+static flag::BoolFlag FLAGS_OPT_ ## long_name(#long_name, short_name, \
   &FLAGS_ ## long_name, false, desc, false)
 
 
@@ -183,5 +185,6 @@ class BoolFlag : public Flag {
     bool * value;
 };
 
+}  // namespace flag
 
 #endif  /* __ASH_FLAGS__ */

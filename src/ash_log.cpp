@@ -44,11 +44,16 @@ DEFINE_flag(end_session, 'E', "Ends the current session.");
 
 
 using namespace ash;
+using namespace flag;
 using namespace std;
 
 
+/**
+ * Displays a brief message about how this is supposed to be used.
+ */
 void usage(ostream & out) {
-  out << "\n\nThis program is not intended to be executed manually.  See the man page for more details.\n";
+  out << "\n\nThis program is not intended to be executed manually.  "
+      << "See the man page for more details.\n";
   Flag::show_help(out);
   exit(1);
 }
@@ -67,6 +72,7 @@ int main(int argc, char ** argv) {
 
   // Show usage if executed with no args.
   if (argc == 1 && !config.sets("HIDE_USAGE_FOR_NO_ARGS")) {
+    Flag::parse(&argc, &argv, true);  // Sets the prog name in help output.
     usage(cerr);
   }
 

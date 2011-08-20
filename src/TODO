@@ -8,7 +8,6 @@ TODO
   [ ] add the 'type' output catching to the command logging and the DB schema.
   [ ] get rid of the need for ASH_SKIP, somehow - maybe use a command-scoped variable or only skip if a later-defined required variable is still unset...
   [ ] add a CFG level to CFG env vars, so all would start with ASH_CFG_ prefix.
-  [ ] look for shell variables within the SQL.  maybe something like 'select * from commands where cwd = "${CWD}"'
   [ ] 
 
 logger.cpp
@@ -22,14 +21,12 @@ database.cpp
   [ ] 
 
 ash_query.cpp
-  [ ] should there be different grouping options?
-  [ ] Suppose I want to see the most commonly-executed commands: in the cwd, on the system, for a session, with exit code <> 0, etc...
+  [ ] design a mechanism for adding more interactivity to the queries.  How can I get *directory* history or even *cwd* history?
+  [ ] look for shell variables within the SQL.  maybe something like 'select * from commands where cwd = "${CWD}"'
   [ ] If ASH_HISTORY_DB is undefined, assume they don't know what the command is - have a more inviting message.  If you are setting this up for the first time, please see http://sites.google.com/projects/advanced_shell_history/...
   [ ] 
 
 
 BUGS
   [ ] pressing Enter at the command line causes a duplicate row to be recorded in the DB
-  [ ] Unknown flag names are causing segmentation faults
-  [ ] ash_query and ash_log with no arguments shows the help output, but the program name in the usage line is just a single dot.
   [ ] 

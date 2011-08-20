@@ -30,6 +30,7 @@
 #include <iostream>
 
 using namespace ash;
+using namespace flag;
 using namespace std;
 
 
@@ -64,7 +65,7 @@ void display(ostream & out, const RowsType & rows, const string & name) {
   }
 
   // Output the headings and the rows.
-  cout << left 
+  cout << left
        << setw(widths[0]) << name
        << setw(widths[1]) << "Description" << endl;
   for (i = rows.begin(), e = rows.end(); i != e; ++i) {
@@ -138,6 +139,7 @@ int main(int argc, char ** argv) {
       return execute(config.get_string("DEFAULT_QUERY"));
     }
     if (!config.sets("HIDE_USEAGE_FOR_NO_ARGS")) {
+      Flag::parse(&argc, &argv, true);  // Sets the prog name in help output.
       Flag::show_help(cerr);
     }
     return 1;
@@ -168,14 +170,15 @@ int main(int argc, char ** argv) {
   // Initialize the available formatters.
   CsvFormatter::init();
   GroupedFormatter::init();
+  NullFormatter::init();
   SpacedFormatter::init();
-  
+
   // Diaplay the available format names.
   if (FLAGS_list_formats) {
     display(cout, Formatter::get_desc(), "Format");
     return 0;
   }
-  
+
   // Execute the requested query.
   return execute(FLAGS_query);
 }

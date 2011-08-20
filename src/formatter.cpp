@@ -20,7 +20,6 @@
 #include <iomanip>
 #include <vector>
 
-//#include "config.hpp"
 #include "database.hpp"
 #include "logger.hpp"
 
@@ -50,7 +49,7 @@ Formatter * Formatter::lookup(const string & name) {
 map<string, string> Formatter::get_desc() {
   map<string, string> rval;
   map<string, Formatter *>::iterator i, e;
-  
+
   for (i = instances.begin(), e = instances.end(); i != e; ++i) {
     if (i -> second)
       rval[i -> first] = i -> second -> description;
@@ -97,6 +96,10 @@ void SpacedFormatter::init() {
 }
 
 
+/**
+ * Calculates the ideal width for each column and inserts column data
+ * left-aligned and separated by spaces.
+ */
 void SpacedFormatter::insert(const ResultSet * rs, ostream & out) const {
   if (!rs) return;  // Sanity check.
 
@@ -112,10 +115,14 @@ void SpacedFormatter::insert(const ResultSet * rs, ostream & out) const {
     else
       widths.push_back(XX);
 
+  // Limit the width of columns containing very wide elements.
+  // TODO(cpa): make this smarter by looking at statistics of the widths and cut out some percentage of outliers.
+  size_t max_w = 80;
+
   // Loop ofer the rs.data looking for max column widths.
   for (size_t r = 0; r < rs -> rows; ++r) {
     for (size_t c = 0; c < rs -> columns; ++c) {
-      widths[c] = max(widths[c], XX + (rs -> data[r][c]).size());
+      widths[c] = max(widths[c], min(max_w, XX + (rs -> data[r][c]).size()));
     }
   }
 
@@ -126,11 +133,39 @@ void SpacedFormatter::insert(const ResultSet * rs, ostream & out) const {
       out << left << setw(widths[c++]) << *i;
     out << endl;
   }
-  
+
   // Iterate over the data once more, printing.
   for (size_t r = 0; r < rs -> rows; ++r) {
     for (size_t c = 0; c < rs -> columns; ++c) {
       out << left << setw(widths[c]) << (rs -> data)[r][c];
+    }
+    out << endl;
+  }
+}
+
+
+/**
+ * Inserts a ResultSet with all values delimited by a common delimiter.
+ */
+void insert_delimited(const ResultSet * rs, ostream & out, const string & d,
+                      const bool do_show_headings)
+{
+  if (!rs) return;
+
+  const ResultSet::HeadersType & headers = rs -> headers;
+  ResultSet::HeadersType::const_iterator i, e;
+
+  if (do_show_headings) {
+    size_t c = 0;
+    for (i = headers.begin(), e = headers.end(); i != e; ++i, ++c)
+      out << *i << (c + 1 < rs -> columns ? d : "");
+    out << endl;
+  }
+
+  // Loop ofer the rs.data inserting delimited text.
+  for (size_t r = 0; r < rs -> rows; ++r) {
+    for (size_t c = 0; c < rs -> columns; ++c) {
+      out << rs -> data[r][c] << (c + 1 < rs -> columns ? d : "");
     }
     out << endl;
   }
@@ -147,11 +182,27 @@ void CsvFormatter::init() {
 
 
 /**
- * 
+ *
  */
 void CsvFormatter::insert(const ResultSet * rs, ostream & out) const {
-  if (!rs) return;
-  
+  insert_delimited(rs, out, ",", do_show_headings);
+}
+
+
+/**
+ * Makes this Formatter avaiable for use within the program.
+ */
+void NullFormatter::init() {
+  static NullFormatter instance("null",
+    "Columns are null separated with strings quoted.");
+}
+
+
+/**
+ *
+ */
+void NullFormatter::insert(const ResultSet * rs, ostream & out) const {
+  insert_delimited(rs, out, string("\0", 1), do_show_headings);
 }
 
 
@@ -165,10 +216,10 @@ void GroupedFormatter::init() {
 
 
 /**
- * 
+ *
  */
 void GroupedFormatter::insert(const ResultSet * rs, ostream & out) const {
   if (!rs) return;
-  
+
 }
 

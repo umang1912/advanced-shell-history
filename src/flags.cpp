@@ -21,6 +21,8 @@
 #include <stdlib.h>  /* for atoi */
 #include <string.h>  /* for strdup */
 
+namespace flag {
+
 using namespace std;
 
 
@@ -76,12 +78,16 @@ int Flag::parse(int * p_argc, char *** p_argv, const bool remove_flags) {
   prog_name = argv[0];
 
   // Put the options into an array, as getopt expects them.
-  struct option * options = new struct option[Flag::options.size()];
+  struct option * options = new struct option[Flag::options.size() + 1];
   int x = 0;
   typedef list<struct option>::iterator iter;
   for (iter i = Flag::options.begin(), e = Flag::options.end(); i != e; ++i) {
     options[x++] = *i;
   }
+  // This sentinel is needed to prevent the getopt library from segfaulting
+  // when an unknown long option is seen first on the list of flags.
+  struct option sentinel = {0, 0, 0, 0};
+  options[x] = sentinel;
 
   // Parse the arguments.
   for (int c = 0, index = 0; c != -1; index = 0) {
@@ -95,6 +101,7 @@ int Flag::parse(int * p_argc, char *** p_argv, const bool remove_flags) {
         if (flag) flag -> set(optarg);
         if (flag == &FLAGS_OPT_help) {
           Flag::show_help(cout);
+          delete [] options;
           exit(0);
         }
         break;
@@ -102,6 +109,7 @@ int Flag::parse(int * p_argc, char *** p_argv, const bool remove_flags) {
 
       case '?': {  // unknown option.
         Flag::show_help(cerr);
+        delete [] options;
         exit(1);
       }
 
@@ -355,3 +363,6 @@ ostream & BoolFlag::insert(ostream & out) const {
   }
   return out;
 }
+
+
+}  // namespace flag
