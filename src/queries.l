@@ -95,7 +95,7 @@ void Queries::lazy_load() {
   query::files.push_back("/etc/ash/queries");
   query::files.push_back(string(getenv("HOME")) + "/.ash/queries");
 
-  // Initialize the input file.  
+  // Initialize the input file.
   yyin = 0;
   if (yywrap()) {
     cout << "FAILED TO FIND A FILE TO PARSE!" << endl;
@@ -161,7 +161,15 @@ void expected(const char * message) {
  *   DESC    := Found a 'definition' and COLON, looking for a quoted string.
  *   STR     := Found a double-quote, looking for a closing double quote.
  *   SQL     := Found a 'sql' keyword, looking for a COLON, LEFT_BRACE and a
-                query definition all at once.
+ *              query definition all at once.
+ *
+ * Example Input:
+ *   MY_QUERY: {
+ *     description: "This is what this query does."
+ *     sql: {
+ *       select * from foo;
+ *     }
+ *   }
  */
 %x Q1 Q2 QUERY D1 DESC STR SQL
 
@@ -280,4 +288,3 @@ int yywrap() {
   // TODO(cpa): LOG(DEBUG) << "Done parsing config files.";
   return 1;
 }
-

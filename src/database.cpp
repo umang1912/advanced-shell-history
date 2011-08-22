@@ -143,8 +143,10 @@ int NOOPCallback(void * ignored, int rows, char ** cols, char ** col_names) {
  */
 void Database::init_db() {
   const string & create_tables = DBObject::get_create_tables();
-  // TODO(cpa): add error-checking here:
-  sqlite3_exec(db, create_tables.c_str(), NOOPCallback, 0, 0);
+  // TODO(cpa): add actual database error message.
+  if (sqlite3_exec(db, create_tables.c_str(), NOOPCallback, 0, 0)) {
+    cerr << "Failed to create tables for ash database." << endl;
+  }
 }
 
 
@@ -269,8 +271,10 @@ ResultSet * Database::exec(const string & query) const {
         goto finalize;
       default:
         sqlite3_finalize(ps);
-        cerr << "unknown sqlite3_step code: " << result << endl;
-        LOG(FATAL) << "unknown sqlite3_step code: " << result << endl;
+        cerr << "unknown sqlite3_step code: " << result << " executing "
+             << query << endl;
+        LOG(FATAL) << "unknown sqlite3_step code: " << result << " executing "
+                   << query << endl;
     }
   }
 
@@ -330,8 +334,16 @@ const string DBObject::quote(const string & in) {
   char c;
   for (string::const_iterator i = in.begin(), e = in.end(); i != e; ++i) {
     c = *i;
-    if (isprint(c)) out.push_back(c);
-    if (c == '\'') out.push_back('\'');
+    switch (c) {
+      case '\n':  // fallthrough
+      case '\t':
+        out.push_back(c);
+        break;
+      case '\'':
+        out.push_back(c); // fallthrough
+      default:
+        if (isprint(c)) out.push_back(c);
+    }
   }
   out.push_back('\'');
   return out;

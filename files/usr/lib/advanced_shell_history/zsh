@@ -16,7 +16,7 @@
 #
 
 # Make sure we are running the shell we think we are running.
-if ! ps ho cmd $$ | grep -q "zsh$"; then
+if ! ps ho cmd $$ | grep -q "zsh"; then
   echo "The shell process name implies you're not running zsh..."
   return
 fi
@@ -25,7 +25,7 @@ source "/usr/lib/advanced_shell_history/common" &>/dev/null || exit 1
 
 
 #
-# Necessary zsh history settings that allow ash to work:
+# Necessary zsh history settings that allow history collection to work:
 #
 setopt extended_history  # Adds start timestamp to log file
 setopt inc_append_history  # Forces log file to be appended after each command.
@@ -64,11 +64,10 @@ source <( typeset -f precmd | sed -e 's/^precmd/ash::original_precmd/' )
 # has finished.
 #
 function precmd() {
-  ASH_PIPESTATUS=( ${?:-0} ${pipestatus[@]:-0} )
+  ASH_PIPESTATUS=( ${?} ${pipestatus[@]} )
   if [[ -z ${ASH_SESSION_ID:-} ]]; then
     export ASH_SESSION_ID="$( ash_log --get_session_id )"
     ash_log -a "Advanced Shell History is enabled (session: ${ASH_SESSION_ID})."
-    readonly ASH_SESSION_ID
   else
     ASH=1 ash::log ${ASH_PIPESTATUS[@]}
   fi

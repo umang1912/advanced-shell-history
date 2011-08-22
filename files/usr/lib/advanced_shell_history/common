@@ -22,12 +22,16 @@
 source <( grep "^[ ]*ASH_[A-Za-z_]*='.*'.*$" /etc/ash/ash.conf \
             | tr -cd '\11\12\15\40-\176' ) || exit 1
 
+export $( sed -n -e "/^[ ]*ASH_[A-Za-z_]*=.*/s:=.*::p" /etc/ash/ash.conf )
+readonly $( sed -n -e "/^[ ]*ASH_[A-Za-z_]*=.*/s:=.*::p" /etc/ash/ash.conf )
+
 
 # Put the history.db in HOME or use ${TMPDIR} if no HOME exists.
 if [[ -d "${HOME}" ]]; then
-  export ASH_HISTORY_DB="${HOME}/.history.db"
+  [[ -d "${HOME}"/.ash ]] || mkdir "${HOME}"/.ash/
+  export ASH_HISTORY_DB="${HOME}/.ash/history.db"
 else
-  export ASH_HISTORY_DB=${TMPDIR}/.history_${UID}.db
+  export ASH_HISTORY_DB=${TMPDIR}/history_${UID}.db
 fi
 readonly ASH_HISTORY_DB
 
@@ -97,14 +101,17 @@ function ash::log() {
   # Prevent users from manually invoking this function from the command line.
   [[ "${ASH:-0}" == "0" ]] && ash::info ash::log && return
 
-  if [[ "${ASH_SKIP}" == "1" ]]; then
+  # ASH_SKIP is set only when the user presses Ctrl-C while entering a command.
+  # Since this kills the command before it was executed, there's no history to
+  # log before the next prompt is drawn.
+  if [[ "${ASH_SKIP:-1}" == "1" ]]; then
     ASH_SKIP=0
     return
   fi
 
   local no start end cmd rval="${1}" && shift
   read -r no start end cmd <<< "$( ash::last_command )"
-  local pipes="${@// /_}"
+  local pipes="$( sed -e 's: :_:g' <<< "${@}" )"
 
   # Log the command.
   ash_log \

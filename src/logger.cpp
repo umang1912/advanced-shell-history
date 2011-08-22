@@ -22,7 +22,6 @@
 
 #include <string>
 
-
 using namespace ash;
 using namespace std;
 
@@ -67,7 +66,6 @@ string get_target(const Severity level) {
   // Default to /dev/null if the visibility is too low for this Logger.
   const Severity visible = parse(config.get_string("LOG_LEVEL", "DEBUG"));
   if (level < visible) return "/dev/null";
-
   // Use the configured target, if configured.
   return config.get_string("LOG_FILE", "/dev/null");
 }

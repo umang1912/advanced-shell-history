@@ -124,9 +124,6 @@ int main(int argc, char ** argv) {
     }
   }
 
-  // TODO(cpa): determine the command binary / alias / function.
-  // TODO(cpa): if none, and the user requested to not store non-commands, skip.
-
   // Insert a command into the DB if there's a command to insert.
   const bool command_flag_used = !FLAGS_command.empty()
     || FLAGS_command_exit

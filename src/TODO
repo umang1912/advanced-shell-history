@@ -5,15 +5,9 @@ TODO
   [ ] add a way to determine the actual binary / alias / function that was invoked for each command
   [ ] add more logging throughout the code.
   [ ] design a shell history function that attempts to intercept builtin history calls and redirect to builtin history wherever necessary ???
-  [ ] add the 'type' output catching to the command logging and the DB schema.
-  [ ] get rid of the need for ASH_SKIP, somehow - maybe use a command-scoped variable or only skip if a later-defined required variable is still unset...
-  [ ] add a CFG level to CFG env vars, so all would start with ASH_CFG_ prefix.
-  [ ] 
-
-logger.cpp
-  [ ] 
-
-config.cpp
+  [ ] add a CFG_ level to CFG env vars, so all would start with ASH_CFG_ prefix.
+  [ ] add an environment variable to disable logging completely.
+  [ ] make the environment variables loaded in the config readonly after loading them.
   [ ] 
 
 database.cpp
@@ -29,4 +23,5 @@ ash_query.cpp
 
 BUGS
   [ ] pressing Enter at the command line causes a duplicate row to be recorded in the DB
+  [ ] logging is not emitting to stderr, for some reason.  it appears broken.
   [ ] 

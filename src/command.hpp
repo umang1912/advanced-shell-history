@@ -34,7 +34,8 @@ class Command : public DBObject {
     static void register_table();
 
   public:
-    Command(const string command, const int rval, const int start, const int end, const int num, const string pipes);
+    Command(const string command, const int rval, const int start,
+            const int end, const int num, const string pipes);
     virtual ~Command();
 
     virtual const string get_name() const;

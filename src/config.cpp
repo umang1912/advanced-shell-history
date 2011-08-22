@@ -45,7 +45,7 @@ Config::Config()
 char * get_ash_env(const string & key) {
   if (key.find("ASH_", 0, 4) == 0)
     return getenv(key.c_str());
-  return getenv(("ASH_" + key).c_str());
+  return getenv((string("ASH_") + key).c_str());
 }
 
 
