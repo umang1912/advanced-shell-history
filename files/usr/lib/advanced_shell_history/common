@@ -19,26 +19,23 @@
 #
 
 # Source the config files to set all ASH_ shell variables.
-source <( grep "^[ ]*ASH_[A-Za-z_]*='.*'.*$" /etc/ash/ash.conf \
+source <( grep "^[ ]*ASH_[A-Za-z_]*=['\"].*['\"].*$" /etc/ash/ash.conf \
             | tr -cd '\11\12\15\40-\176' ) || exit 1
 
 export $( sed -n -e "/^[ ]*ASH_[A-Za-z_]*=.*/s:=.*::p" /etc/ash/ash.conf )
 readonly $( sed -n -e "/^[ ]*ASH_[A-Za-z_]*=.*/s:=.*::p" /etc/ash/ash.conf )
 
 
-# Put the history.db in HOME or use ${TMPDIR} if no HOME exists.
-if [[ -d "${HOME}" ]]; then
-  [[ -d "${HOME}"/.ash ]] || mkdir "${HOME}"/.ash/
-  export ASH_HISTORY_DB="${HOME}/.ash/history.db"
-else
-  export ASH_HISTORY_DB=${TMPDIR}/history_${UID}.db
+# Create the directory holding the history database.
+if [[ ! -e "${ASH_CFG_HISTORY_DB}" ]]; then
+  mkdir -p "$( dirname "${ASH_CFG_HISTORY_DB}" )" \
+    || ash_log -a "Failed to mkdir -p $( dirname "${ASH_CFG_HISTORY_DB}" )"
 fi
-readonly ASH_HISTORY_DB
 
 
 # Ensure there is a HISTFILE.
 if [[ -z "${HISTFILE}" ]]; then
-  export HISTFILE="${ASH_HISTORY_DB%.db}"
+  export HISTFILE="${ASH_CFG_HISTORY_DB%.db}"
   ash_log -a "WARN: HISTFILE undefined. Exporting HISTFILE as: '${HISTFILE}'."
 fi
 if [[ ! -e "${HISTFILE}" ]] && ! touch "${HISTFILE}" &>/dev/null; then

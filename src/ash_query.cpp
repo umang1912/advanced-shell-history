@@ -13,7 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-
+// TODO(cpa): comment this utility
 #include "ash_query.hpp"
 
 #include "command.hpp"
@@ -77,8 +77,8 @@ void display(ostream & out, const RowsType & rows, const string & name) {
 
 
 /**
- * Executes a query, printing the results to stdout according to the user-chosen
- * output format.
+ * Executes a query, printing the results to stdout according to the
+ * user-chosen output format.
  */
 int execute(const string & query_name) {
   Config & config = Config::instance();
@@ -87,8 +87,8 @@ int execute(const string & query_name) {
   string db_file(FLAGS_database);
   if (db_file == "") {
     if (config.get_string("HISTORY_DB") == "") {
-      cerr << "Expected either --database or ASH_HISTORY_DB to be defined."
-           << endl;
+      cerr << "Expected either --database or ASH_CFG_HISTORY_DB "
+           << "to be defined." << endl;
       return 1;
     }
     db_file = config.get_string("HISTORY_DB");
@@ -182,4 +182,3 @@ int main(int argc, char ** argv) {
   // Execute the requested query.
   return execute(FLAGS_query);
 }
-

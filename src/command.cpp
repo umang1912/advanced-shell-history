@@ -47,7 +47,8 @@ void Command::register_table() {
      << "  duration integer not null,\n"
      << "  pipe_cnt int(3),\n"
      << "  pipe_vals varchar(80),\n"
-     << "  command varchar(1000) not null\n"
+     << "  command varchar(1000) not null,\n"
+     << "UNIQUE(session_id, command_no)\n"
      << ");";
   DBObject::register_table(name, ss.str());
 }

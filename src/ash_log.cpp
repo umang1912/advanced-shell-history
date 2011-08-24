@@ -60,6 +60,8 @@ void usage(ostream & out) {
 
 
 int main(int argc, char ** argv) {
+  if (getenv("ASH_DISABLED")) return 0;
+
   // Load the config from the environment.
   Config & config = Config::instance();
 
@@ -93,7 +95,7 @@ int main(int argc, char ** argv) {
   // Get the filename backing the history database.
   string db_file = config.get_string("HISTORY_DB");
   if (db_file == "") {
-    usage(cerr << "\nExpected ASH_HISTORY_DB to be defined.");
+    usage(cerr << "\nExpected ASH_CFG_HISTORY_DB to be defined.");
   }
 
   // Register the tables expected in the program.

@@ -1,27 +1,21 @@
 TODO
-  [ ] add an option to remove loopback IPs from the session IP address: ASH_SKIP_LOOPBACKS='true'
-  [ ] add an option to remove ipv4 or ipv6 addresses: ASH_HOST_IP_TYPES='v4,v6'
-  [ ] add an option to ignore non-commands: ASH_IGNORE_NON_COMMANDS='true'  # this avoids keeping passwords and/or junk commands in your database.
+  [ ] add an option to remove loopback IPs from the session IP address: ASH_CFG_SKIP_LOOPBACKS='true'
+  [ ] add an option to remove ipv4 or ipv6 addresses: ASH_CFG_HOST_IP_TYPES='v4,v6'
+  [ ] add an option to ignore non-commands: ASH_CFG_IGNORE_NON_COMMANDS='true'  # this avoids keeping passwords and/or junk commands in your database.
   [ ] add a way to determine the actual binary / alias / function that was invoked for each command
   [ ] add more logging throughout the code.
   [ ] design a shell history function that attempts to intercept builtin history calls and redirect to builtin history wherever necessary ???
-  [ ] add a CFG_ level to CFG env vars, so all would start with ASH_CFG_ prefix.
-  [ ] add an environment variable to disable logging completely.
-  [ ] make the environment variables loaded in the config readonly after loading them.
   [ ] 
 
 database.cpp
-  [ ] use sqlite3_sleep to sleep for milliseconds instead of the way i'm doing it now... USE THAT API!!!
   [ ] 
 
 ash_query.cpp
   [ ] design a mechanism for adding more interactivity to the queries.  How can I get *directory* history or even *cwd* history?
   [ ] look for shell variables within the SQL.  maybe something like 'select * from commands where cwd = "${CWD}"'
-  [ ] If ASH_HISTORY_DB is undefined, assume they don't know what the command is - have a more inviting message.  If you are setting this up for the first time, please see http://sites.google.com/projects/advanced_shell_history/...
+  [ ] If ASH_CFG_HISTORY_DB is undefined, assume they don't know what the command / utility is - have a more inviting message.  If you are setting this up for the first time, please see http://sites.google.com/projects/advanced_shell_history/...
   [ ] 
 
 
 BUGS
-  [ ] pressing Enter at the command line causes a duplicate row to be recorded in the DB
-  [ ] logging is not emitting to stderr, for some reason.  it appears broken.
   [ ] 

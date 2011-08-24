@@ -20,7 +20,6 @@
 #include <stdio.h>     /* for fopen */
 #include <stdlib.h>    /* for rand, srand */
 #include <time.h>      /* for time */
-#include <unistd.h>    /* for usleep */
 
 #include <iostream>
 #include <list>
@@ -94,7 +93,9 @@ Database::Database(const string & filename)
   size_t registered = DBObject::table_names.size();
 
   stringstream ss;
-  ss << "select count(*) from sqlite_master where tbl_name in (";
+  ss << "select count(*) "
+     << "from sqlite_master "
+     << "where type = 'table' and tbl_name in (";
 
   // List the table names registered by the code.
   if (registered > 0) ss << DBObject::quote(DBObject::table_names[0]);
@@ -180,8 +181,7 @@ bool retry_execute(const string & query, sqlite3 * db, callback c,
     srand(time(0));
     ms += rand() % rand_ms;
   }
-  // TODO(cpa): use the sqlite3_sleep function and avoid importing usleep libraries.
-  if (usleep(ms * 1000) != 0) {
+  if (ms > sqlite3_sleep(ms)) {
     LOG(WARNING) << "Failed to sleep " << ms << " ms between failed queries.";
   }
 
@@ -267,6 +267,9 @@ ResultSet * Database::exec(const string & query) const {
           results.back().push_back(ss.str());
         }
       	continue;  // for loop
+      case SQLITE_CONSTRAINT:
+        LOG(DEBUG) << "constraint violation executing: " << query;
+        goto finalize;
       case SQLITE_DONE:
         goto finalize;
       default:

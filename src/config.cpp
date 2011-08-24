@@ -40,12 +40,12 @@ Config::Config()
 
 
 /**
- * Returns a char * value for an environment variable prefixed with ASH_.
+ * Returns a char * value for an environment variable prefixed with ASH_CFG_.
  */
 char * get_ash_env(const string & key) {
-  if (key.find("ASH_", 0, 4) == 0)
+  if (key.find("ASH_CFG_", 0, 8) == 0)
     return getenv(key.c_str());
-  return getenv((string("ASH_") + key).c_str());
+  return getenv((string("ASH_CFG_") + key).c_str());
 }
 
 
@@ -101,12 +101,12 @@ string Config::get_string(const string & key, const string & dv) const {
 Config & Config::instance() {
   static Config _instance;
   if (!_instance.is_loaded) {
-    // Find all environment variables matching a common prefix ASH_
+    // Find all environment variables matching a common prefix ASH_CFG_
     for (int i = 0; environ[i] != NULL; ++i) {
       string line = environ[i];
-      if (line.substr(0, 4) == "ASH_") {
+      if (line.substr(0, 8) == "ASH_CFG_") {
         int first_equals = line.find_first_of('=');
-        string key = line.substr(4, first_equals - 4);
+        string key = line.substr(8, first_equals - 8);
         string value = line.substr(first_equals + 1);
         _instance.values[key] = value;
       }
