@@ -75,7 +75,7 @@ string get_target(const Severity level) {
  * Constructs a logger and adds the severity to the output.
  */
 Logger::Logger(const Severity lvl)
-  : log(get_target(lvl).c_str()), level(lvl)
+  : log(get_target(lvl).c_str(), fstream::out | fstream::app), level(lvl)
 {
   log << to_str(level) << ": ";
 }
