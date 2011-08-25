@@ -2,7 +2,7 @@ TODO
   [ ] add an option to remove loopback IPs from the session IP address: ASH_CFG_SKIP_LOOPBACKS='true'
   [ ] add an option to remove ipv4 or ipv6 addresses: ASH_CFG_HOST_IP_TYPES='v4,v6'
   [ ] add an option to ignore non-commands: ASH_CFG_IGNORE_NON_COMMANDS='true'  # this avoids keeping passwords and/or junk commands in your database.
-  [ ] add a way to determine the actual binary / alias / function that was invoked for each command
+  [ ] find a safe way to get the 'builtin type' details for a command (without re-executing it)
   [ ] add more logging throughout the code.
   [ ] design a shell history function that attempts to intercept builtin history calls and redirect to builtin history wherever necessary ???
   [ ] 

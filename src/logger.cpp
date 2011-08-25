@@ -19,6 +19,7 @@
 #include "config.hpp"
 
 #include <stdlib.h>  /* for exit */
+#include <time.h>    /* for time, strftime, localtime */
 
 #include <string>
 
@@ -66,7 +67,7 @@ string get_target(const Severity level) {
   // Default to /dev/null if the visibility is too low for this Logger.
   const Severity visible = parse(config.get_string("LOG_LEVEL", "DEBUG"));
   if (level < visible) return "/dev/null";
-  // Use the configured target, if configured.
+  // Use the configured target file.
   return config.get_string("LOG_FILE", "/dev/null");
 }
 
@@ -77,7 +78,33 @@ string get_target(const Severity level) {
 Logger::Logger(const Severity lvl)
   : log(get_target(lvl).c_str(), fstream::out | fstream::app), level(lvl)
 {
-  log << to_str(level) << ": ";
+  char time_now[200];
+  time_t t = time(NULL);
+
+  // Get the time now.
+  struct tm * tmp = localtime(&t);
+  if (tmp == NULL) {
+    perror("advanced shell history: localtime");
+    if (level != FATAL) {
+      LOG(FATAL) << "FATAL: Failed to get localtime on this machine.";
+    } else {
+      log << to_str(level) << ": ";
+      return;
+    }
+  }
+
+  // Get the log date format, if one was specified.
+  Config & config = Config::instance();
+  string format = config.get_string("LOG_DATE_FMT", "%Y-%m-%d %H:%M:%S %Z: ");
+  if (strftime(time_now, sizeof(time_now), format.c_str(), tmp) == 0) {
+    if (level != FATAL) {  // avoids infinite recursion.
+      LOG(FATAL) << "ASH_CFG_LOG_DATE_FMT is invalid: '" << format << "'";
+    } else {
+      log << to_str(level) << ": ";
+    }
+  } else {
+    log << time_now << to_str(level) << ": ";
+  }
 }
 
 
