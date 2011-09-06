@@ -84,8 +84,10 @@ const string unix::ppid() {
   if (p && fgets(pp, 100, p) != 0) {
     ss.str("");
     ss << atoi(pp);
+    pclose(p);
     return ss.str();
   }
+  pclose(p);
   return "null";
 }
 
@@ -110,8 +112,10 @@ const string unix::shell() {
     FILE * p = popen(ss.str().c_str(), "r");
     if (p && fgets(sh, 100, p) != 0) {
       // TODO(cpa): parse out the shell name from the command (space delimited?)
+      pclose(p);
       return DBObject::quote(string(sh));
     }
+    pclose(p);
   }
   return "null";
 }

@@ -30,3 +30,34 @@ DEMO: {
     ;
   }
 }
+
+
+CWD: {
+  description: "Shows the history for the current working directory only."
+  sql: {
+    select
+      datetime(c.start_time, 'unixepoch', 'localtime') as "when",
+      c.command as "what"
+    from
+      commands as c
+    where
+      c.cwd = '${PWD}' or c.cwd = '/${PWD}'
+    ;
+  }
+}
+
+
+RCWD: {
+  description: "Shows the history rooted at the current working directory."
+  sql: {
+    select
+      datetime(c.start_time, 'unixepoch', 'localtime') as "when",
+      c.command as "what"
+    from
+      commands as c
+    where
+      c.cwd = '${PWD}' or c.cwd = '/${PWD}'
+      or c.cwd like '${PWD}/%' or c.cwd like '/${PWD}/%'
+    ;
+  }
+}

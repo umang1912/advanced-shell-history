@@ -28,6 +28,10 @@ using std::map;
 using std::string;
 
 
+/**
+ * A container for all queries specified in /etc/ash/queries or in the user
+ * defined ~/.ash/queries file.
+ */
 class Queries {
   public:
     static void add(string & name, string & desc, string & sql);

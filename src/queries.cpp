@@ -382,8 +382,8 @@ static void yy_fatal_error (yyconst char msg[]  );
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
 
-#define YY_NUM_RULES 33
-#define YY_END_OF_BUFFER 34
+#define YY_NUM_RULES 38
+#define YY_END_OF_BUFFER 39
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -391,17 +391,19 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static yyconst flex_int16_t yy_accept[90] =
+static yyconst flex_int16_t yy_accept[101] =
     {   0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,    0,    0,   34,   32,    1,    1,
-       32,    3,    7,    5,    4,    6,   11,    9,    8,   33,
-       10,   13,   12,   33,   33,   16,   20,   18,   17,   19,
-       24,   22,   23,   21,   33,   26,   25,   31,   28,   27,
-       31,   30,    1,    0,    2,    3,    7,    5,    4,   11,
+        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+       39,   37,    1,    1,   37,    3,    7,    5,    4,    6,
+       11,    9,    8,   38,   10,   13,   12,   38,   38,   16,
+       20,   18,   17,   19,   24,   22,   23,   21,   38,   26,
+       25,   28,   27,   29,   33,   31,   31,   30,   32,   34,
+       35,   36,    1,    0,    2,    3,    7,    5,    4,   11,
         9,    8,   13,   12,    0,    0,   20,   18,   17,   22,
-       21,    0,   25,   28,   27,    0,   29,    0,   15,   29,
-        0,    0,    0,    0,    0,    0,    0,   14,    0
+       21,    0,   25,   28,   27,   31,   30,   32,   34,    0,
+       15,    0,    0,    0,    0,    0,    0,    0,   14,    0
+
     } ;
 
 static yyconst flex_int32_t yy_ec[256] =
@@ -439,125 +441,133 @@ static yyconst flex_int32_t yy_ec[256] =
 static yyconst flex_int32_t yy_meta[22] =
     {   0,
         1,    2,    3,    1,    2,    4,    2,    4,    4,    4,
-        4,    4,    4,    4,    4,    4,    4,    4,    4,    1,
+        4,    4,    4,    4,    4,    4,    4,    4,    4,    5,
         5
     } ;
 
-static yyconst flex_int16_t yy_base[111] =
+static yyconst flex_int16_t yy_base[124] =
     {   0,
         0,   21,   41,   47,   53,   72,   91,  111,  131,  137,
-      143,  147,    5,    7,  151,  171,   90,  292,   10,   12,
-       86,    0,    0,   14,    0,  292,    0,   16,    0,  292,
-        0,   27,    0,   78,   71,  292,    0,   29,    0,  292,
-      292,   31,  292,    0,   82,  292,  292,  292,   33,    0,
-       37,  292,   35,   82,  292,    0,    0,   59,    0,    0,
-       61,    0,   63,    0,   66,   71,    0,   65,    0,   67,
-        0,   78,  292,   69,    0,   78,    0,   70,  292,    0,
-       59,   48,   38,   32,   36,   31,   14,  292,  292,  192,
-      197,  202,  207,  212,  217,  222,  227,  232,    2,  237,
+      143,  147,    5,    7,  151,  157,  163,  182,    9,   11,
+      102,  312,   10,   12,   98,    0,    0,   14,    0,  312,
+        0,   16,    0,  312,    0,   31,    0,   89,   82,  312,
+        0,   33,    0,  312,  312,   35,  312,    0,   93,  312,
+      312,   37,    0,  312,  312,   59,   61,    0,   93,    0,
+      312,  312,   63,   88,  312,    0,    0,   65,    0,    0,
+       67,    0,   69,    0,   72,   77,    0,   78,    0,   80,
+        0,   84,  312,   82,    0,   84,    0,   76,    0,   68,
+      312,   42,   46,   38,   32,   36,   31,   14,  312,  312,
 
-      242,  247,  252,  257,  262,  267,  272,  277,  282,  287
+      202,  207,  212,  217,  222,  227,  232,  237,  242,  247,
+        2,  252,  257,  262,  267,  272,  277,  282,  287,  292,
+      297,  302,  307
     } ;
 
-static yyconst flex_int16_t yy_def[111] =
+static yyconst flex_int16_t yy_def[124] =
     {   0,
-       90,   90,   91,   91,   92,   92,   93,   93,   94,   94,
-       95,   95,   96,   96,   97,   97,   89,   89,   89,   89,
-       98,   99,  100,   89,  101,   89,  102,   89,  103,   89,
-      102,   89,  104,   89,   89,   89,  105,   89,  106,   89,
-       89,   89,   89,  107,  108,   89,   89,   89,   89,  109,
-       89,   89,   89,   98,   89,   99,  100,   89,  101,  102,
-       89,  103,   89,  104,   89,   89,  105,   89,  106,   89,
-      107,  108,   89,   89,  109,   89,  110,   89,   89,  110,
-       89,   89,   89,   89,   89,   89,   89,   89,    0,   89,
-       89,   89,   89,   89,   89,   89,   89,   89,   89,   89,
+      101,  101,  102,  102,  103,  103,  104,  104,  105,  105,
+      106,  106,  107,  107,  104,  104,  108,  108,  109,  109,
+      100,  100,  100,  100,  110,  111,  112,  100,  113,  100,
+      114,  100,  115,  100,  114,  100,  116,  100,  100,  100,
+      117,  100,  118,  100,  100,  100,  100,  119,  120,  100,
+      100,  100,  121,  100,  100,  100,  100,  122,  100,  123,
+      100,  100,  100,  110,  100,  111,  112,  100,  113,  114,
+      100,  115,  100,  116,  100,  100,  117,  100,  118,  100,
+      119,  120,  100,  100,  121,  100,  122,  100,  123,  100,
+      100,  100,  100,  100,  100,  100,  100,  100,  100,    0,
 
-       89,   89,   89,   89,   89,   89,   89,   89,   89,   89
+      100,  100,  100,  100,  100,  100,  100,  100,  100,  100,
+      100,  100,  100,  100,  100,  100,  100,  100,  100,  100,
+      100,  100,  100
     } ;
 
-static yyconst flex_int16_t yy_nxt[314] =
+static yyconst flex_int16_t yy_nxt[334] =
     {   0,
-       18,   19,   20,   18,   21,   56,   18,   46,   47,   46,
-       47,   53,   53,   53,   53,   58,   58,   61,   61,   18,
-       18,   18,   19,   20,   18,   21,   88,   18,   63,   63,
-       68,   68,   70,   70,   74,   74,   53,   53,   76,   76,
-       18,   18,   24,   24,   87,   25,   86,   26,   24,   24,
-       85,   25,   84,   26,   28,   28,   77,   29,   83,   30,
-       58,   58,   61,   61,   63,   63,   68,   68,   70,   70,
-       74,   74,   31,   28,   28,   82,   29,   81,   30,   76,
-       76,   73,   79,   78,   55,   73,   66,   65,   55,   89,
-       89,   31,   32,   32,   89,   33,   89,   77,   89,   34,
+       22,   23,   24,   22,   25,   66,   22,   50,   51,   50,
+       51,   63,   63,   63,   63,   68,   68,   71,   71,   22,
+       22,   22,   23,   24,   22,   25,   99,   22,   61,   62,
+       61,   62,   73,   73,   78,   78,   80,   80,   84,   84,
+       22,   22,   28,   28,   98,   29,   97,   30,   28,   28,
+       96,   29,   95,   30,   32,   32,   94,   33,   93,   34,
+       86,   86,   86,   86,   63,   63,   68,   68,   71,   71,
+       73,   73,   35,   32,   32,   92,   33,   88,   34,   78,
+       78,   80,   80,   84,   84,   86,   86,   83,   91,   90,
+       65,   35,   36,   36,   88,   37,   83,   76,   75,   38,
 
-       89,   89,   89,   89,   89,   89,   89,   89,   35,   89,
-       89,   36,   32,   32,   89,   33,   89,   89,   89,   34,
-       89,   89,   89,   89,   89,   89,   89,   89,   35,   89,
-       89,   36,   38,   38,   89,   39,   89,   40,   38,   38,
-       89,   39,   89,   40,   42,   42,   43,   44,   42,   42,
-       43,   44,   49,   49,   89,   50,   89,   51,   89,   89,
-       89,   89,   89,   89,   89,   89,   89,   89,   89,   89,
-       89,   52,   49,   49,   89,   50,   89,   51,   89,   89,
-       89,   89,   89,   89,   89,   89,   89,   89,   89,   89,
-       89,   52,   22,   22,   22,   22,   22,   23,   23,   23,
+       65,  100,  100,  100,  100,  100,  100,  100,   39,  100,
+      100,   40,   36,   36,  100,   37,  100,  100,  100,   38,
+      100,  100,  100,  100,  100,  100,  100,  100,   39,  100,
+      100,   40,   42,   42,  100,   43,  100,   44,   42,   42,
+      100,   43,  100,   44,   46,   46,   47,   48,   46,   46,
+       47,   48,   52,   52,  100,   53,  100,   54,   52,   52,
+      100,   53,  100,   54,   56,   57,  100,   58,  100,  100,
+      100,  100,  100,  100,  100,  100,  100,  100,  100,  100,
+      100,  100,   59,   56,   57,  100,   58,  100,  100,  100,
+      100,  100,  100,  100,  100,  100,  100,  100,  100,  100,
 
-       23,   23,   27,   27,   27,   27,   27,   30,   30,   30,
-       30,   30,   37,   37,   37,   37,   37,   41,   41,   41,
-       41,   41,   45,   45,   45,   45,   45,   48,   48,   48,
-       48,   48,   54,   54,   54,   54,   54,   57,   89,   89,
-       57,   57,   59,   59,   89,   59,   59,   60,   89,   89,
-       60,   60,   62,   62,   89,   62,   62,   64,   64,   89,
-       64,   64,   67,   89,   89,   67,   67,   69,   69,   89,
-       69,   69,   71,   71,   89,   71,   71,   72,   72,   89,
-       72,   72,   75,   75,   89,   75,   75,   80,   80,   80,
-       80,   17,   89,   89,   89,   89,   89,   89,   89,   89,
+      100,   59,   26,   26,   26,   26,   26,   27,   27,   27,
+       27,   27,   31,   31,   31,   31,   31,   34,   34,   34,
+       34,   34,   41,   41,   41,   41,   41,   45,   45,   45,
+       45,   45,   49,   49,   49,   49,   49,   55,   55,   55,
+       55,   55,   60,   60,   60,   60,   60,   64,   64,   64,
+       64,   64,   67,  100,  100,   67,   67,   69,   69,  100,
+       69,   69,   70,  100,  100,   70,   70,   72,   72,  100,
+       72,   72,   74,   74,  100,   74,   74,   77,  100,  100,
+       77,   77,   79,   79,  100,   79,   79,   81,   81,  100,
+       81,   81,   82,   82,  100,   82,   82,   85,   85,  100,
 
-       89,   89,   89,   89,   89,   89,   89,   89,   89,   89,
-       89,   89,   89
+       85,   85,   87,   87,  100,   87,   87,   89,   89,   89,
+       89,   21,  100,  100,  100,  100,  100,  100,  100,  100,
+      100,  100,  100,  100,  100,  100,  100,  100,  100,  100,
+      100,  100,  100
     } ;
 
-static yyconst flex_int16_t yy_chk[314] =
+static yyconst flex_int16_t yy_chk[334] =
     {   0,
-        1,    1,    1,    1,    1,   99,    1,   13,   13,   14,
-       14,   19,   19,   20,   20,   24,   24,   28,   28,    1,
-        1,    2,    2,    2,    2,    2,   87,    2,   32,   32,
-       38,   38,   42,   42,   49,   49,   53,   53,   51,   51,
-        2,    2,    3,    3,   86,    3,   85,    3,    4,    4,
-       84,    4,   83,    4,    5,    5,   51,    5,   82,    5,
-       58,   58,   61,   61,   63,   63,   68,   68,   70,   70,
-       74,   74,    5,    6,    6,   81,    6,   78,    6,   76,
-       76,   72,   66,   65,   54,   45,   35,   34,   21,   17,
-        0,    6,    7,    7,    0,    7,    0,   76,    0,    7,
+        1,    1,    1,    1,    1,  111,    1,   13,   13,   14,
+       14,   23,   23,   24,   24,   28,   28,   32,   32,    1,
+        1,    2,    2,    2,    2,    2,   98,    2,   19,   19,
+       20,   20,   36,   36,   42,   42,   46,   46,   52,   52,
+        2,    2,    3,    3,   97,    3,   96,    3,    4,    4,
+       95,    4,   94,    4,    5,    5,   93,    5,   92,    5,
+       56,   56,   57,   57,   63,   63,   68,   68,   71,   71,
+       73,   73,    5,    6,    6,   90,    6,   88,    6,   78,
+       78,   80,   80,   84,   84,   86,   86,   82,   76,   75,
+       64,    6,    7,    7,   59,    7,   49,   39,   38,    7,
 
-        0,    0,    0,    0,    0,    0,    0,    0,    7,    0,
+       25,   21,    0,    0,    0,    0,    0,    0,    7,    0,
         0,    7,    8,    8,    0,    8,    0,    0,    0,    8,
         0,    0,    0,    0,    0,    0,    0,    0,    8,    0,
         0,    8,    9,    9,    0,    9,    0,    9,   10,   10,
         0,   10,    0,   10,   11,   11,   11,   11,   12,   12,
-       12,   12,   15,   15,    0,   15,    0,   15,    0,    0,
+       12,   12,   15,   15,    0,   15,    0,   15,   16,   16,
+        0,   16,    0,   16,   17,   17,    0,   17,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,   15,   16,   16,    0,   16,    0,   16,    0,    0,
+        0,    0,   17,   18,   18,    0,   18,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,   16,   90,   90,   90,   90,   90,   91,   91,   91,
 
-       91,   91,   92,   92,   92,   92,   92,   93,   93,   93,
-       93,   93,   94,   94,   94,   94,   94,   95,   95,   95,
-       95,   95,   96,   96,   96,   96,   96,   97,   97,   97,
-       97,   97,   98,   98,   98,   98,   98,  100,    0,    0,
-      100,  100,  101,  101,    0,  101,  101,  102,    0,    0,
-      102,  102,  103,  103,    0,  103,  103,  104,  104,    0,
-      104,  104,  105,    0,    0,  105,  105,  106,  106,    0,
-      106,  106,  107,  107,    0,  107,  107,  108,  108,    0,
-      108,  108,  109,  109,    0,  109,  109,  110,  110,  110,
-      110,   89,   89,   89,   89,   89,   89,   89,   89,   89,
+        0,   18,  101,  101,  101,  101,  101,  102,  102,  102,
+      102,  102,  103,  103,  103,  103,  103,  104,  104,  104,
+      104,  104,  105,  105,  105,  105,  105,  106,  106,  106,
+      106,  106,  107,  107,  107,  107,  107,  108,  108,  108,
+      108,  108,  109,  109,  109,  109,  109,  110,  110,  110,
+      110,  110,  112,    0,    0,  112,  112,  113,  113,    0,
+      113,  113,  114,    0,    0,  114,  114,  115,  115,    0,
+      115,  115,  116,  116,    0,  116,  116,  117,    0,    0,
+      117,  117,  118,  118,    0,  118,  118,  119,  119,    0,
+      119,  119,  120,  120,    0,  120,  120,  121,  121,    0,
 
-       89,   89,   89,   89,   89,   89,   89,   89,   89,   89,
-       89,   89,   89
+      121,  121,  122,  122,    0,  122,  122,  123,  123,  123,
+      123,  100,  100,  100,  100,  100,  100,  100,  100,  100,
+      100,  100,  100,  100,  100,  100,  100,  100,  100,  100,
+      100,  100,  100
     } ;
 
 /* Table of booleans, true if rule could match eol. */
-static yyconst flex_int32_t yy_rule_can_match_eol[34] =
+static yyconst flex_int32_t yy_rule_can_match_eol[39] =
     {   0,
 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 
-    0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0,     };
+    0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0,     };
 
 static yy_state_type yy_last_accepting_state;
 static char *yy_last_accepting_cpos;
@@ -592,7 +602,10 @@ char *yytext;
 */
 #include "queries.hpp"
 
+#include "logger.hpp"
+
 #include <iostream>
+#include <sstream>
 
 
 extern int yylex();
@@ -606,6 +619,8 @@ namespace query {
 
 // Temp variables for parsing.
 string * name, * desc, * sql;
+int braces = 0;
+stringstream * ss;
 
 // The config files to parse for queries.
 list<string> files;
@@ -652,9 +667,33 @@ map<string, string> Queries::get_sql() {
 }
 
 
+/**
+ * Returns the stored query, substituting variables with current values within
+ * the query string.
+ */
 string Queries::get_sql(const string & name) {
   Queries::lazy_load();
-  return Queries::has(name) ? Queries::queries[name] : "";
+
+  // Sanity check, do nothing if the requested query is not found.
+  if (!Queries::has(name)) return "";
+
+  // Eval the query, to expand any and all referenced variables.
+  stringstream ss;
+  ss << "cat <<EOF_ASH_SQL\n" << Queries::queries[name] << "\nEOF_ASH_SQL";
+
+  FILE * p = popen(ss.str().c_str(), "r");
+  if (!p) LOG(FATAL) << "Failed to popen(\"" << ss.str() << "\", \"r\")";
+
+  // Read the query, with all variables substituted.  
+  ss.str("");
+  for (char buffer[1000]; fgets(buffer, sizeof(buffer), p) != 0; ) ss << buffer;
+
+  // Clean up.
+  if (pclose(p) == -1) {
+    LOG(FATAL) << "Failed to pclose open stream after reading: " << ss.str();
+  }
+
+  return ss.str();
 }
 
 
@@ -680,7 +719,7 @@ void Queries::lazy_load() {
   
   // Parse the input file.
   if (yylex()) {
-    cout << "FAILED TO PARSE!" << endl;
+    cout << "FAILED TO PARSE QUERIES!" << endl;
     exit(1);
   }
 }
@@ -730,8 +769,9 @@ void expected(const char * message) {
  *   D1      := Found a 'definition' keyword, looking for a COLON.
  *   DESC    := Found a 'definition' and COLON, looking for a quoted string.
  *   STR     := Found a double-quote, looking for a closing double quote.
- *   SQL     := Found a 'sql' keyword, looking for a COLON, LEFT_BRACE and a
- *              query definition all at once.
+ *   SQL     := Found a 'sql' keyword, looking for a COLON.
+ *   SQL1    := Found 'sql:', looking for a LEFT_BRACE.
+ *   SQL2    := Found 'sql: {', reading a query and looking for closing '}'.
  *
  * Example Input:
  *   MY_QUERY: {
@@ -742,7 +782,7 @@ void expected(const char * message) {
  *   }
  */
 
-#line 746 "queries.cpp"
+#line 786 "queries.cpp"
 
 #define INITIAL 0
 #define Q1 1
@@ -752,6 +792,8 @@ void expected(const char * message) {
 #define DESC 5
 #define STR 6
 #define SQL 7
+#define SQL1 8
+#define SQL2 9
 
 #ifndef YY_NO_UNISTD_H
 /* Special case for "unistd.h", since it is non-ANSI. We include it way
@@ -934,9 +976,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 176 "queries.l"
+#line 206 "queries.l"
 
-#line 940 "queries.cpp"
+#line 982 "queries.cpp"
 
 	if ( !(yy_init) )
 		{
@@ -989,13 +1031,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 90 )
+				if ( yy_current_state >= 101 )
 					yy_c = yy_meta[(unsigned int) yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 292 );
+		while ( yy_base[yy_current_state] != 312 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -1032,18 +1074,18 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 177 "queries.l"
+#line 207 "queries.l"
 ;  // WHITESPACE
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 178 "queries.l"
+#line 208 "queries.l"
 ;  // # LINE COMMENT.
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 179 "queries.l"
+#line 209 "queries.l"
 {
 			  ash::query::desc = ash::query::sql = 0;
 			  ash::query::name = new std::string(yytext);
@@ -1053,62 +1095,62 @@ YY_RULE_SETUP
 /* State Q1 - Read a queary name, expecting a COLON. */
 case 4:
 YY_RULE_SETUP
-#line 186 "queries.l"
+#line 216 "queries.l"
 ;  // LINE COMMENT.
 	YY_BREAK
 case 5:
 /* rule 5 can match eol */
 YY_RULE_SETUP
-#line 187 "queries.l"
+#line 217 "queries.l"
 ;  // WHITESPACE
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 188 "queries.l"
+#line 218 "queries.l"
 BEGIN(Q2);
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 189 "queries.l"
+#line 219 "queries.l"
 ash::expected(":");
 	YY_BREAK
 /* State Q2 - Read a query name and COLON, expecting an LBRACE. */
 case 8:
 YY_RULE_SETUP
-#line 193 "queries.l"
+#line 223 "queries.l"
 ;  // LINE COMMENT.
 	YY_BREAK
 case 9:
 /* rule 9 can match eol */
 YY_RULE_SETUP
-#line 194 "queries.l"
+#line 224 "queries.l"
 ;  // WHITESPACE
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 195 "queries.l"
+#line 225 "queries.l"
 BEGIN(QUERY);
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 196 "queries.l"
+#line 226 "queries.l"
 ash::expected("{");
 	YY_BREAK
 /* State QUERY - Expecting a description and sql definition. */
 case 12:
 YY_RULE_SETUP
-#line 200 "queries.l"
+#line 230 "queries.l"
 ;  // LINE COMMENT.
 	YY_BREAK
 case 13:
 /* rule 13 can match eol */
 YY_RULE_SETUP
-#line 201 "queries.l"
+#line 231 "queries.l"
 ;  // WHITESPACE
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 202 "queries.l"
+#line 232 "queries.l"
 {
 			  if (ash::query::desc)
 			    ash::fail("multiple descriptions defined");
@@ -1117,7 +1159,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 207 "queries.l"
+#line 237 "queries.l"
 {
 			  if (ash::query::sql)
 			    ash::fail("multiple sql sections defined");
@@ -1126,7 +1168,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 212 "queries.l"
+#line 242 "queries.l"
 {
 			  using namespace ash;
 			  using namespace ash::query;
@@ -1147,51 +1189,51 @@ YY_RULE_SETUP
 /* State D1 - Read keyword 'description', expecting a COLON. */
 case 17:
 YY_RULE_SETUP
-#line 230 "queries.l"
+#line 260 "queries.l"
 ;  // LINE COMMENT.
 	YY_BREAK
 case 18:
 /* rule 18 can match eol */
 YY_RULE_SETUP
-#line 231 "queries.l"
+#line 261 "queries.l"
 ;  // WHITESPACE
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 232 "queries.l"
+#line 262 "queries.l"
 BEGIN(DESC);
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 233 "queries.l"
+#line 263 "queries.l"
 ash::expected(":");
 	YY_BREAK
 /* State DESC - Read 'description:' - expecting a quoted string. */
 case 21:
 YY_RULE_SETUP
-#line 236 "queries.l"
+#line 266 "queries.l"
 ;  // LINE COMMENT.
 	YY_BREAK
 case 22:
 /* rule 22 can match eol */
 YY_RULE_SETUP
-#line 237 "queries.l"
+#line 267 "queries.l"
 ;  // WHITESPACE
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 238 "queries.l"
+#line 268 "queries.l"
 BEGIN(STR);
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 239 "queries.l"
+#line 269 "queries.l"
 ash::expected("\"");
 	YY_BREAK
 /* State STR - Read a quoted string. */
 case 25:
 YY_RULE_SETUP
-#line 242 "queries.l"
+#line 272 "queries.l"
 {
 			  ash::query::desc = new std::string(yytext, yyleng-1);
 			  BEGIN(QUERY);
@@ -1200,56 +1242,97 @@ YY_RULE_SETUP
 case 26:
 /* rule 26 can match eol */
 YY_RULE_SETUP
-#line 246 "queries.l"
+#line 276 "queries.l"
 ash::expected("\" - Multi-line strings are illegal.");
 	YY_BREAK
 /* State SQL - read 'sql' token, expecting a COLON. */
 case 27:
 YY_RULE_SETUP
-#line 249 "queries.l"
+#line 279 "queries.l"
 ;  // LINE COMMENT.
 	YY_BREAK
 case 28:
 /* rule 28 can match eol */
 YY_RULE_SETUP
-#line 250 "queries.l"
+#line 280 "queries.l"
 ;  // WHITESPACE
 	YY_BREAK
 case 29:
-/* rule 29 can match eol */
 YY_RULE_SETUP
-#line 251 "queries.l"
-{
-			  // Eat the colon and brace.
-			  while (yytext[0] != '{') ++yytext;
-			  ash::query::sql = new std::string(++yytext);
-			}
+#line 281 "queries.l"
+BEGIN(SQL1);
 	YY_BREAK
+/* State SQL1 - read 'sql:' token, expecting a LEFT_BRACE. */
 case 30:
 YY_RULE_SETUP
-#line 256 "queries.l"
-BEGIN(QUERY);
+#line 284 "queries.l"
+;  // LINE COMMENT.
 	YY_BREAK
 case 31:
+/* rule 31 can match eol */
 YY_RULE_SETUP
-#line 257 "queries.l"
-ash::expected(":");
+#line 285 "queries.l"
+;  // WHITESPACE
 	YY_BREAK
-/* FAIL BUCKET - this matches any character that is not covered above. */
 case 32:
 YY_RULE_SETUP
-#line 260 "queries.l"
+#line 286 "queries.l"
 {
-			  ash::fail() << "Unexpected character." << std::endl;
-			  exit(1);
+			  ash::query::ss = new std::stringstream();
+			  BEGIN(SQL2);
 			}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 264 "queries.l"
+#line 290 "queries.l"
+ash::expected("{");
+	YY_BREAK
+/* State SQL2 - read 'sql: {' token, expecting a closing RBRACE */
+case 34:
+/* rule 34 can match eol */
+YY_RULE_SETUP
+#line 293 "queries.l"
+*ash::query::ss << yytext;
+	YY_BREAK
+case 35:
+YY_RULE_SETUP
+#line 294 "queries.l"
+{
+			  ++ash::query::braces;
+			  *ash::query::ss << "{";
+			}
+	YY_BREAK
+case 36:
+YY_RULE_SETUP
+#line 298 "queries.l"
+{
+			  using namespace ash::query;
+			  if (braces) {
+			    --braces;
+			    *ss << "}";
+			  } else {
+			    sql = new std::string(ss -> str());
+			    delete ss;
+			    ss = 0;
+			    BEGIN(QUERY);
+			  }
+			}
+	YY_BREAK
+/* FAIL BUCKET - this matches any character that is not covered above. */
+case 37:
+YY_RULE_SETUP
+#line 312 "queries.l"
+{
+			  ash::fail() << ": Unexpected character." << std::endl;
+			  exit(1);
+			}
+	YY_BREAK
+case 38:
+YY_RULE_SETUP
+#line 316 "queries.l"
 ECHO;
 	YY_BREAK
-#line 1253 "queries.cpp"
+#line 1336 "queries.cpp"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(Q1):
 case YY_STATE_EOF(Q2):
@@ -1258,6 +1341,8 @@ case YY_STATE_EOF(D1):
 case YY_STATE_EOF(DESC):
 case YY_STATE_EOF(STR):
 case YY_STATE_EOF(SQL):
+case YY_STATE_EOF(SQL1):
+case YY_STATE_EOF(SQL2):
 	yyterminate();
 
 	case YY_END_OF_BUFFER:
@@ -1548,7 +1633,7 @@ static int yy_get_next_buffer (void)
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 90 )
+			if ( yy_current_state >= 101 )
 				yy_c = yy_meta[(unsigned int) yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
@@ -1576,11 +1661,11 @@ static int yy_get_next_buffer (void)
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 90 )
+		if ( yy_current_state >= 101 )
 			yy_c = yy_meta[(unsigned int) yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
-	yy_is_jam = (yy_current_state == 89);
+	yy_is_jam = (yy_current_state == 100);
 
 	return yy_is_jam ? 0 : yy_current_state;
 }
@@ -2225,7 +2310,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 264 "queries.l"
+#line 316 "queries.l"
 
 
 
@@ -2254,4 +2339,5 @@ int yywrap() {
   // TODO(cpa): LOG(DEBUG) << "Done parsing config files.";
   return 1;
 }
+
 

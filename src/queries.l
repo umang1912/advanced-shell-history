@@ -16,7 +16,10 @@
 */
 #include "queries.hpp"
 
+#include "logger.hpp"
+
 #include <iostream>
+#include <sstream>
 
 
 extern int yylex();
@@ -30,6 +33,8 @@ namespace query {
 
 // Temp variables for parsing.
 string * name, * desc, * sql;
+int braces = 0;
+stringstream * ss;
 
 // The config files to parse for queries.
 list<string> files;
@@ -76,9 +81,33 @@ map<string, string> Queries::get_sql() {
 }
 
 
+/**
+ * Returns the stored query, substituting variables with current values within
+ * the query string.
+ */
 string Queries::get_sql(const string & name) {
   Queries::lazy_load();
-  return Queries::has(name) ? Queries::queries[name] : "";
+
+  // Sanity check, do nothing if the requested query is not found.
+  if (!Queries::has(name)) return "";
+
+  // Eval the query, to expand any and all referenced variables.
+  stringstream ss;
+  ss << "cat <<EOF_ASH_SQL\n" << Queries::queries[name] << "\nEOF_ASH_SQL";
+
+  FILE * p = popen(ss.str().c_str(), "r");
+  if (!p) LOG(FATAL) << "Failed to popen(\"" << ss.str() << "\", \"r\")";
+
+  // Read the query, with all variables substituted.  
+  ss.str("");
+  for (char buffer[1000]; fgets(buffer, sizeof(buffer), p) != 0; ) ss << buffer;
+
+  // Clean up.
+  if (pclose(p) == -1) {
+    LOG(FATAL) << "Failed to pclose open stream after reading: " << ss.str();
+  }
+
+  return ss.str();
 }
 
 
@@ -104,7 +133,7 @@ void Queries::lazy_load() {
   
   // Parse the input file.
   if (yylex()) {
-    cout << "FAILED TO PARSE!" << endl;
+    cout << "FAILED TO PARSE QUERIES!" << endl;
     exit(1);
   }
 }
@@ -160,8 +189,9 @@ void expected(const char * message) {
  *   D1      := Found a 'definition' keyword, looking for a COLON.
  *   DESC    := Found a 'definition' and COLON, looking for a quoted string.
  *   STR     := Found a double-quote, looking for a closing double quote.
- *   SQL     := Found a 'sql' keyword, looking for a COLON, LEFT_BRACE and a
- *              query definition all at once.
+ *   SQL     := Found a 'sql' keyword, looking for a COLON.
+ *   SQL1    := Found 'sql:', looking for a LEFT_BRACE.
+ *   SQL2    := Found 'sql: {', reading a query and looking for closing '}'.
  *
  * Example Input:
  *   MY_QUERY: {
@@ -171,7 +201,7 @@ void expected(const char * message) {
  *     }
  *   }
  */
-%x Q1 Q2 QUERY D1 DESC STR SQL
+%x Q1 Q2 QUERY D1 DESC STR SQL SQL1 SQL2
 
 %%
 <INITIAL>[ \t\n]+	;  // WHITESPACE
@@ -189,14 +219,14 @@ void expected(const char * message) {
 <Q1>[^#: \t\n]+		ash::expected(":");
 
 
- /* State Q2 - Read a query name and COLON, expecting an LBRACE. */
+  /* State Q2 - Read a query name and COLON, expecting an LBRACE. */
 <Q2>#.*			;  // LINE COMMENT.
 <Q2>[ \t\n]+		;  // WHITESPACE
 <Q2>"{"			BEGIN(QUERY);
 <Q2>[^#: \t\n]+		ash::expected("{");
 
 
- /* State QUERY - Expecting a description and sql definition. */
+  /* State QUERY - Expecting a description and sql definition. */
 <QUERY>#.*		;  // LINE COMMENT.
 <QUERY>[ \t\n]+		;  // WHITESPACE
 <QUERY>"description"	{
@@ -226,39 +256,61 @@ void expected(const char * message) {
 			  BEGIN(INITIAL);
 			}
 
- /* State D1 - Read keyword 'description', expecting a COLON. */
+  /* State D1 - Read keyword 'description', expecting a COLON. */
 <D1>#.*			;  // LINE COMMENT.
 <D1>[ \t\n]+		;  // WHITESPACE
 <D1>":"			BEGIN(DESC);
 <D1>[^#: \t\n]+		ash::expected(":");
 
- /* State DESC - Read 'description:' - expecting a quoted string. */
+  /* State DESC - Read 'description:' - expecting a quoted string. */
 <DESC>#.*		;  // LINE COMMENT.
 <DESC>[ \t\n]+		;  // WHITESPACE
 <DESC>\"		BEGIN(STR);
 <DESC>[^# \t\n\"]	ash::expected("\"");
 
- /* State STR - Read a quoted string. */
+  /* State STR - Read a quoted string. */
 <STR>[^"\n]*\"		{
 			  ash::query::desc = new std::string(yytext, yyleng-1);
 			  BEGIN(QUERY);
 			}
 <STR>\n			ash::expected("\" - Multi-line strings are illegal.");
 
- /* State SQL - read 'sql' token, expecting a COLON. */
+  /* State SQL - read 'sql' token, expecting a COLON. */
 <SQL>#.*		;  // LINE COMMENT.
 <SQL>[ \t\n]+		;  // WHITESPACE
-<SQL>:[ \t\n]*\{[^}]*	{
-			  // Eat the colon and brace.
-			  while (yytext[0] != '{') ++yytext;
-			  ash::query::sql = new std::string(++yytext);
+<SQL>":"		BEGIN(SQL1);
+
+  /* State SQL1 - read 'sql:' token, expecting a LEFT_BRACE. */
+<SQL1>#.*		;  // LINE COMMENT.
+<SQL1>[ \t\n]+		;  // WHITESPACE
+<SQL1>\{[ \t]*	{
+			  ash::query::ss = new std::stringstream();
+			  BEGIN(SQL2);
 			}
-<SQL>"}"		BEGIN(QUERY);
-<SQL>[^# \t\n}]		ash::expected(":");
+<SQL1>.			ash::expected("{");
+
+  /* State SQL2 - read 'sql: {' token, expecting a closing RBRACE */
+<SQL2>[^{}]+		*ash::query::ss << yytext;
+<SQL2>"{"		{
+			  ++ash::query::braces;
+			  *ash::query::ss << "{";
+			}
+<SQL2>"}"		{
+			  using namespace ash::query;
+			  if (braces) {
+			    --braces;
+			    *ss << "}";
+			  } else {
+			    sql = new std::string(ss -> str());
+			    delete ss;
+			    ss = 0;
+			    BEGIN(QUERY);
+			  }
+			}
 
   /* FAIL BUCKET - this matches any character that is not covered above. */
 .			{
-			  ash::fail() << "Unexpected character." << std::endl;
+			  ash::fail() << ": Unexpected character." << std::endl;
 			  exit(1);
 			}
 %%
@@ -288,3 +340,4 @@ int yywrap() {
   // TODO(cpa): LOG(DEBUG) << "Done parsing config files.";
   return 1;
 }
+
