@@ -220,6 +220,5 @@ void GroupedFormatter::init() {
  */
 void GroupedFormatter::insert(const ResultSet * rs, ostream & out) const {
   if (!rs) return;
-
+  // TODO(cpa): complete this class.
 }
-

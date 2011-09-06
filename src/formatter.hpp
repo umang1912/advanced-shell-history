@@ -14,6 +14,11 @@
    limitations under the License.
 */
 
+/**
+ * This class provides a base and some concrete examples of classes that are
+ * designed to take a DB ResultSet and output the contents in a formatted way.
+ */
+
 #ifndef __ASH_FORMATTER__
 #define __ASH_FORMATTER__
 
@@ -100,13 +105,13 @@ FORMATTER(Csv);
 
 /**
  * Singleton class that converts a result set into output, delimiting all
- * columns with commas.
+ * columns with \0 characters (NULL).
  */
 FORMATTER(Null);
 
 
 /**
- * TODO(cpa): describe this class.
+ * Singleton class that converts a result set into output,
  */
 FORMATTER(Grouped);
 

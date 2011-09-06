@@ -22,6 +22,7 @@
 #include <sstream>
 
 
+// This is implemented at the end of this file, after the syntax definition.
 extern int yylex();
 extern "C" int yywrap();
 
@@ -49,18 +50,27 @@ map<string, string> Queries::descriptions;
 map<string, string> Queries::queries;
 
 
+/**
+ * Add a query (and description) to the collection of saved queries.
+ */
 void Queries::add(string & name, string & desc, string & sql) {
   Queries::descriptions[name] = desc;
   Queries::queries[name] = sql;
 }
 
 
+/**
+ * Get the set of names and descriptions of all queries.
+ */
 map<string, string> Queries::get_desc() {
   Queries::lazy_load();
   return Queries::descriptions;
 }
 
 
+/**
+ * Return true if the argument query is already defined.
+ */
 bool Queries::has(const string & name) {
   Queries::lazy_load();
   return
@@ -69,15 +79,30 @@ bool Queries::has(const string & name) {
 }
 
 
+/**
+ * Return the description of an argument query.
+ */
 string Queries::get_desc(const string & name) {
   Queries::lazy_load();
   return Queries::has(name) ? Queries::descriptions[name] : "";
 }
 
 
+/**
+ * Return the set of names and SQL for all saved queries.
+ */
 map<string, string> Queries::get_sql() {
   Queries::lazy_load();
   return Queries::queries;
+}
+
+
+/**
+ * Return the query without substituting environment variables.
+ */
+string Queries::get_raw_sql(const string & name) {
+  Queries::lazy_load();
+  return Queries::has(name) ? Queries::queries[name] : "";
 }
 
 
@@ -91,6 +116,8 @@ string Queries::get_sql(const string & name) {
   // Sanity check, do nothing if the requested query is not found.
   if (!Queries::has(name)) return "";
 
+  LOG(DEBUG) << "Fetching query: '" << Queries::queries[name] << "'";
+
   // Eval the query, to expand any and all referenced variables.
   stringstream ss;
   ss << "cat <<EOF_ASH_SQL\n" << Queries::queries[name] << "\nEOF_ASH_SQL";
@@ -98,16 +125,20 @@ string Queries::get_sql(const string & name) {
   FILE * p = popen(ss.str().c_str(), "r");
   if (!p) LOG(FATAL) << "Failed to popen(\"" << ss.str() << "\", \"r\")";
 
-  // Read the query, with all variables substituted.  
+  // Read the query, with all variables substituted.
   ss.str("");
   for (char buffer[1000]; fgets(buffer, sizeof(buffer), p) != 0; ) ss << buffer;
+
+  LOG(DEBUG) << "Query evaluated to: '" << ss.str() << "'";
 
   // Clean up.
   if (pclose(p) == -1) {
     LOG(FATAL) << "Failed to pclose open stream after reading: " << ss.str();
   }
 
-  return ss.str();
+  // Remove the trailing newline, which was added by the here-document.
+  string sql = ss.str();
+  return sql.substr(0, sql.size() - 1);
 }
 
 
@@ -120,6 +151,8 @@ void Queries::lazy_load() {
   if (loaded) return;
   loaded = true;
 
+  LOG(DEBUG) << "Loading query files for saved queries.";
+
   // Load these files, in this order.
   query::files.push_back("/etc/ash/queries");
   query::files.push_back(string(getenv("HOME")) + "/.ash/queries");
@@ -130,7 +163,7 @@ void Queries::lazy_load() {
     cout << "FAILED TO FIND A FILE TO PARSE!" << endl;
     exit(1);
   }
-  
+
   // Parse the input file.
   if (yylex()) {
     cout << "FAILED TO PARSE QUERIES!" << endl;
@@ -184,7 +217,7 @@ void expected(const char * message) {
  *   INITIAL := Looking for a query definition.
  *   Q1      := Found a query definition, looking for a COLON.
  *   Q2      := Found a query definition and COLON, looking for a LEFT_BRACE.
- *   QUERY   := Found a query definition, colon and left brace, looking for 
+ *   QUERY   := Found a query definition, colon and left brace, looking for
  *              a description field and a sql field.
  *   D1      := Found a 'definition' keyword, looking for a COLON.
  *   DESC    := Found a 'definition' and COLON, looking for a quoted string.
@@ -335,9 +368,9 @@ int yywrap() {
     query::files.pop_front();
     yyin = fopen(query::parsing.c_str(), "r");
     if (yyin) return 0;
-    // TODO(cpa): LOG(DEBUG) << "The file couldn't be opened.";
+    LOG(DEBUG) << "File could not be opened: " << query::parsing;
   }
-  // TODO(cpa): LOG(DEBUG) << "Done parsing config files.";
+  LOG(DEBUG) << "Done parsing config files.";
   return 1;
 }
 

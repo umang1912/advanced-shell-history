@@ -143,12 +143,17 @@ int main(int argc, char ** argv) {
 
   // End the current session in the DB: -E
   if (FLAGS_end_session) {
-    Session session;
-    Database db = Database(db_file);
-    db.exec(session.get_close_session_sql());
-    // TODO(cpa): LOG(ERROR) if there is currently no session ID in the environment or in the DB.
+    char * id = getenv(ASH_SESSION_ID);
+    if (id == NULL) {
+      LOG(ERROR) << "Can't end the current session: ASH_SESSION_ID undefined.";
+    } else {
+      Session session;
+      Database db = Database(db_file);
+      db.exec(session.get_close_session_sql());
+    }
   }
 
   // Set the exit code to match what the previous command exited: -e 123
   return FLAGS_exit;
 }
+

@@ -5,15 +5,18 @@ TODO
   [ ] find a safe way to get the 'builtin type' details for a command (without re-executing it)
   [ ] add more logging throughout the code.
   [ ] design a shell history function that attempts to intercept builtin history calls and redirect to builtin history wherever necessary ???
+  [ ] write a formatter that collapses repeated column values automatically
+  [ ] add an option for a formatter that includes visible pipe separators between aligned columns
+  [ ] include a row of dashes after the header line for aligned columns
+  [ ] make LOG(ERROR) and above also go to stderr
   [ ] 
 
 database.cpp
   [ ] 
 
 ash_query.cpp
-  [ ] design a mechanism for adding more interactivity to the queries.  How can I get *directory* history or even *cwd* history?
-  [ ] look for shell variables within the SQL.  maybe something like 'select * from commands where cwd = "${CWD}"'
   [ ] If ASH_CFG_HISTORY_DB is undefined, assume they don't know what the command / utility is - have a more inviting message.  If you are setting this up for the first time, please see http://sites.google.com/projects/advanced_shell_history/...
+  [ ] add a default formatter (aligned)
   [ ] 
 
 

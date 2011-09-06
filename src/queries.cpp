@@ -608,6 +608,7 @@ char *yytext;
 #include <sstream>
 
 
+// This is implemented at the end of this file, after the syntax definition.
 extern int yylex();
 extern "C" int yywrap();
 
@@ -635,18 +636,27 @@ map<string, string> Queries::descriptions;
 map<string, string> Queries::queries;
 
 
+/**
+ * Add a query (and description) to the collection of saved queries.
+ */
 void Queries::add(string & name, string & desc, string & sql) {
   Queries::descriptions[name] = desc;
   Queries::queries[name] = sql;
 }
 
 
+/**
+ * Get the set of names and descriptions of all queries.
+ */
 map<string, string> Queries::get_desc() {
   Queries::lazy_load();
   return Queries::descriptions;
 }
 
 
+/**
+ * Return true if the argument query is already defined.
+ */
 bool Queries::has(const string & name) {
   Queries::lazy_load();
   return
@@ -655,15 +665,30 @@ bool Queries::has(const string & name) {
 }
 
 
+/**
+ * Return the description of an argument query.
+ */
 string Queries::get_desc(const string & name) {
   Queries::lazy_load();
   return Queries::has(name) ? Queries::descriptions[name] : "";
 }
 
 
+/**
+ * Return the set of names and SQL for all saved queries.
+ */
 map<string, string> Queries::get_sql() {
   Queries::lazy_load();
   return Queries::queries;
+}
+
+
+/**
+ * Return the query without substituting environment variables.
+ */
+string Queries::get_raw_sql(const string & name) {
+  Queries::lazy_load();
+  return Queries::has(name) ? Queries::queries[name] : "";
 }
 
 
@@ -677,6 +702,8 @@ string Queries::get_sql(const string & name) {
   // Sanity check, do nothing if the requested query is not found.
   if (!Queries::has(name)) return "";
 
+  LOG(DEBUG) << "Fetching query: '" << Queries::queries[name] << "'";
+
   // Eval the query, to expand any and all referenced variables.
   stringstream ss;
   ss << "cat <<EOF_ASH_SQL\n" << Queries::queries[name] << "\nEOF_ASH_SQL";
@@ -684,16 +711,20 @@ string Queries::get_sql(const string & name) {
   FILE * p = popen(ss.str().c_str(), "r");
   if (!p) LOG(FATAL) << "Failed to popen(\"" << ss.str() << "\", \"r\")";
 
-  // Read the query, with all variables substituted.  
+  // Read the query, with all variables substituted.
   ss.str("");
   for (char buffer[1000]; fgets(buffer, sizeof(buffer), p) != 0; ) ss << buffer;
+
+  LOG(DEBUG) << "Query evaluated to: '" << ss.str() << "'";
 
   // Clean up.
   if (pclose(p) == -1) {
     LOG(FATAL) << "Failed to pclose open stream after reading: " << ss.str();
   }
 
-  return ss.str();
+  // Remove the trailing newline, which was added by the here-document.
+  string sql = ss.str();
+  return sql.substr(0, sql.size() - 1);
 }
 
 
@@ -706,6 +737,8 @@ void Queries::lazy_load() {
   if (loaded) return;
   loaded = true;
 
+  LOG(DEBUG) << "Loading query files for saved queries.";
+
   // Load these files, in this order.
   query::files.push_back("/etc/ash/queries");
   query::files.push_back(string(getenv("HOME")) + "/.ash/queries");
@@ -716,7 +749,7 @@ void Queries::lazy_load() {
     cout << "FAILED TO FIND A FILE TO PARSE!" << endl;
     exit(1);
   }
-  
+
   // Parse the input file.
   if (yylex()) {
     cout << "FAILED TO PARSE QUERIES!" << endl;
@@ -764,7 +797,7 @@ void expected(const char * message) {
  *   INITIAL := Looking for a query definition.
  *   Q1      := Found a query definition, looking for a COLON.
  *   Q2      := Found a query definition and COLON, looking for a LEFT_BRACE.
- *   QUERY   := Found a query definition, colon and left brace, looking for 
+ *   QUERY   := Found a query definition, colon and left brace, looking for
  *              a description field and a sql field.
  *   D1      := Found a 'definition' keyword, looking for a COLON.
  *   DESC    := Found a 'definition' and COLON, looking for a quoted string.
@@ -782,7 +815,7 @@ void expected(const char * message) {
  *   }
  */
 
-#line 786 "queries.cpp"
+#line 819 "queries.cpp"
 
 #define INITIAL 0
 #define Q1 1
@@ -976,9 +1009,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 206 "queries.l"
+#line 239 "queries.l"
 
-#line 982 "queries.cpp"
+#line 1015 "queries.cpp"
 
 	if ( !(yy_init) )
 		{
@@ -1074,18 +1107,18 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 207 "queries.l"
+#line 240 "queries.l"
 ;  // WHITESPACE
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 208 "queries.l"
+#line 241 "queries.l"
 ;  // # LINE COMMENT.
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 209 "queries.l"
+#line 242 "queries.l"
 {
 			  ash::query::desc = ash::query::sql = 0;
 			  ash::query::name = new std::string(yytext);
@@ -1095,62 +1128,62 @@ YY_RULE_SETUP
 /* State Q1 - Read a queary name, expecting a COLON. */
 case 4:
 YY_RULE_SETUP
-#line 216 "queries.l"
+#line 249 "queries.l"
 ;  // LINE COMMENT.
 	YY_BREAK
 case 5:
 /* rule 5 can match eol */
 YY_RULE_SETUP
-#line 217 "queries.l"
+#line 250 "queries.l"
 ;  // WHITESPACE
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 218 "queries.l"
+#line 251 "queries.l"
 BEGIN(Q2);
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 219 "queries.l"
+#line 252 "queries.l"
 ash::expected(":");
 	YY_BREAK
 /* State Q2 - Read a query name and COLON, expecting an LBRACE. */
 case 8:
 YY_RULE_SETUP
-#line 223 "queries.l"
+#line 256 "queries.l"
 ;  // LINE COMMENT.
 	YY_BREAK
 case 9:
 /* rule 9 can match eol */
 YY_RULE_SETUP
-#line 224 "queries.l"
+#line 257 "queries.l"
 ;  // WHITESPACE
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 225 "queries.l"
+#line 258 "queries.l"
 BEGIN(QUERY);
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 226 "queries.l"
+#line 259 "queries.l"
 ash::expected("{");
 	YY_BREAK
 /* State QUERY - Expecting a description and sql definition. */
 case 12:
 YY_RULE_SETUP
-#line 230 "queries.l"
+#line 263 "queries.l"
 ;  // LINE COMMENT.
 	YY_BREAK
 case 13:
 /* rule 13 can match eol */
 YY_RULE_SETUP
-#line 231 "queries.l"
+#line 264 "queries.l"
 ;  // WHITESPACE
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 232 "queries.l"
+#line 265 "queries.l"
 {
 			  if (ash::query::desc)
 			    ash::fail("multiple descriptions defined");
@@ -1159,7 +1192,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 237 "queries.l"
+#line 270 "queries.l"
 {
 			  if (ash::query::sql)
 			    ash::fail("multiple sql sections defined");
@@ -1168,7 +1201,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 242 "queries.l"
+#line 275 "queries.l"
 {
 			  using namespace ash;
 			  using namespace ash::query;
@@ -1189,51 +1222,51 @@ YY_RULE_SETUP
 /* State D1 - Read keyword 'description', expecting a COLON. */
 case 17:
 YY_RULE_SETUP
-#line 260 "queries.l"
+#line 293 "queries.l"
 ;  // LINE COMMENT.
 	YY_BREAK
 case 18:
 /* rule 18 can match eol */
 YY_RULE_SETUP
-#line 261 "queries.l"
+#line 294 "queries.l"
 ;  // WHITESPACE
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 262 "queries.l"
+#line 295 "queries.l"
 BEGIN(DESC);
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 263 "queries.l"
+#line 296 "queries.l"
 ash::expected(":");
 	YY_BREAK
 /* State DESC - Read 'description:' - expecting a quoted string. */
 case 21:
 YY_RULE_SETUP
-#line 266 "queries.l"
+#line 299 "queries.l"
 ;  // LINE COMMENT.
 	YY_BREAK
 case 22:
 /* rule 22 can match eol */
 YY_RULE_SETUP
-#line 267 "queries.l"
+#line 300 "queries.l"
 ;  // WHITESPACE
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 268 "queries.l"
+#line 301 "queries.l"
 BEGIN(STR);
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 269 "queries.l"
+#line 302 "queries.l"
 ash::expected("\"");
 	YY_BREAK
 /* State STR - Read a quoted string. */
 case 25:
 YY_RULE_SETUP
-#line 272 "queries.l"
+#line 305 "queries.l"
 {
 			  ash::query::desc = new std::string(yytext, yyleng-1);
 			  BEGIN(QUERY);
@@ -1242,41 +1275,41 @@ YY_RULE_SETUP
 case 26:
 /* rule 26 can match eol */
 YY_RULE_SETUP
-#line 276 "queries.l"
+#line 309 "queries.l"
 ash::expected("\" - Multi-line strings are illegal.");
 	YY_BREAK
 /* State SQL - read 'sql' token, expecting a COLON. */
 case 27:
 YY_RULE_SETUP
-#line 279 "queries.l"
+#line 312 "queries.l"
 ;  // LINE COMMENT.
 	YY_BREAK
 case 28:
 /* rule 28 can match eol */
 YY_RULE_SETUP
-#line 280 "queries.l"
+#line 313 "queries.l"
 ;  // WHITESPACE
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 281 "queries.l"
+#line 314 "queries.l"
 BEGIN(SQL1);
 	YY_BREAK
 /* State SQL1 - read 'sql:' token, expecting a LEFT_BRACE. */
 case 30:
 YY_RULE_SETUP
-#line 284 "queries.l"
+#line 317 "queries.l"
 ;  // LINE COMMENT.
 	YY_BREAK
 case 31:
 /* rule 31 can match eol */
 YY_RULE_SETUP
-#line 285 "queries.l"
+#line 318 "queries.l"
 ;  // WHITESPACE
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 286 "queries.l"
+#line 319 "queries.l"
 {
 			  ash::query::ss = new std::stringstream();
 			  BEGIN(SQL2);
@@ -1284,19 +1317,19 @@ YY_RULE_SETUP
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 290 "queries.l"
+#line 323 "queries.l"
 ash::expected("{");
 	YY_BREAK
 /* State SQL2 - read 'sql: {' token, expecting a closing RBRACE */
 case 34:
 /* rule 34 can match eol */
 YY_RULE_SETUP
-#line 293 "queries.l"
+#line 326 "queries.l"
 *ash::query::ss << yytext;
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 294 "queries.l"
+#line 327 "queries.l"
 {
 			  ++ash::query::braces;
 			  *ash::query::ss << "{";
@@ -1304,7 +1337,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 298 "queries.l"
+#line 331 "queries.l"
 {
 			  using namespace ash::query;
 			  if (braces) {
@@ -1321,7 +1354,7 @@ YY_RULE_SETUP
 /* FAIL BUCKET - this matches any character that is not covered above. */
 case 37:
 YY_RULE_SETUP
-#line 312 "queries.l"
+#line 345 "queries.l"
 {
 			  ash::fail() << ": Unexpected character." << std::endl;
 			  exit(1);
@@ -1329,10 +1362,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 316 "queries.l"
+#line 349 "queries.l"
 ECHO;
 	YY_BREAK
-#line 1336 "queries.cpp"
+#line 1369 "queries.cpp"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(Q1):
 case YY_STATE_EOF(Q2):
@@ -2310,7 +2343,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 316 "queries.l"
+#line 349 "queries.l"
 
 
 
@@ -2334,9 +2367,9 @@ int yywrap() {
     query::files.pop_front();
     yyin = fopen(query::parsing.c_str(), "r");
     if (yyin) return 0;
-    // TODO(cpa): LOG(DEBUG) << "The file couldn't be opened.";
+    LOG(DEBUG) << "File could not be opened: " << query::parsing;
   }
-  // TODO(cpa): LOG(DEBUG) << "Done parsing config files.";
+  LOG(DEBUG) << "Done parsing config files.";
   return 1;
 }
 

@@ -13,7 +13,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-// TODO(cpa): comment this utility
+
+/**
+ * This program is designed to invoke saved queries in /etc/ash/queries and
+ * ~/.ash/queries allowing multiple output formatting styles.
+ */
+
 #include "ash_query.hpp"
 
 #include "command.hpp"
@@ -34,11 +39,11 @@ using namespace flag;
 using namespace std;
 
 
-// TODO(cpa): add a flag to include the query with the result set
 // TODO(cpa): add some formatting options (\0 delim, tab delim, etc).
 
 DEFINE_string(database, 'd', 0, "A history database to query.");
 DEFINE_string(format, 'f', 0, "A format to display results.");
+DEFINE_string(print_query, 'p', 0, "Print the query SQL.");
 DEFINE_string(query, 'q', 0, "The name of the saved query to execute.");
 
 DEFINE_flag(list_formats, 'F', "Display all available formats.");
@@ -80,7 +85,7 @@ void display(ostream & out, const RowsType & rows, const string & name) {
  * Executes a query, printing the results to stdout according to the
  * user-chosen output format.
  */
-int execute(const string & query_name) {
+int execute(const string & sql) {
   Config & config = Config::instance();
 
   // Get the filename backing the database we are about to query.
@@ -98,14 +103,6 @@ int execute(const string & query_name) {
   Session::register_table();
   Command::register_table();
   Database db(db_file);
-
-  // Get the query SQL using the name, making sure it is found.
-  string sql = Queries::get_sql(query_name);
-  if (sql == "") {
-    cerr << "\nUnknown query name: '" << query_name << "'" << endl;
-    display(cerr << '\n', Queries::get_desc(), "Query");
-    return 1;
-  }
 
   // Get the intended Formatter before executing the query.
   string format = FLAGS_format == ""
@@ -179,6 +176,32 @@ int main(int argc, char ** argv) {
     return 0;
   }
 
+  // Print the requested query (both generic and actual, if different).
+  if (FLAGS_print_query != "") {
+    string sql = Queries::get_sql(FLAGS_print_query);
+    string raw = Queries::get_raw_sql(FLAGS_print_query);
+    if (raw == "") {
+      cout << "Query not found: " << FLAGS_print_query << "\nAvailable:\n";
+      display(cout, Queries::get_desc(), "Query");
+      return 1;
+    }
+    cout << "Query: " << FLAGS_print_query << endl;
+    if (raw != sql) {
+      cout << "Template Form:\n" << raw << "\nActual SQL:\n";
+    }
+    cout << sql << endl;
+    return 0;
+  }
+
+  // Make sure the requested query exists.
+  string sql = Queries::get_sql(FLAGS_query);
+  if (sql == "") {
+    cout << "Query not found: " << FLAGS_query << "\nAvailable:\n";
+    display(cout, Queries::get_desc(), "Query");
+    return 1;
+  }
+
   // Execute the requested query.
-  return execute(FLAGS_query);
+  return execute(sql);
 }
+

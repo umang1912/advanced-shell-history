@@ -14,7 +14,7 @@
 #   limitations under the License.
 #
 
-VERSION := 0.1.r72
+VERSION := 0.1.r73
 LOGGER	:= ash_log
 QUERIER	:= ash_query
 EXES	:= ${LOGGER} ${QUERIER}
@@ -25,7 +25,7 @@ CPPS	:= $(shell ls *.cpp)
 TRASH	:= ${OBJS} ${EXES} core
 CPP	:= g++
 C	:= gcc
-FLAGS	:= -g -Wall -DASH_VERSION="\"${VERSION}\"" -ansi -pedantic
+FLAGS	:= -g -Wall -DASH_VERSION="\"${VERSION}\"" -ansi -pedantic -O2
 
 .PHONY:	all clean distclean new reallyclean
 all:	${EXES}

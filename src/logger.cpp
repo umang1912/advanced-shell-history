@@ -117,3 +117,4 @@ Logger::~Logger() {
   log.close();
   if (level == FATAL) exit(1);
 }
+

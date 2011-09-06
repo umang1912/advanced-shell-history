@@ -43,6 +43,7 @@ class Queries {
     static string get_desc(const string & name);
 
     static map<string, string> get_sql();
+    static string get_raw_sql(const string & name);
     static string get_sql(const string & name);
 
   private:
@@ -60,3 +61,4 @@ class Queries {
 }  // namespace ash
 
 #endif  // __ASH_QUERIES__
+
