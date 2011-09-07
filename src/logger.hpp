@@ -13,7 +13,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
+/*
 
+  This utility provides a simple logger complete with various levels of
+  visibility.  This is essentially a small subset interface of the Google
+  logging library (glog) with no extra dependencies.
+
+*/
 #ifndef __ASH_LOGGER__
 #define __ASH_LOGGER__
 

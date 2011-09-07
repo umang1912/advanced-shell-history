@@ -16,6 +16,7 @@
 
 #include "unix.hpp"
 
+#include "config.hpp"
 #include "database.hpp"
 #include "util.hpp"
 
@@ -111,7 +112,6 @@ const string unix::shell() {
     char sh[100];
     FILE * p = popen(ss.str().c_str(), "r");
     if (p && fgets(sh, 100, p) != 0) {
-      // TODO(cpa): parse out the shell name from the command (space delimited?)
       pclose(p);
       return DBObject::quote(string(sh));
     }
@@ -175,12 +175,16 @@ const string unix::host_ip() {
     return "null";
   }
 
+  Config & config = Config::instance();
+  bool skip_lo = config.sets("SKIP_LOOPBACK");
+  
   int ips = 0;
   stringstream ss;
   char buffer[256];
   for (struct ifaddrs * i = addrs; i; i = i -> ifa_next) {
     struct sockaddr * address = i -> ifa_addr;
     if (address == NULL) continue;
+    if (skip_lo && i -> ifa_name && string("lo") == i -> ifa_name) continue;
 
     sa_family_t family = address -> sa_family;
     switch (family) {
@@ -212,7 +216,7 @@ const string unix::host_ip() {
 const string unix::host_name() {
   char buffer[1024];
   if (gethostname(buffer, sizeof(buffer))) {
-    // TOOD(cpa): log a warning
+    perror("advanced shell history: Unix: gethostname");
   }
   return DBObject::quote(buffer);
 }

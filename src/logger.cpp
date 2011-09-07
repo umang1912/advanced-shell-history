@@ -84,9 +84,9 @@ Logger::Logger(const Severity lvl)
   // Get the time now.
   struct tm * tmp = localtime(&t);
   if (tmp == NULL) {
-    perror("advanced shell history: localtime");
+    perror("advanced shell history Logger: localtime");
     if (level != FATAL) {
-      LOG(FATAL) << "FATAL: Failed to get localtime on this machine.";
+      LOG(FATAL) << "Failed to get localtime on this machine.";  // recurse
     } else {
       log << to_str(level) << ": ";
       return;

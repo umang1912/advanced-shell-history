@@ -32,13 +32,14 @@ version:
 	sed -i -e "/^VERSION :=/s/:= .*/:= ${RVERSION}/" src/Makefile
 
 build:
-	cd src && make
+	@ cd src && make
 	chmod 555 src/ash_log src/ash_query
 	cp -af src/ash_log src/ash_query files/usr/local/bin
 
 install: uninstall build
-	cd files && \
-	sudo tar -cpO $$( find -type f | grep -v '\.svn' ) | tar -xpC /
+	@ echo "Installing files:"
+	@ cd files && \
+	sudo tar -cpO $$( find -type f | grep -v '\.svn' ) | tar -xpvC /
 
 uninstall:
 	sudo rm -rf /etc/ash /usr/lib/advanced_shell_history

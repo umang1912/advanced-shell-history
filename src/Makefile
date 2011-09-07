@@ -14,7 +14,7 @@
 #   limitations under the License.
 #
 
-VERSION := 0.1.r73
+VERSION := 0.1.r74
 LOGGER	:= ash_log
 QUERIER	:= ash_query
 EXES	:= ${LOGGER} ${QUERIER}
@@ -102,4 +102,4 @@ formatter.o: formatter.hpp database.hpp logger.hpp
 logger.o: logger.hpp config.hpp
 queries.o: queries.hpp logger.hpp
 session.o: session.hpp ash_log.hpp unix.hpp
-unix.o: unix.hpp database.hpp util.hpp
+unix.o: unix.hpp config.hpp database.hpp util.hpp

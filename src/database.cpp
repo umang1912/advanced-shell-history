@@ -144,9 +144,14 @@ int NOOPCallback(void * ignored, int rows, char ** cols, char ** col_names) {
  */
 void Database::init_db() {
   const string & create_tables = DBObject::get_create_tables();
-  // TODO(cpa): add actual database error message.
-  if (sqlite3_exec(db, create_tables.c_str(), NOOPCallback, 0, 0)) {
-    cerr << "Failed to create tables for ash database." << endl;
+  char * error = 0;
+  if (sqlite3_exec(db, create_tables.c_str(), NOOPCallback, 0, &error)) {
+    cerr << "Failed to create tables:\n"
+         << create_tables
+         << "Error:\n"
+         << error << endl;
+    sqlite3_free(error);
+    error = 0;
   }
 }
 
@@ -155,7 +160,6 @@ void Database::init_db() {
  * Callback used in Database::select_int.
  */
 int SelectInt(void * result, int rows, char ** cols, char ** column_names) {
-// TODO(cpa): templatize this method somehow?
   *((int*) result) = atoi(cols[0]);
   return 0;
 }
@@ -223,7 +227,6 @@ bool executed(const string & query, sqlite3 * db, callback c, void * result) {
 
 /**
  * Executes a query expecting a single int return value.
- * TODO(cpa): refactor code using this to use exec below.
  */
 int Database::select_int(const string & query) const {
   int result = -1;
@@ -238,9 +241,13 @@ int Database::select_int(const string & query) const {
  * Execute a query or abort the program with the DB error message.
  */
 ResultSet * Database::exec(const string & query) const {
-  sqlite3_stmt * ps;
+  sqlite3_stmt * ps = 0;
   sqlite3_prepare_v2(db, query.c_str(), query.length(), &ps, 0);
-// TODO(cpa): can i detect an error in the query here?
+  if (!ps) {
+    LOG(FATAL) << "Failed to create a prepared statement for query: '" << query
+               << "'\nError:\n" << sqlite3_errmsg(db);
+  }
+
   ResultSet::HeadersType headers;
   ResultSet::DataType results;
   stringstream ss;
@@ -263,21 +270,24 @@ ResultSet * Database::exec(const string & query) const {
         results.push_back(ResultSet::RowType());
         for (size_t c = 0; c < columns; ++c) {
           ss.str("");
-          ss << sqlite3_column_text(ps, c);
+          if (sqlite3_column_text(ps, c)) {
+            ss << sqlite3_column_text(ps, c);
+          }
           results.back().push_back(ss.str());
         }
       	continue;  // for loop
       case SQLITE_CONSTRAINT:
-        LOG(DEBUG) << "constraint violation executing: " << query;
+        LOG(DEBUG) << "constraint violation executing: '" << query << "'";
         goto finalize;
       case SQLITE_DONE:
         goto finalize;
       default:
         sqlite3_finalize(ps);
-        cerr << "unknown sqlite3_step code: " << result << " executing "
-             << query << endl;
-        LOG(FATAL) << "unknown sqlite3_step code: " << result << " executing "
-                   << query << endl;
+        // TODO(cpa): remove this line once the FATAL errors are redirected to stderr by default.
+        cerr << "unknown sqlite3_step code: " << result << " executing '"
+             << query << "'\nError:\n" << sqlite3_errmsg(db) << endl;
+        LOG(FATAL) << "unknown sqlite3_step code: " << result << " executing '"
+                   << query << "'\nError:\n" << sqlite3_errmsg(db);
     }
   }
 
@@ -330,6 +340,7 @@ const string DBObject::quote(const char * value) {
 /**
  * Returns a quoted string suitable for insertion into the DB.
  * Converts an empty string to null.  Removes unprintable characters.
+ * Replaces all single-quotes with double single quotes in the output string.
  */
 const string DBObject::quote(const string & in) {
   if (in.empty()) return "null";
