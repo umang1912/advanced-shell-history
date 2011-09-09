@@ -14,20 +14,82 @@
 .\"limitations under the License.
 .\"
 
-.TH ash_query 1 "2011-09" "Copyright Carl Anderson" "Advanced Shell History"
+.TH ash_query 1 \
+  "Updated: __DATE__" \
+  "__VERSION__" \
+  "Advanced Shell History"
+
 
 .SH NAME
-ash_query
+ash_query - The advanced shell history query manager.
+
 
 .SH SYNOPSIS
-TODO(cpa): This program queries command history from a sqlite3 database.
+Usage: ash_query [options]
+      --help
+  -d  --database VALUE
+  -f  --format VALUE
+  -p  --print_query VALUE
+  -q  --query VALUE
+  -F  --list_formats
+  -H  --hide_headings
+  -Q  --list_queries
+      --version
+
 
 .SH DESCRIPTION
 TODO(cpa): Write a description of ash_query
 
+
 .SH OPTIONS
-TODO(cpa):
---help
+.IP "      --help"
+
+Display help and exit 0.
+
+.IP "  -d  --database VALUE"
+
+The filename of the database to query.  Typically this will be ~/.ash/history.db
+
+.IP "  -f  --format VALUE"
+
+Select an output format (VALUE) from:
+
+.B aligned
+  Columns are aligned and separated with spaces.      
+
+.B csv
+  Columns are comma separated with strings quoted.    
+
+.B group
+  Repeated values are summarized before the rows.     
+
+.B null
+  Columns are null separated with strings quoted. 
+
+.IP "  -p  --print_query VALUE"
+
+Print the query to stdout.  If the query uses shell variables, the generic query will be printed in addition to the query after variable substitution.
+
+.IP "  -q  --query VALUE"
+
+Execute the named query (VALUE) and display results formatted according to the specified --format.
+
+.IP "  -F  --list_formats"
+
+List the available output formats.
+
+.IP "  -H  --hide_headings"
+
+Suppress the headings of output tables (sometimes useful for scripting).
+
+.IP "  -Q  --list_queries"
+
+List the names and descriptions of all available saved queries taken from /etc/ash/queries and ~/.ash/queries.
+
+.IP "      --version"
+
+Display the version number and exit.
+
 
 .SH FILES
 .I /etc/ash/ash.conf
@@ -61,15 +123,19 @@ Sourced for bash sessions.
 Sourced for zsh sessions.
 .RE
 
+
 .SH ENVIRONMENT
 TODO(cpa): List the required environment variables for this program
+
 
 .SH "SEE ALSO"
 .BR ash_log(1)
 for logging history
 
+
 .SH AUTHOR
 Carl Anderson, Google Inc.
 
+
 .SH BUGS
-Please report bugs at http://code.google.com/p/advanced-shell-history/issues
+Report bugs at http://code.google.com/p/advanced-shell-history/issues

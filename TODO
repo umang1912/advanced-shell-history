@@ -1,5 +1,4 @@
 TODO
-  [ ] man page for ash_query
   [ ] add the version number to the man pages (and the date?)
   [ ] audit existing TODO comments in the code
   [ ] create a Google Sites page
@@ -9,4 +8,5 @@ TODO
   [ ] draw up a sql diagram showing the database schema - as a guide for people writing new queries.
   [ ] detect when /usr/local/bin is NOT in the PATH during install
   [ ] test installing this on a Gentoo server to make sure all dependencies are known.
+  [ ] implement the __DATE__ substitution in the man pages to use the date of the file itself
   [ ] 
