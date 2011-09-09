@@ -1,13 +1,11 @@
 TODO
+  [ ] man pages for ash_log and ash_query
   [ ] audit existing TODO comments in the code
-  [ ] Create a history function in the common shell lib, redirect queries to ash_query.
   [ ] create a Google Sites page
   [ ]   provide some example queries on the sites page.
   [ ] set up the initial repository on code.google.com
-  [ ] write up better documentation - how to install, how to use, etc.
+  [ ] write up better documentation - how to use, etc.
   [ ] draw up a sql diagram showing the database schema - as a guide for people writing new queries.
-  [ ] man pages for ash_log and ash_query - include in install tarball
   [ ] detect when /usr/local/bin is NOT in the PATH during install
   [ ] test installing this on a Gentoo server to make sure all dependencies are known.
-  [ ] Add a build notes section to the README - including a special section for mac
   [ ] 

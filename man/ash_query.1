@@ -1,0 +1,75 @@
+.\"
+.\"Copyright 2011 Carl Anderson
+.\"
+.\"Licensed under the Apache License, Version 2.0 (the "License");
+.\"you may not use this file except in compliance with the License.
+.\"You may obtain a copy of the License at
+.\"
+.\"    http://www.apache.org/licenses/LICENSE-2.0
+.\"
+.\"Unless required by applicable law or agreed to in writing, software
+.\"distributed under the License is distributed on an "AS IS" BASIS,
+.\"WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+.\"See the License for the specific language governing permissions and
+.\"limitations under the License.
+.\"
+
+.TH ash_query 1 "2011-09" "Copyright Carl Anderson" "Advanced Shell History"
+
+.SH NAME
+ash_query
+
+.SH SYNOPSIS
+TODO(cpa): This program queries command history from a sqlite3 database.
+
+.SH DESCRIPTION
+TODO(cpa): Write a description of ash_query
+
+.SH OPTIONS
+TODO(cpa):
+--help
+
+.SH FILES
+.I /etc/ash/ash.conf
+.RS
+Contains environment variables to be sourced into your shell.
+.RE
+
+.I /etc/ash/queries
+.RS
+Contains saved queries which can be invoked using the
+.BR ash_query(1)
+command.  Also see
+.I ~/.ash/queries
+for user-written queries.
+.RE
+
+.I ~/.ash/history.db
+.RS
+The default location for the sqlite3 database holding command history.  See
+http://code.google.com/p/advanced-shell-history/w for more details on how
+the data is stored internally and other tips for querying the data.
+.RE
+
+.I /usr/local/advanced_shell_history/bash
+.RS
+Sourced for bash sessions.
+.RE
+
+.I /usr/local/advanced_shell_history/zsh
+.RS
+Sourced for zsh sessions.
+.RE
+
+.SH ENVIRONMENT
+TODO(cpa): List the required environment variables for this program
+
+.SH "SEE ALSO"
+.BR ash_log(1)
+for logging history
+
+.SH AUTHOR
+Carl Anderson, Google Inc.
+
+.SH BUGS
+Please report bugs at http://code.google.com/p/advanced-shell-history/issues

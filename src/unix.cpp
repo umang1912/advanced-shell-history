@@ -177,7 +177,7 @@ const string unix::host_ip() {
 
   Config & config = Config::instance();
   bool skip_lo = config.sets("SKIP_LOOPBACK");
-  
+
   int ips = 0;
   stringstream ss;
   char buffer[256];
@@ -189,13 +189,17 @@ const string unix::host_ip() {
     sa_family_t family = address -> sa_family;
     switch (family) {
       case AF_INET: {
-        struct sockaddr_in * a = (struct sockaddr_in *) address;
-        inet_ntop(family, &(a -> sin_addr), buffer, sizeof(buffer));
+        if (config.sets("LOG_IPV4")) {
+          struct sockaddr_in * a = (struct sockaddr_in *) address;
+          inet_ntop(family, &(a -> sin_addr), buffer, sizeof(buffer));
+        }
         break;
       }
       case AF_INET6: {
-        struct sockaddr_in6 * a = (struct sockaddr_in6 *) address;
-        inet_ntop(family, &(a -> sin6_addr), buffer, sizeof(buffer));
+        if (config.sets("LOG_IPV6")) {
+          struct sockaddr_in6 * a = (struct sockaddr_in6 *) address;
+          inet_ntop(family, &(a -> sin6_addr), buffer, sizeof(buffer));
+        }
         break;
       }
       default:

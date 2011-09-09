@@ -106,7 +106,7 @@ int execute(const string & sql) {
 
   // Get the intended Formatter before executing the query.
   string format = FLAGS_format == ""
-    ? config.get_string("DEFAULT_FORMAT")
+    ? config.get_string("DEFAULT_FORMAT", "aligned")
     : FLAGS_format;
   Formatter * formatter = Formatter::lookup(format);
   if (!formatter) {
@@ -135,7 +135,7 @@ int main(int argc, char ** argv) {
     if (config.sets("DEFAULT_QUERY")) {
       return execute(config.get_string("DEFAULT_QUERY"));
     }
-    if (!config.sets("HIDE_USEAGE_FOR_NO_ARGS")) {
+    if (!config.sets("HIDE_USAGE_FOR_NO_ARGS")) {
       Flag::parse(&argc, &argv, true);  // Sets the prog name in help output.
       Flag::show_help(cerr);
     }

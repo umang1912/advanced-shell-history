@@ -20,6 +20,7 @@ RVERSION := ${VERSION}${REV}
 TMP_ROOT := /tmp
 TMP_DIR  := ${TMP_ROOT}/ash-${VERSION}
 TMP_FILE := ${TMP_DIR}.tar.gz
+MAN_DIR  := /usr/share/man/man1
 SRC_DEST := ..
 
 
@@ -36,14 +37,20 @@ build:
 	chmod 555 src/ash_log src/ash_query
 	cp -af src/ash_log src/ash_query files/usr/local/bin
 
-install: uninstall build
-	@ echo "Installing files:"
+man:	man/*.1
+	gzip -9 man/ash_log.1 -c > ./files${MAN_DIR}/ash_log.1.gz
+	gzip -9 man/ash_query.1 -c > ./files${MAN_DIR}/ash_query.1.gz
+
+install: uninstall build man
+	@ echo "\nInstalling files:"
 	@ cd files && \
-	sudo tar -cpO $$( find -type f | grep -v '\.svn' ) | tar -xpvC /
+	sudo tar -cpO $$( find -type f | grep -v '\.svn' ) | sudo tar -xpvC /
+	@ echo "\n 0/ - Install completed!\n<Y\n/ \\"
 
 uninstall:
 	sudo rm -rf /etc/ash /usr/lib/advanced_shell_history
-	sudo rm -f /usr/local/bin/ash_{log,query}
+	sudo rm -f /usr/local/bin/ash_log /usr/local/bin/ash_query
+	sudo rm -f ${MAN_DIR}/ash_log.1.gz ${MAN_DIR}/ash_query.1.gz
 
 src_tarball_minimal: mrproper src_tarball
 

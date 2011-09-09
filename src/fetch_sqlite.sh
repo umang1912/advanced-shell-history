@@ -19,8 +19,11 @@
 # This script attempts to fetch the SQLite3 amalgamation tarball using either
 # wget or curl (whichever is available).
 #
-# Alternatively, you can download this file yourself and leave it in this
+# Alternatively, you can download the zip file yourself and leave it in this
 # directory to be unpacked by this script.
+#
+# Note: this script is invoked by the Makefile, you should not need to invoke
+#       it yourself!
 #
 set -e
 set -u
@@ -96,7 +99,13 @@ else
 fi
 
 # Unpack the tarball and move the contents into this directory.
-unzip "${SQLITE_ZIP}"
+if ! unzip "${SQLITE_ZIP}"; then
+  # This can happen if a fetch was cancelled by Ctrl-C halfway through.
+  echo -e "\nFailed to unzip ${SQLITE_ZIP} - is it corrupt?\n"
+  echo -e "Consider deleting ${SQLITE_ZIP} and retrying build.\n"
+  exit 1
+fi
+
 mv -f "${SQLITE_DIR}"/sqlite3.* .
 
 # Clean up.

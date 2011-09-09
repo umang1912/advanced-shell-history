@@ -15,6 +15,33 @@ Features of this utility:
   * provides a convenient tool to query the history database.
 
 
+HOW TO BUILD:
+  make
+
+Notes:
+  * A full build of the code from source depends on the following commands
+    or utilities existing on your build system:
+      - bash
+      - make
+      - g++ and gcc
+      - curl
+      - tar
+      - unzip
+      - sed and awk
+      - flex (optional: only needed if rebuilding queries.cpp from queries.l)
+  * Also recommended is sqlite3 for writing new queries interactively.
+  * On a Mac, you will need to install xcode for make, g++:
+      http://developer.apple.com/xcode/
+
+
+HOW TO INSTALL:
+  make install
+
+
+HOW TO UNINSTALL:
+  make uninstall
+
+
 HOW DOES THIS WORK:
 
 This program operates on the assumption that your shell gives you the ability

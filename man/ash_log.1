@@ -1,0 +1,190 @@
+.\"
+.\"Copyright 2011 Carl Anderson
+.\"
+.\"Licensed under the Apache License, Version 2.0 (the "License");
+.\"you may not use this file except in compliance with the License.
+.\"You may obtain a copy of the License at
+.\"
+.\"    http://www.apache.org/licenses/LICENSE-2.0
+.\"
+.\"Unless required by applicable law or agreed to in writing, software
+.\"distributed under the License is distributed on an "AS IS" BASIS,
+.\"WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+.\"See the License for the specific language governing permissions and
+.\"limitations under the License.
+.\"
+
+.TH ash_log 1 \
+  "Updated: 2011-09" \
+  "Copyright Carl Anderson" \
+  "Advanced Shell History"
+
+
+.SH NAME
+ash_log - The advanced shell history command logger.
+
+
+.SH SYNOPSIS
+Usage: ash_log [options]
+      --help
+  -a  --alert VALUE
+  -c  --command VALUE
+  -e  --command_exit VALUE
+  -p  --command_pipe_status VALUE
+  -s  --command_start VALUE
+  -f  --command_finish VALUE
+  -n  --command_number VALUE
+  -x  --exit VALUE
+  -V  --version
+  -S  --get_session_id
+  -E  --end_session
+
+.\" TODO(cpa): This program logs command history into a sqlite3 database.
+
+
+.SH DESCRIPTION
+.B ash_log is not intended to be executed manually.
+It is invoked automatically by the advanced shell history system which is 
+only activated by sourcing the appropriate file.
+
+Advanced Shell History includes:
+.RS
+Session details:
+.RS
+.IP "* login and logout times"
+.IP "* username and hostname"
+.IP "* incoming ssh connection details (ip and ports)"
+.IP "* shell name"
+.IP "* tty, shell pid and ppid"
+.RE
+
+Command details:
+.RS
+.IP "* start and stop times"
+.IP "* exit code and pipestatus codes"
+.IP "* current working directory"
+.IP "* session id"
+.RE
+
+Many more data points are also collected.
+.RE
+
+
+If you intend to use this system to manage your own personal command history,
+it is recommended that you add the appropriate source command to your shell rc
+file so it is automatically started with each new session.
+
+.B For bash, add this to your ~/.bashrc file:
+.RS
+source /usr/local/advanced_shell_history/bash
+.RE
+
+.B For zsh, add this to your ~/.zshrc file:
+.RS
+source /usr/local/advanced_shell_history/zsh
+.RE
+
+
+.SH OPTIONS
+.IP "      --help"
+
+Display command help and exit 0.
+
+.IP "  -a  --alert VALUE"
+
+Display an alert message (VALUE) and exit 0.
+
+.IP "  -c  --command VALUE"
+
+Store the command (VALUE) entered by the user.
+
+.IP "  -e  --command_exit VALUE"
+
+Store the command exit code (VALUE) of the command.
+
+.IP "  -p  --command_pipe_status VALUE"
+
+Store the command pipe states (exit code for each piped command) separated by underscores.
+
+.IP "  -s  --command_start VALUE"
+
+The unix epoch timestamp (VALUE) when the command started (the user pressed Enter).
+
+.IP "  -f  --command_finish VALUE"
+
+The unix epoch timestamp (VALUE) when the command completed and the next prompt was displayed.
+
+.IP "  -n  --command_number VALUE"
+
+The shell builtin history number (VALUE) of the entered command.
+
+.IP "  -x  --exit VALUE"
+
+The exit code to use when exiting this program.
+This flag is needed to re-create the same exit status as the logged command.
+This is important because this command runs automatically before the prompt is redrawn, so if ash_log does not restore the previous exit code, the user would see the exit code for ash_log (and NOT their command) when executing:
+.RS
+  echo ${?}
+.RE
+
+.IP "  -V  --version"
+
+Display the version number and exit.
+
+.IP "  -S  --get_session_id"
+
+Display the advanced shell history session number and exit.  If no session ID is found, one is created and displayed.
+
+.IP "  -E  --end_session"
+
+Ends the current session, as defined by the shell environment variable ASH_SESSION_ID.  It is an error to use this flag without having the ASH_SESSION_ID variable set.
+
+
+.SH FILES
+.I /etc/ash/ash.conf
+.RS
+Contains environment variables to be sourced into your shell.
+.RE
+
+.I /etc/ash/queries
+.RS
+Contains saved queries which can be invoked using the
+.BR ash_query(1)
+command.  Also see
+.I ~/.ash/queries
+for user-written queries.
+.RE
+
+.I ~/.ash/history.db
+.RS
+The default location for the sqlite3 database holding command history.  See
+http://code.google.com/p/advanced-shell-history/w for more details on how
+the data is stored internally and other tips for querying the data.
+.RE
+
+.I /usr/local/advanced_shell_history/bash
+.RS
+Sourced for bash sessions.
+.RE
+
+.I /usr/local/advanced_shell_history/zsh
+.RS
+Sourced for zsh sessions.
+.RE
+
+
+.SH ENVIRONMENT
+TODO(cpa): List the required environment variables
+
+
+.SH "SEE ALSO"
+.BR ash_query(1)
+to query history
+
+
+.SH AUTHOR
+Carl Anderson, Google Inc.
+
+
+.SH BUGS
+Report bugs at http://code.google.com/p/advanced-shell-history/issues
