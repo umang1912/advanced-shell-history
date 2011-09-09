@@ -38,19 +38,22 @@ build:
 	cp -af src/ash_log src/ash_query files/usr/local/bin
 
 man:	man/*.1
-	gzip -9 man/ash_log.1 -c > ./files${MAN_DIR}/ash_log.1.gz
-	gzip -9 man/ash_query.1 -c > ./files${MAN_DIR}/ash_query.1.gz
+	sed -e "s:__VERSION__:Version ${RVERSION}:" man/ash_log.1 \
+	  | gzip -9 -c > ./files${MAN_DIR}/ash_log.1.gz
+	sed -e "s:__VERSION__:Version ${RVERSION}:" man/ash_query.1 \
+	  | gzip -9 -c > ./files${MAN_DIR}/ash_query.1.gz
 
 install: uninstall build man
 	@ echo "\nInstalling files:"
 	@ cd files && \
-	sudo tar -cpO $$( find -type f | grep -v '\.svn' ) | sudo tar -xpvC /
+	sudo tar -cpO $$( find -type f -o -type l | grep -v '\.svn' ) | sudo tar -xpvC /
 	@ echo "\n 0/ - Install completed!\n<Y\n/ \\"
 
 uninstall:
 	sudo rm -rf /etc/ash /usr/lib/advanced_shell_history
 	sudo rm -f /usr/local/bin/ash_log /usr/local/bin/ash_query
 	sudo rm -f ${MAN_DIR}/ash_log.1.gz ${MAN_DIR}/ash_query.1.gz
+	sudo rm -f ${MAN_DIR}/advanced_shell_history
 
 src_tarball_minimal: mrproper src_tarball
 

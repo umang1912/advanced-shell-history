@@ -1,5 +1,6 @@
 TODO
-  [ ] man pages for ash_log and ash_query
+  [ ] man page for ash_query
+  [ ] add the version number to the man pages (and the date?)
   [ ] audit existing TODO comments in the code
   [ ] create a Google Sites page
   [ ]   provide some example queries on the sites page.

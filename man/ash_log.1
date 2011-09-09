@@ -15,8 +15,8 @@
 .\"
 
 .TH ash_log 1 \
-  "Updated: 2011-09" \
-  "Copyright Carl Anderson" \
+  "Updated: __DATE__" \
+  "__VERSION__" \
   "Advanced Shell History"
 
 
@@ -38,8 +38,6 @@ Usage: ash_log [options]
   -V  --version
   -S  --get_session_id
   -E  --end_session
-
-.\" TODO(cpa): This program logs command history into a sqlite3 database.
 
 
 .SH DESCRIPTION
@@ -174,8 +172,17 @@ Sourced for zsh sessions.
 
 
 .SH ENVIRONMENT
-TODO(cpa): List the required environment variables
+.IP ASH_CFG_HIDE_USAGE_FOR_NO_ARGS
+This can be set to suppress the default --help output if no arguments are passed to ash_log.
 
+.IP ASH_CFG_HISTORY_DB
+The filename of the database where commands and sessions are stored.
+
+.IP ASH_DISABLED
+If set, ash_log is disabled.
+
+.IP ASH_SESSION_ID
+The session id number created for the current session.  If unset, a new session ID will be created and displayed.  The caller is expected to export this variable using the generated ID number.
 
 .SH "SEE ALSO"
 .BR ash_query(1)
