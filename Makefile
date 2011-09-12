@@ -39,8 +39,10 @@ build:
 
 man:	man/*.1
 	sed -e "s:__VERSION__:Version ${RVERSION}:" man/ash_log.1 \
+	  | sed -e "s:__DATE__:$$( stat -c %y man/ash_log.1 | cut -d' ' -f1 ):" \
 	  | gzip -9 -c > ./files${MAN_DIR}/ash_log.1.gz
 	sed -e "s:__VERSION__:Version ${RVERSION}:" man/ash_query.1 \
+	  | sed -e "s:__DATE__:$$( stat -c %y man/ash_query.1 | cut -d' ' -f1 ):" \
 	  | gzip -9 -c > ./files${MAN_DIR}/ash_query.1.gz
 
 install: uninstall build man

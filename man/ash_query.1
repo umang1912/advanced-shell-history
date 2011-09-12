@@ -38,7 +38,8 @@ Usage: ash_query [options]
 
 
 .SH DESCRIPTION
-TODO(cpa): Write a description of ash_query
+ash_query is a part of the Advanced Shell History package.  It provides a
+convenient way to execute saved queries against a command history database.
 
 
 .SH OPTIONS
@@ -48,7 +49,10 @@ Display help and exit 0.
 
 .IP "  -d  --database VALUE"
 
-The filename of the database to query.  Typically this will be ~/.ash/history.db
+The filename (VALUE) of the database to query.
+Typically this will be ~/.ash/history.db.
+If this is not specified on the command line, ash_query will look for a shell
+environment variable ASH_CFG_HISTORY_DB and try to use that.
 
 .IP "  -f  --format VALUE"
 
@@ -66,17 +70,27 @@ Select an output format (VALUE) from:
 .B null
   Columns are null separated with strings quoted. 
 
+If format is not specified, ash_query will look for a default format
+environment variable ASH_CFG_DEFAULT_FORMAT and try to use that.
+If neither are specified, the default is 'aligned'.
+
+
 .IP "  -p  --print_query VALUE"
 
-Print the query to stdout.  If the query uses shell variables, the generic query will be printed in addition to the query after variable substitution.
+Print the named query (VALUE) to stdout.
+If the query uses shell variables, the generic query will be printed in
+addition to the query after variable substitution.
 
 .IP "  -q  --query VALUE"
 
-Execute the named query (VALUE) and display results formatted according to the specified --format.
+Execute the named query (VALUE) and display results formatted according to
+the specified --format.  If no query is specified, ash_query will check for
+a named query in the shell environment variable ASH_CFG_DEFAULT_QUERY and
+attempt to use that.
 
 .IP "  -F  --list_formats"
 
-List the available output formats.
+List all the available output formats.
 
 .IP "  -H  --hide_headings"
 
@@ -84,7 +98,8 @@ Suppress the headings of output tables (sometimes useful for scripting).
 
 .IP "  -Q  --list_queries"
 
-List the names and descriptions of all available saved queries taken from /etc/ash/queries and ~/.ash/queries.
+List the names and descriptions of all available saved queries taken from
+/etc/ash/queries and ~/.ash/queries.
 
 .IP "      --version"
 
@@ -113,19 +128,61 @@ http://code.google.com/p/advanced-shell-history/w for more details on how
 the data is stored internally and other tips for querying the data.
 .RE
 
-.I /usr/local/advanced_shell_history/bash
+.I /usr/lib/advanced_shell_history/bash
 .RS
 Sourced for bash sessions.
 .RE
 
-.I /usr/local/advanced_shell_history/zsh
+.I /usr/lib/advanced_shell_history/zsh
 .RS
 Sourced for zsh sessions.
 .RE
 
 
 .SH ENVIRONMENT
-TODO(cpa): List the required environment variables for this program
+.IP ASH_CFG_DB_FAIL_RANDOM_TIMEOUT
+After a failed select, sleep a random number of milliseconds before retrying.
+This is intended to add some noise to the retry mechanism.
+
+.IP ASH_CFG_DB_FAIL_TIMEOUT
+After a failed select, sleep this many milliseconds before retrying.
+
+.IP ASH_CFG_DB_MAX_RETRIES
+Quit db retries after this many attempts.
+
+.IP ASH_CFG_DEFAULT_FORMAT
+The default format to display queried data returned by ash_query.  Set this
+to something other than 'aligned' if you prefer a different format.
+
+.IP ASH_CFG_DEFAULT_QUERY
+The default query to execute by ash_query.  Set this to the name of your
+favorite query if you don't want to specify the same query name each time.
+
+.IP ASH_CFG_HIDE_USAGE_FOR_NO_ARGS
+Normally, if you invoke ash_query with no arguments, the --help output is
+displayed.  With this set to a non-empty value, the --help output is
+suppressed in this case.
+
+.IP ASH_CFG_HISTORY_DB
+The default database to query.  This is set by sourcing one of the shell
+scripts in /usr/lib/advanced_shell_history and signifies the location
+of the database where commands are logged.  If this variable exists, the
+--database flag does not need to be used.
+
+.IP ASH_CFG_IGNORE_UNKNOWN_FLAGS
+Normally ash_query complains when it sees unknown flags.  With this variable
+set to a non-empty value, unknown flags are ignored.
+
+.IP ASH_CFG_LOG_DATE_FMT
+If logging is in use, this format string can be set to customize the date
+string.
+
+.IP ASH_CFG_LOG_FILE
+The file destination of logged messages, if logging is in use.
+
+.IP ASH_CFG_LOG_LEVEL
+The lowest level of logging to make visible.  Levels (in increasing order)
+are DEBUG, INFO, WARN, ERROR and FATAL.
 
 
 .SH "SEE ALSO"
@@ -139,3 +196,4 @@ Carl Anderson, Google Inc.
 
 .SH BUGS
 Report bugs at http://code.google.com/p/advanced-shell-history/issues
+

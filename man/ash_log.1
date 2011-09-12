@@ -74,12 +74,12 @@ file so it is automatically started with each new session.
 
 .B For bash, add this to your ~/.bashrc file:
 .RS
-source /usr/local/advanced_shell_history/bash
+source /usr/lib/advanced_shell_history/bash
 .RE
 
 .B For zsh, add this to your ~/.zshrc file:
 .RS
-source /usr/local/advanced_shell_history/zsh
+source /usr/lib/advanced_shell_history/zsh
 .RE
 
 
@@ -102,15 +102,18 @@ Store the command exit code (VALUE) of the command.
 
 .IP "  -p  --command_pipe_status VALUE"
 
-Store the command pipe states (exit code for each piped command) separated by underscores.
+Store the command pipe states (exit code for each piped command) separated by
+underscores.
 
 .IP "  -s  --command_start VALUE"
 
-The unix epoch timestamp (VALUE) when the command started (the user pressed Enter).
+The unix epoch timestamp (VALUE) when the command started (the user pressed
+Enter).
 
 .IP "  -f  --command_finish VALUE"
 
-The unix epoch timestamp (VALUE) when the command completed and the next prompt was displayed.
+The unix epoch timestamp (VALUE) when the command completed and the next prompt
+was displayed.
 
 .IP "  -n  --command_number VALUE"
 
@@ -120,7 +123,9 @@ The shell builtin history number (VALUE) of the entered command.
 
 The exit code to use when exiting this program.
 This flag is needed to re-create the same exit status as the logged command.
-This is important because this command runs automatically before the prompt is redrawn, so if ash_log does not restore the previous exit code, the user would see the exit code for ash_log (and NOT their command) when executing:
+This is important because this command runs automatically before the prompt is
+redrawn, so if ash_log does not restore the previous exit code, the user would
+see the exit code for ash_log (and NOT their command) when executing:
 .RS
   echo ${?}
 .RE
@@ -131,11 +136,14 @@ Display the version number and exit.
 
 .IP "  -S  --get_session_id"
 
-Display the advanced shell history session number and exit.  If no session ID is found, one is created and displayed.
+Display the advanced shell history session number and exit.  If no session ID
+is found, one is created and displayed.
 
 .IP "  -E  --end_session"
 
-Ends the current session, as defined by the shell environment variable ASH_SESSION_ID.  It is an error to use this flag without having the ASH_SESSION_ID variable set.
+Ends the current session, as defined by the shell environment variable
+ASH_SESSION_ID.  It is an error to use this flag without having the
+ASH_SESSION_ID variable set.
 
 
 .SH FILES
@@ -160,29 +168,71 @@ http://code.google.com/p/advanced-shell-history/w for more details on how
 the data is stored internally and other tips for querying the data.
 .RE
 
-.I /usr/local/advanced_shell_history/bash
+.I /usr/lib/advanced_shell_history/bash
 .RS
 Sourced for bash sessions.
 .RE
 
-.I /usr/local/advanced_shell_history/zsh
+.I /usr/lib/advanced_shell_history/zsh
 .RS
 Sourced for zsh sessions.
 .RE
 
 
 .SH ENVIRONMENT
+.IP ASH_CFG_DB_FAIL_RANDOM_TIMEOUT
+After a failed select, sleep a random number of milliseconds before retrying.
+This is intended to add some noise to the retry mechanism.
+
+.IP ASH_CFG_DB_FAIL_TIMEOUT
+After a failed select, sleep this many milliseconds before retrying.
+
+.IP ASH_CFG_DB_MAX_RETRIES
+Quit db retries after this many attempts.
+
 .IP ASH_CFG_HIDE_USAGE_FOR_NO_ARGS
-This can be set to suppress the default --help output if no arguments are passed to ash_log.
+Normally, if you invoke ash_query with no arguments, the --help output is
+displayed.  With this set to a non-empty value, the --help output is
+suppressed in this case.
 
 .IP ASH_CFG_HISTORY_DB
-The filename of the database where commands and sessions are stored.
+The default database to query.  This is set by sourcing one of the shell
+scripts in /usr/lib/advanced_shell_history and signifies the location
+of the database where commands are logged.  If this variable exists, the
+--database flag does not need to be used.
+
+.IP ASH_CFG_IGNORE_UNKNOWN_FLAGS
+Normally ash_query complains when it sees unknown flags.  With this variable
+set to a non-empty value, unknown flags are ignored.
+
+.IP ASH_CFG_LOG_DATE_FMT
+If logging is in use, this format string can be set to customize the date
+string.
+
+.IP ASH_CFG_LOG_FILE
+The file destination of logged messages, if logging is in use.
+
+.IP ASH_CFG_LOG_IPV4
+Can be used to skip logging ipv4 host IP addresses.
+
+.IP ASH_CFG_LOG_IPV6
+Can be used to skip logging ipv6 host IP addresses.
+
+.IP ASH_CFG_LOG_LEVEL
+The lowest level of logging to make visible.  Levels (in increasing order)
+are DEBUG, INFO, WARN, ERROR and FATAL.
+
+.IP ASH_CFG_SKIP_LOOPBACK
+Skip logging IP addresses for loopback devices (both ipv4 and ipv6).
 
 .IP ASH_DISABLED
 If set, ash_log is disabled.
 
 .IP ASH_SESSION_ID
-The session id number created for the current session.  If unset, a new session ID will be created and displayed.  The caller is expected to export this variable using the generated ID number.
+The session id number created for the current session.  If unset, a new
+session ID will be created and displayed.  The caller is expected to export
+this variable using the generated ID number.
+
 
 .SH "SEE ALSO"
 .BR ash_query(1)
