@@ -181,14 +181,14 @@ Sourced for zsh sessions.
 
 .SH ENVIRONMENT
 .IP ASH_CFG_DB_FAIL_RANDOM_TIMEOUT
-After a failed select, sleep a random number of milliseconds before retrying.
+After a failed insert, sleep a random number of milliseconds before retrying.
 This is intended to add some noise to the retry mechanism.
 
 .IP ASH_CFG_DB_FAIL_TIMEOUT
-After a failed select, sleep this many milliseconds before retrying.
+After a failed insert, sleep this many milliseconds before retrying.
 
 .IP ASH_CFG_DB_MAX_RETRIES
-Quit db retries after this many attempts.
+Quit db retries after this many failed attempts.
 
 .IP ASH_CFG_HIDE_USAGE_FOR_NO_ARGS
 Normally, if you invoke ash_query with no arguments, the --help output is

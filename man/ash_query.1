@@ -38,8 +38,26 @@ Usage: ash_query [options]
 
 
 .SH DESCRIPTION
-ash_query is a part of the Advanced Shell History package.  It provides a
+.B ash_query
+is a part of the Advanced Shell History package.  It provides a
 convenient way to execute saved queries against a command history database.
+
+To collect command history data and to populate a history database, you must
+first source the appropriate shell code into your shell session.
+
+If you intend to use this system to manage your own personal command history,
+it is recommended that you add the appropriate source command to your shell rc
+file so it is automatically started with each new session.
+
+.B For bash, add this to your ~/.bashrc file:
+.RS
+source /usr/lib/advanced_shell_history/bash
+.RE
+
+.B For zsh, add this to your ~/.zshrc file:
+.RS
+source /usr/lib/advanced_shell_history/zsh
+.RE
 
 
 .SH OPTIONS
@@ -148,7 +166,7 @@ This is intended to add some noise to the retry mechanism.
 After a failed select, sleep this many milliseconds before retrying.
 
 .IP ASH_CFG_DB_MAX_RETRIES
-Quit db retries after this many attempts.
+Quit db retries after this many failed attempts.
 
 .IP ASH_CFG_DEFAULT_FORMAT
 The default format to display queried data returned by ash_query.  Set this

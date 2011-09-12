@@ -35,11 +35,11 @@ DEFINE_int(command_exit, 'e', 0, "The exit code of the command to log.");
 DEFINE_string(command_pipe_status, 'p', 0, "The pipe states of the command to log.");
 DEFINE_int(command_start, 's', 0, "The timestamp when the command started.");
 DEFINE_int(command_finish, 'f', 0, "The timestamp when the command stopped.");
-DEFINE_int(command_number, 'n', 0, "The command number according to shell history.");
-DEFINE_int(exit, 'x', 0, "The exit code to use when exiting this program.");
+DEFINE_int(command_number, 'n', 0, "The builtin shell history command number.");
+DEFINE_int(exit, 'x', 0, "The exit code to use when exiting.");
 
 DEFINE_flag(version, 'V', "Prints the version and exits.");
-DEFINE_flag(get_session_id, 'S', "Begins a session and / or emits the session ID.");
+DEFINE_flag(get_session_id, 'S', "Emits the session ID (or creates one).");
 DEFINE_flag(end_session, 'E', "Ends the current session.");
 
 
@@ -52,8 +52,8 @@ using namespace std;
  * Displays a brief message about how this is supposed to be used.
  */
 void usage(ostream & out) {
-  out << "\n\nThis program is not intended to be executed manually.  "
-      << "See the man page for more details.\n";
+  out << "\n\nThis program is not intended to be executed manually.\n\n"
+      << "NOTE: See the man page for more details.\n";
   Flag::show_help(out);
   exit(1);
 }

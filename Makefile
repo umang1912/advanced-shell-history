@@ -24,8 +24,8 @@ MAN_DIR  := /usr/share/man/man1
 SRC_DEST := ..
 
 
-.PHONY: all build clean install mrproper src_tarball src_tarball_minimal uninstall version
-all:	version build
+.PHONY: all build clean install man mrproper src_tarball src_tarball_minimal uninstall version
+all:	version build man
 
 new:	clean all
 
@@ -37,7 +37,7 @@ build:
 	chmod 555 src/ash_log src/ash_query
 	cp -af src/ash_log src/ash_query files/usr/local/bin
 
-man:	man/*.1
+man:
 	sed -e "s:__VERSION__:Version ${RVERSION}:" man/ash_log.1 \
 	  | sed -e "s:__DATE__:$$( stat -c %y man/ash_log.1 | cut -d' ' -f1 ):" \
 	  | gzip -9 -c > ./files${MAN_DIR}/ash_log.1.gz
