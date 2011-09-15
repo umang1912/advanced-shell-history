@@ -14,18 +14,18 @@
 .\"limitations under the License.
 .\"
 
-.TH ash_log 1 \
+.TH _ash_log 1 \
   "Updated: __DATE__" \
   "__VERSION__" \
   "Advanced Shell History"
 
 
 .SH NAME
-ash_log - The advanced shell history command logger.
+_ash_log - The advanced shell history command logger.
 
 
 .SH SYNOPSIS
-Usage: ash_log [options]
+Usage: _ash_log [options]
       --help
   -a  --alert VALUE
   -c  --command VALUE
@@ -41,7 +41,7 @@ Usage: ash_log [options]
 
 
 .SH DESCRIPTION
-.B ash_log is not intended to be executed manually.
+.B _ash_log is not intended to be executed manually.
 It is invoked automatically by the advanced shell history system which is 
 only activated by sourcing the appropriate file.
 
@@ -124,8 +124,8 @@ The shell builtin history number (VALUE) of the entered command.
 The exit code to use when exiting this program.
 This flag is needed to re-create the same exit status as the logged command.
 This is important because this command runs automatically before the prompt is
-redrawn, so if ash_log does not restore the previous exit code, the user would
-see the exit code for ash_log (and NOT their command) when executing:
+redrawn, so if _ash_log does not restore the previous exit code, the user would
+see the exit code for _ash_log (and NOT their command) when executing:
 .RS
   echo ${?}
 .RE
@@ -226,7 +226,7 @@ are DEBUG, INFO, WARN, ERROR and FATAL.
 Skip logging IP addresses for loopback devices (both ipv4 and ipv6).
 
 .IP ASH_DISABLED
-If set, ash_log is disabled.
+If set, _ash_log is disabled.
 
 .IP ASH_SESSION_ID
 The session id number created for the current session.  If unset, a new

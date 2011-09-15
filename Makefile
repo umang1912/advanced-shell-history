@@ -34,13 +34,13 @@ version:
 
 build:
 	@ cd src && make
-	chmod 555 src/ash_log src/ash_query
-	cp -af src/ash_log src/ash_query files/usr/local/bin
+	chmod 555 src/_ash_log src/ash_query
+	cp -af src/_ash_log src/ash_query files/usr/local/bin
 
 man:
-	sed -e "s:__VERSION__:Version ${RVERSION}:" man/ash_log.1 \
-	  | sed -e "s:__DATE__:$$( stat -c %y man/ash_log.1 | cut -d' ' -f1 ):" \
-	  | gzip -9 -c > ./files${MAN_DIR}/ash_log.1.gz
+	sed -e "s:__VERSION__:Version ${RVERSION}:" man/_ash_log.1 \
+	  | sed -e "s:__DATE__:$$( stat -c %y man/_ash_log.1 | cut -d' ' -f1 ):" \
+	  | gzip -9 -c > ./files${MAN_DIR}/_ash_log.1.gz
 	sed -e "s:__VERSION__:Version ${RVERSION}:" man/ash_query.1 \
 	  | sed -e "s:__DATE__:$$( stat -c %y man/ash_query.1 | cut -d' ' -f1 ):" \
 	  | gzip -9 -c > ./files${MAN_DIR}/ash_query.1.gz
@@ -53,8 +53,8 @@ install: uninstall build man
 
 uninstall:
 	sudo rm -rf /etc/ash /usr/lib/advanced_shell_history
-	sudo rm -f /usr/local/bin/ash_log /usr/local/bin/ash_query
-	sudo rm -f ${MAN_DIR}/ash_log.1.gz ${MAN_DIR}/ash_query.1.gz
+	sudo rm -f /usr/local/bin/_ash_log /usr/local/bin/ash_query
+	sudo rm -f ${MAN_DIR}/_ash_log.1.gz ${MAN_DIR}/ash_query.1.gz
 	sudo rm -f ${MAN_DIR}/advanced_shell_history
 
 src_tarball_minimal: mrproper src_tarball
@@ -71,5 +71,8 @@ mrproper: clean
 
 clean:	version
 	cd src && make distclean
-	rm -f files/usr/local/bin/ash_*
+	rm -f files/usr/local/bin/_ash_log
+	rm -f files/usr/local/bin/ash_query
+	rm -f files/usr/share/man/man1/_ash_log.1.gz
+	rm -f files/usr/share/man/man1/ash_query.1.gz
 	rm -rf ${TMP_DIR} ${TMP_FILE}

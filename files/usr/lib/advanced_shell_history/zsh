@@ -80,8 +80,8 @@ source <( typeset -f precmd | sed -e 's/^precmd/ash::original_precmd/' )
 function precmd() {
   ASH_PIPESTATUS=( ${?} ${pipestatus[@]} )
   if [[ -z ${ASH_SESSION_ID:-} ]]; then
-    export ASH_SESSION_ID="$( ash_log --get_session_id )"
-    ash_log -a "Advanced Shell History is enabled (session: ${ASH_SESSION_ID})."
+    export ASH_SESSION_ID="$( _ash_log --get_session_id )"
+    [[ -n ${ASH_CFG_MOTD:-} ]] && _ash_log -a "${ASH_CFG_MOTD}"
   else
     ASH=1 ash::log ${ASH_PIPESTATUS[@]}
   fi
@@ -89,5 +89,5 @@ function precmd() {
 
   local rval=${ASH_PIPESTATUS[1]}
   ASH_PIPESTATUS=( ${ASH_PIPESTATUS[2,-1]} )
-  ash_log --exit ${rval:-1}
+  _ash_log --exit ${rval:-1}
 }

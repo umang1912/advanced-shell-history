@@ -14,12 +14,13 @@
    limitations under the License.
 */
 
-#include <sstream>
-
-#include "ash_log.hpp"
 #include "command.hpp"
+
+#include "_ash_log.hpp"
 #include "unix.hpp"
 #include "util.hpp"
+
+#include <sstream>
 
 
 using namespace ash;
@@ -75,7 +76,7 @@ Command::Command(const string command, const int rval, const int start_ts,
   values["duration"] = Util::to_string(end_ts - start_ts);
   int pipe_cnt = 1;
   for (string::const_iterator i = pipes.begin(), e = pipes.end(); i != e; ++i)
-    if ((*i) == ' ') ++pipe_cnt;
+    if ((*i) == '_') ++pipe_cnt;
   values["pipe_cnt"] = Util::to_string(pipe_cnt);
   values["pipe_vals"] = quote(pipes);
   values["command"] = quote(command);

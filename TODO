@@ -4,7 +4,5 @@ TODO
   [ ] detect when /usr/local/bin is NOT in the PATH during install
   [ ] test installing this on a Gentoo server to make sure all dependencies are known.
   [ ] write up notes for bash users and for zsh users
-  [ ] make the MOTD optional - customizable in ash.conf
-  [ ] rename ash_log to _ash_log - to not pollute the executable namespace and make it easier to tab-complete ash_query
-  [ ] write a Troubleshooting and FAQ wiki page
+  [ ] write Troubleshooting and FAQ wiki pages
   [ ] 

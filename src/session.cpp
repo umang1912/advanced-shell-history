@@ -16,7 +16,7 @@
 
 #include "session.hpp"
 
-#include "ash_log.hpp"
+#include "_ash_log.hpp"
 #include "unix.hpp"
 
 #include <sstream>

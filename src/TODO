@@ -5,9 +5,7 @@ TODO
   [ ] add more logging throughout the system.
   [ ] add an option for a formatter that includes visible pipe separators between aligned columns
   [ ] include a row of dashes after the header line for aligned columns
-  [ ] add a config option to try to make the environment variables read-only if present: ASH_CFG_READ_ONLY
   [ ] add some linter scripts to test the code for style and correctness.
-  [ ] add a config option to customize the MOTD
   [ ] 
 
 database.cpp
@@ -21,7 +19,6 @@ ash_query.cpp
 
 
 BUGS
-  [ ] pipe_cnt seems to always be 1
   [ ] 
 
 
