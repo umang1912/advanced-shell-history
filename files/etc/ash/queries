@@ -41,7 +41,7 @@ CWD: {
     from
       commands as c
     where
-      c.cwd = '${PWD}' or c.cwd = '/${PWD}'
+      c.cwd = '${PWD}' or c.cwd = '/${PWD}' or c.cwd = '/${PWD#//}'
     ;
   }
 }

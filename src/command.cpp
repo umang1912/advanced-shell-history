@@ -38,7 +38,6 @@ void Command::register_table() {
      << "  shell_level integer not null,\n"
      << "  command_no integer,\n"
      << "  tty varchar(20) not null,\n"
-     << "  shlvl integer not null,\n"
      << "  euid int(16) not null,\n"
      << "  cwd varchar(256) not null,\n"
      << "  rval int(5) not null,\n"
@@ -64,7 +63,6 @@ Command::Command(const string command, const int rval, const int start_ts,
   values["shell_level"] = unix::env_int("SHLVL");
   values["command_no"] = Util::to_string(number);
   values["tty"] = unix::tty();
-  values["shlvl"] = unix::env_int("SHLVL");
   values["euid"] = unix::euid();
   if (rval == 0 && command.find("cd") == 0) {
     values["cwd"] = unix::env("OLDPWD");

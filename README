@@ -16,7 +16,7 @@ Features of this utility:
 
 
 HOW TO BUILD:
-  make
+  $ make
 
 Notes:
   * A full build of the code from source depends on the following commands
@@ -35,11 +35,11 @@ Notes:
 
 
 HOW TO INSTALL:
-  make install
+  $ make install
 
 
 HOW TO UNINSTALL:
-  make uninstall
+  $ make uninstall
 
 
 HOW DOES THIS WORK:
@@ -69,8 +69,8 @@ Caveats:
   * all users will notice that the PIPESTATUS / pipestatus variables have
     been renamed to ASH_PIPESTATUS.  Because these variables are transient
     and logged, they cannot be easily restored.  Instead they are copied.
-  * when you build this, it may download a version of sqlite3 (if it's not
-    already included in the tarball or the svn repo).
+  * when you build this, the Makefile may download a version of sqlite3
+    (if it's not already included in the tarball or the svn repo).
   * this potentially changes your normal shell history settings to enable
     options necessary for the magic to work.
 
@@ -78,4 +78,4 @@ Bugs:
   * doesn't capture exec'ed commands: example: exec rm /tmp/foo # is lost
 
 Author: cpa@google.com (Carl Anderson)
-Last Update: 2011-08-04
+Last Update: 2011-09-11
