@@ -204,4 +204,3 @@ int main(int argc, char ** argv) {
   // Execute the requested query.
   return execute(sql);
 }
-

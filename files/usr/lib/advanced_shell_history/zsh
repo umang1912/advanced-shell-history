@@ -81,7 +81,9 @@ function precmd() {
   ASH_PIPESTATUS=( ${?} ${pipestatus[@]} )
   if [[ -z ${ASH_SESSION_ID:-} ]]; then
     export ASH_SESSION_ID="$( _ash_log --get_session_id )"
-    [[ -n ${ASH_CFG_MOTD:-} ]] && _ash_log -a "${ASH_CFG_MOTD}"
+    if [[ -n ${ASH_CFG_MOTD:-} ]]; then
+      _ash_log -a "${ASH_CFG_MOTD}session ${ASH_SESSION_ID}"
+    fi
   else
     ASH=1 ash::log ${ASH_PIPESTATUS[@]}
   fi

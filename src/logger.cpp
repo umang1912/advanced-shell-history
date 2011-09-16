@@ -58,8 +58,8 @@ const char * to_str(const Severity level) {
 
 /**
  * Returns the log file filename designated as the target for a given severity
- * level.  This relies on environment variables ASH_LOG_LEVEL and ASH_LOG_FILE
- * to be populated or it will return /dev/null as a default.
+ * level.  This relies on environment variables ASH_CFG_LOG_LEVEL and
+ * ASH_CFG_LOG_FILE to be populated or it will return /dev/null as a default.
  */
 string get_target(const Severity level) {
   Config & config = Config::instance();

@@ -33,25 +33,37 @@ version:
 	sed -i -e "/^VERSION :=/s/:= .*/:= ${RVERSION}/" src/Makefile
 
 build:
+	@ printf "\nCompiling source code...\n"
 	@ cd src && make
 	chmod 555 src/_ash_log src/ash_query
 	cp -af src/_ash_log src/ash_query files/usr/local/bin
 
 man:
+	@ printf "\nGenerating man pages...\n"
 	sed -e "s:__VERSION__:Version ${RVERSION}:" man/_ash_log.1 \
-	  | sed -e "s:__DATE__:$$( stat -c %y man/_ash_log.1 | cut -d' ' -f1 ):" \
+	  | sed -e "s:__DATE__:$$( \
+	      stat -c %y man/_ash_log.1 \
+	        | cut -d' ' -f1 ):" \
 	  | gzip -9 -c > ./files${MAN_DIR}/_ash_log.1.gz
 	sed -e "s:__VERSION__:Version ${RVERSION}:" man/ash_query.1 \
-	  | sed -e "s:__DATE__:$$( stat -c %y man/ash_query.1 | cut -d' ' -f1 ):" \
+	  | sed -e "s:__DATE__:$$( \
+	      stat -c %y man/ash_query.1 \
+	        | cut -d' ' -f1 ):" \
 	  | gzip -9 -c > ./files${MAN_DIR}/ash_query.1.gz
+	chmod 644 ./files${MAN_DIR}/*ash*.1.gz
 
-install: uninstall build man
+install: build man uninstall
+	@ printf "\nInstalling Advanced Shell History...\n"
 	@ echo "\nInstalling files:"
 	@ cd files && \
-	sudo tar -cpO $$( find -type f -o -type l | grep -v '\.svn' ) | sudo tar -xpvC /
-	@ echo "\n 0/ - Install completed!\n<Y\n/ \\"
+	sudo tar -cpO --owner=root $$( \
+	  find -type f -o -type l \
+	    | grep -v '\.svn' \
+	) | sudo tar -xpvC /
+	@ printf "\n 0/ - Install completed!\n<Y\n/ \\ \n"
 
 uninstall:
+	@ printf "\nUninstalling Advanced Shell History...\n"
 	sudo rm -rf /etc/ash /usr/lib/advanced_shell_history
 	sudo rm -f /usr/local/bin/_ash_log /usr/local/bin/ash_query
 	sudo rm -f ${MAN_DIR}/_ash_log.1.gz ${MAN_DIR}/ash_query.1.gz
@@ -70,6 +82,7 @@ mrproper: clean
 	rm -f src/sqlite3.*
 
 clean:	version
+	@ printf "\nCleaning temp and trash files...\n"
 	cd src && make distclean
 	rm -f files/usr/local/bin/_ash_log
 	rm -f files/usr/local/bin/ash_query
