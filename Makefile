@@ -69,13 +69,16 @@ uninstall:
 	sudo rm -f ${MAN_DIR}/_ash_log.1.gz ${MAN_DIR}/ash_query.1.gz
 	sudo rm -f ${MAN_DIR}/advanced_shell_history
 
-src_tarball_minimal: mrproper src_tarball
-
-src_tarball: clean
+tarball:
 	mkdir -p ${TMP_DIR}
 	rsync -Ca * ${TMP_DIR}
 	cd ${TMP_ROOT} && tar -czpf ${TMP_FILE} ./ash-${VERSION}/
 	rm -rf ${TMP_DIR}
+
+src_tarball_minimal: mrproper tarball
+	mv ${TMP_FILE} ${SRC_DEST}/ash-${RVERSION}-minimal.tar.gz
+
+src_tarball: clean tarball
 	mv ${TMP_FILE} ${SRC_DEST}/ash-${RVERSION}.tar.gz
 
 mrproper: clean
