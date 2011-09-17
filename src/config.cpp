@@ -33,7 +33,7 @@ extern char ** environ;  /* populated by unistd.h */
  * Construct a Config object, setting defaults.
  */
 Config::Config()
-  :values(), is_loaded(false)
+  : values(), is_loaded(false)
 {
   // NOTHING TO DO!
 }
@@ -62,7 +62,6 @@ bool Config::has(const string & key) const {
  */
 bool Config::sets(const string & key, const bool dv) const {
   char * env = get_ash_env(key);
-  // TODO(cpa): convert env to lowercase
   return env ? "true" == string(env) : dv;
 }
 
@@ -72,7 +71,6 @@ bool Config::sets(const string & key, const bool dv) const {
  */
 int Config::get_int(const string & key, const int dv) const {
   char * env = get_ash_env(key);
-  // TODO(cpa): add extra error-checking here since atoi is fairly lax.
   return env ? dv : atoi(env);
 }
 

@@ -1,0 +1,17 @@
+#summary Frequently asked questions
+#labels Phase-Support,Phase-Implementation,Featured
+
+= Introduction =
+
+
+*If you would like to ask a question that you don't see here, [http://code.google.com/p/advanced-shell-history/issues/entry?template=Defect%20report%20from%20user please do.]*
+
+==FAQ==
+Since this is a brand-new project, this section is under construction.  Please be patient - I will fill this out as the questions come in.
+
+In the meantime, you can [http://code.google.com/p/advanced-shell-history/feeds subscribe to the feed] if you are interested in following this project.
+
+
+===Troubleshooting===
+
+If you are having problems, please see the [HOWTO_Troubleshoot troubleshooting guide.]

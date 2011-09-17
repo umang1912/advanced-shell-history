@@ -18,6 +18,7 @@
 
 #include "config.hpp"
 #include "database.hpp"
+#include "logger.hpp"
 #include "util.hpp"
 
 #include <fstream>      /* for ifstream */
@@ -172,6 +173,7 @@ const string unix::uid() {
 const string unix::host_ip() {
   struct ifaddrs * addrs;
   if (getifaddrs(&addrs)) {
+    LOG(INFO) << "No network addresses detected.";
     return "null";
   }
 
@@ -183,8 +185,14 @@ const string unix::host_ip() {
   char buffer[256];
   for (struct ifaddrs * i = addrs; i; i = i -> ifa_next) {
     struct sockaddr * address = i -> ifa_addr;
-    if (address == NULL) continue;
-    if (skip_lo && i -> ifa_name && string("lo") == i -> ifa_name) continue;
+    if (address == NULL) {
+      LOG(WARNING) << "Skipped a null network address.";
+      continue;
+    }
+    if (skip_lo && i -> ifa_name && string("lo") == i -> ifa_name) {
+      LOG(DEBUG) << "Skipped a loopback address, as configured.";
+      continue;
+    }
 
     sa_family_t family = address -> sa_family;
     switch (family) {
@@ -192,6 +200,8 @@ const string unix::host_ip() {
         if (config.sets("LOG_IPV4")) {
           struct sockaddr_in * a = (struct sockaddr_in *) address;
           inet_ntop(family, &(a -> sin_addr), buffer, sizeof(buffer));
+        } else {
+          LOG(DEBUG) << "Skipped an IPv4 address for: " << i -> ifa_name;
         }
         break;
       }
@@ -199,6 +209,8 @@ const string unix::host_ip() {
         if (config.sets("LOG_IPV6")) {
           struct sockaddr_in6 * a = (struct sockaddr_in6 *) address;
           inet_ntop(family, &(a -> sin6_addr), buffer, sizeof(buffer));
+        } else {
+          LOG(DEBUG) << "Skipped an IPv6 address for: " << i -> ifa_name;
         }
         break;
       }

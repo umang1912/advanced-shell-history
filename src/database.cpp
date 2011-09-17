@@ -299,9 +299,9 @@ finalize:
 
 
 
-/*********
+/**
  * DB_OBJECT CODE BELOW:
- ****/
+ */
 
 
 /**

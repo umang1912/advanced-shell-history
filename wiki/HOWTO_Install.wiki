@@ -1,0 +1,39 @@
+#summary How to compile and install from source
+#labels Phase-Implementation,Phase-Deploy,Phase-Support
+
+= Introduction =
+
+To compile and install this program from source you will need a basic linux toolchain (g++, gcc, libc and make) and the ability to sudo on the target system.  This guide will walk you through compiling and installing everything from source.
+
+If you are running Mac OSX, you may need to perform an extra step.
+
+
+= Steps =
+
+ # If you are running Mac OSX, you will need to install Xcode. See http://developer.apple.com/xcode/
+ # Open a new terminal window.  The following steps will be performed within the shell.
+ # Download and unpack the source tarball (or minimal source tarball). Alternatively, you can [http://code.google.com/p/advanced-shell-history/source/checkout checkout the repository] and continue building from the next step.
+{{{
+  curl -s http://code.google.com/p/advanced-shell-history/downloads/ash-latest-src.tar.gz -o /tmp/ash-src.tar.gz
+  cd /tmp
+  tar -xvzpf ash-src.tar.gz
+}}}
+ # Compile the code.
+{{{
+  cd /tmp/ash-src
+  make
+}}}
+ # If you wish to install the package system-wide, you can use the included makefile target to do so.  If you do NOT want to install the package system-wide, see the guide for [HOWTO_Custom custom installations.]
+{{{
+  make install
+}}}
+ # Cleanup (Optional).
+{{{
+  cd /tmp
+  rm -rf ash-src ash-src.tar.gz
+}}}
+ # Congratulations!  The code compiled and is installed, but you are not quite done yet.  You still need to opt-in to the system.
+
+= [HOWTO_Begin Next] =
+
+To learn about how to begin using the program, look at [HOWTO_Begin this guide.]

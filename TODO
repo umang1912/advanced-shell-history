@@ -3,6 +3,4 @@ TODO
   [ ] set up the initial repository on code.google.com
   [ ] detect when /usr/local/bin is NOT in the PATH during install
   [ ] test installing this on a Gentoo server to make sure all dependencies are known.
-  [ ] write up notes for bash users and for zsh users
-  [ ] write Troubleshooting and FAQ wiki pages
   [ ] 

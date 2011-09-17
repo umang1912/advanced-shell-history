@@ -5,6 +5,9 @@ TODO
   [ ] add an option for a formatter that includes visible pipe separators between aligned columns
   [ ] include a row of dashes after the header line for aligned columns
   [ ] add some linter scripts to test the code for style and correctness.
+  [ ] audit the shell code for READONLY changes to be made.
+  [ ] add env variables to the wiki that are only in the shell code.
+  [ ] test concurrent inserts using cssh
   [ ] 
 
 database.cpp
