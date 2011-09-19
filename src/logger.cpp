@@ -81,6 +81,10 @@ Logger::Logger(const Severity lvl)
   char time_now[200];
   time_t t = time(NULL);
 
+  // Get the session_id, if it has already beeen set.
+  char * session_id = getenv("ASH_SESSION_ID");
+  if (session_id == NULL) session_id = "?";
+
   // Get the time now.
   struct tm * tmp = localtime(&t);
   if (tmp == NULL) {
@@ -88,7 +92,7 @@ Logger::Logger(const Severity lvl)
     if (level != FATAL) {
       LOG(FATAL) << "Failed to get localtime on this machine.";  // recurse
     } else {
-      log << to_str(level) << ": ";
+      log << "SESSION: " << session_id << ": " << to_str(level) << ": ";
       return;
     }
   }
@@ -100,10 +104,10 @@ Logger::Logger(const Severity lvl)
     if (level != FATAL) {  // avoids infinite recursion.
       LOG(FATAL) << "ASH_CFG_LOG_DATE_FMT is invalid: '" << format << "'";
     } else {
-      log << to_str(level) << ": ";
+      log << "SESSION: " << session_id << ": " << to_str(level) << ": ";
     }
   } else {
-    log << time_now << to_str(level) << ": ";
+    log << time_now << "SESSION: " << session_id << ": " << to_str(level) << ": ";
   }
 }
 
