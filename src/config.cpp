@@ -71,7 +71,7 @@ bool Config::sets(const string & key, const bool dv) const {
  */
 int Config::get_int(const string & key, const int dv) const {
   char * env = get_ash_env(key);
-  return env ? dv : atoi(env);
+  return env ? atoi(env) : dv;
 }
 
 
