@@ -16,7 +16,6 @@
 
 #include "command.hpp"
 
-#include "_ash_log.hpp"
 #include "unix.hpp"
 #include "util.hpp"
 
@@ -60,7 +59,7 @@ void Command::register_table() {
 Command::Command(const string command, const int rval, const int start_ts,
                  const int end_ts, const int number, const string pipes)
 {
-  values["session_id"] = unix::env_int(ASH_SESSION_ID);
+  values["session_id"] = unix::env_int("ASH_SESSION_ID");
   values["shell_level"] = unix::env_int("SHLVL");
   values["command_no"] = Util::to_string(number);
   values["tty"] = unix::tty();
@@ -107,6 +106,6 @@ const string Command::get_sql() const {
   ss << DBObject::get_sql()
      << "UPDATE sessions "
      << "SET end_time = null, duration = null "
-     << "WHERE id = " << unix::env_int(ASH_SESSION_ID) << ";";
+     << "WHERE id = " << unix::env_int("ASH_SESSION_ID") << ";";
   return ss.str();
 }

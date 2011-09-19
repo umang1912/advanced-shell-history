@@ -106,7 +106,7 @@ int main(int argc, char ** argv) {
   if (FLAGS_get_session_id) {
     Database db = Database(db_file);
     stringstream ss;
-    char * id = getenv(ASH_SESSION_ID);
+    char * id = getenv("ASH_SESSION_ID");
     if (id) {
       ss << "select count(*) from sessions where id = " << id
          << " and duration is null;";
@@ -143,7 +143,7 @@ int main(int argc, char ** argv) {
 
   // End the current session in the DB: -E
   if (FLAGS_end_session) {
-    char * id = getenv(ASH_SESSION_ID);
+    char * id = getenv("ASH_SESSION_ID");
     if (id == NULL) {
       LOG(ERROR) << "Can't end the current session: ASH_SESSION_ID undefined.";
     } else {

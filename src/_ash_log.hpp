@@ -24,8 +24,4 @@
 #endif  /* ASH_VERSION */
 
 
-// This is the shell environment variable that holds the session ID.
-#define ASH_SESSION_ID "ASH_SESSION_ID"
-
-
 #endif  /* __ASH_ASH_LOG__ */

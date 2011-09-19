@@ -14,7 +14,7 @@
 #   limitations under the License.
 #
 
-VERSION := 0.1.r84
+VERSION := 0.1.r85
 LOGGER	:= _ash_log
 QUERIER	:= ash_query
 EXES	:= ${LOGGER} ${QUERIER}
@@ -25,7 +25,7 @@ CPPS	:= $(shell ls *.cpp)
 TRASH	:= ${OBJS} ${EXES} core
 CPP	:= g++
 C	:= gcc
-FLAGS	:= -g -Wall -DASH_VERSION="\"${VERSION}\"" -ansi -pedantic -O2
+FLAGS	:= -g -Wall -DASH_VERSION="\"${VERSION}\"" -ansi -pedantic -O2 -lrt
 
 .PHONY:	all clean distclean new reallyclean
 all:	${EXES}
@@ -94,12 +94,12 @@ Makefile: ${CPPS}
 # DEPENDENCIES: (Do not edit this line!)
 _ash_log.o: _ash_log.hpp command.hpp config.hpp flags.hpp logger.hpp session.hpp unix.hpp
 ash_query.o: ash_query.hpp command.hpp config.hpp database.hpp flags.hpp formatter.hpp logger.hpp queries.hpp session.hpp
-command.o: command.hpp _ash_log.hpp unix.hpp util.hpp
+command.o: command.hpp unix.hpp util.hpp
 config.o: config.hpp
 database.o: database.hpp config.hpp logger.hpp sqlite3.h
 flags.o: flags.hpp
 formatter.o: formatter.hpp database.hpp logger.hpp
 logger.o: logger.hpp config.hpp
 queries.o: queries.hpp logger.hpp
-session.o: session.hpp _ash_log.hpp unix.hpp
+session.o: session.hpp unix.hpp
 unix.o: unix.hpp config.hpp database.hpp logger.hpp util.hpp

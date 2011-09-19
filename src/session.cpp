@@ -16,7 +16,6 @@
 
 #include "session.hpp"
 
-#include "_ash_log.hpp"
 #include "unix.hpp"
 
 #include <sstream>
@@ -116,6 +115,6 @@ const string Session::get_close_session_sql() const {
      << "SET \n"
      << "  end_time = " << unix::time() << ", \n"
      << "  duration = " << unix::time() << " - start_time \n"
-     << "WHERE id == " << unix::env(ASH_SESSION_ID) << "; ";
+     << "WHERE id == " << unix::env("ASH_SESSION_ID") << "; ";
   return ss.str();
 }
