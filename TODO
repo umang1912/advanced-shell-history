@@ -1,6 +1,3 @@
 TODO
-  [ ] change the src_tarball makefile target to create an ash-src directory, or maybe a symlink that points to what was just built...
   [ ] set up the initial repository on code.google.com
-  [ ] detect when /usr/local/bin is NOT in the PATH during install
-  [ ] test installing this on a Gentoo server to make sure all dependencies are known.
   [ ] 

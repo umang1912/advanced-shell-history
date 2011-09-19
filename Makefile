@@ -23,6 +23,7 @@ TMP_FILE := ${TMP_DIR}.tar.gz
 MAN_DIR  := /usr/share/man/man1
 SRC_DEST := ..
 
+BEGIN_URL := http://code.google.com/p/advanced-shell-history/wiki/HOWTO_Begin
 
 .PHONY: all build clean install man mrproper src_tarball src_tarball_minimal uninstall version
 all:	version build man
@@ -60,7 +61,7 @@ install: build man uninstall
 	  find -type f -o -type l \
 	    | grep -v '\.svn' \
 	) | sudo tar -xpvC /
-	@ printf "\n 0/ - Install completed!\n<Y\n/ \\ \n"
+	@ printf "\n 0/ - Install completed!\n<Y    See: ${BEGIN_URL}\n/ \\ \n"
 
 uninstall:
 	@ printf "\nUninstalling Advanced Shell History...\n"

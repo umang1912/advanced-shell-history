@@ -1,4 +1,4 @@
-Advanced Shell History
+Advanced Shell History         http://code.google.com/p/advanced-shell-history/
 
 
 Save your command line history in a sqlite3 DB!
@@ -78,4 +78,4 @@ Bugs:
   * doesn't capture exec'ed commands: example: exec rm /tmp/foo # is lost
 
 Author: cpa@google.com (Carl Anderson)
-Last Update: 2011-09-11
+Last Update: 2011-09-17

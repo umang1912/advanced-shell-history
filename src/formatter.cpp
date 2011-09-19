@@ -116,8 +116,7 @@ void SpacedFormatter::insert(const ResultSet * rs, ostream & out) const {
       widths.push_back(XX);
 
   // Limit the width of columns containing very wide elements.
-  // TODO(cpa): make this smarter by looking at statistics of the widths and cut out some percentage of outliers.
-  size_t max_w = 80;
+  size_t max_w = 80;  // TODO(cpa): make this a flag.
 
   // Loop ofer the rs.data looking for max column widths.
   for (size_t r = 0; r < rs -> rows; ++r) {
@@ -158,6 +157,7 @@ void insert_delimited(const ResultSet * rs, ostream & out, const string & d,
   if (do_show_headings) {
     size_t c = 0;
     for (i = headers.begin(), e = headers.end(); i != e; ++i, ++c)
+      // Don't add a delimiter after the last column.
       out << *i << (c + 1 < rs -> columns ? d : "");
     out << endl;
   }
