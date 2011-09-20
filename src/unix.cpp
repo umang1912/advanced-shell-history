@@ -25,8 +25,10 @@
 #include <sstream>      /* for stringstream */
 
 #include <arpa/inet.h>  /* for inet_ntop */
+#include <errno.h>      /* for errno */
 #include <ifaddrs.h>    /* for getifaddrs, freeifaddrs */
 #include <stdlib.h>     /* for getenv */
+#include <string.h>     /* for strlen */
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <time.h>       /* for time */
@@ -38,11 +40,12 @@ using namespace std;
 
 
 /**
- * Returns the i'th row of /proc/$$/stat.
+ * Returns the i'th value (target) of /proc/${pid}/stat.
  */
-const string proc_stat(int target) {
-  static string filename = "/proc/" + unix::pid() + "/stat";
-  ifstream fin(filename.c_str());
+const string proc_stat(const int target, const pid_t pid) {
+  stringstream ss;
+  ss << "/proc/" << pid << "/stat";
+  ifstream fin(ss.str().c_str());
   string token;
   for (int i = 0; fin.good(); ++i) {
     fin >> token;
@@ -65,32 +68,67 @@ const string unix::cwd() {
 }
 
 
+/**
+ * Returns true if the argument file exists.
+ */
 bool exists(const char * dir) {
   struct stat st;
-  return stat(dir, &st);
+  if (stat(dir, &st) != 0) {
+    LOG(DEBUG) << "tested file does not exist: '" << dir << "': "
+               << strerror(errno);
+    return false;
+  }
+  return true;
 }
 
 
 /**
- * Returns the parent process ID.
+ * Returns the output of the ps command (minus trailing newlines).
+ */
+const char * ps(const string & args, pid_t pid) {
+  LOG(DEBUG) << "looking at ps output for ps " << args << " " << pid;
+  stringstream ss;
+  ss << "/bin/ps " << args << " " << pid;
+  FILE * p = popen(ss.str().c_str(), "r");
+  if (p) {
+    char buffer[256];
+    char * rval = fgets(buffer, 256, p);
+    pclose(p);
+    if (!rval) return "null";
+    for (size_t i = strlen(rval) - 1; i > 0; --i)
+      if (rval[i] == '\n') {
+        rval[i] = '\0';
+        break;
+      }
+    return rval;
+  }
+  return "null";
+}
+
+
+/**
+ * Returns the parent process id of the argument process id.
+ */
+const pid_t get_ppid(const pid_t pid) {
+  return atoi(exists("/proc") ? proc_stat(3, pid).c_str() : ps("ho ppid", pid));
+}
+
+
+/**
+ * Returns the pid of the command-line shell.
+ */
+const pid_t shell_pid() {
+  return get_ppid(getppid());
+}
+
+
+/**
+ * Returns the parent process ID of the shell process.
  */
 const string unix::ppid() {
-  if (exists("/proc"))
-    return proc_stat(3);
-
   stringstream ss;
-  ss << "/bin/ps ho ppid " << getppid();
-
-  char pp[100];
-  FILE * p = popen(ss.str().c_str(), "r");
-  if (p && fgets(pp, 100, p) != 0) {
-    ss.str("");
-    ss << atoi(pp);
-    pclose(p);
-    return ss.str();
-  }
-  pclose(p);
-  return "null";
+  ss << get_ppid(shell_pid());
+  return ss.str();
 }
 
 
@@ -99,24 +137,17 @@ const string unix::ppid() {
  */
 const string unix::shell() {
   if (exists("/proc")) {
-    string sh = proc_stat(1);
+    LOG(DEBUG) << "looking for shell name in /proc/" << shell_pid() << "/stat.";
+    string sh = proc_stat(1, shell_pid());
     // If the shell name is wrapped in parentheses, strip them.
     if (!sh.empty() && sh[0] == '(' && sh[sh.length() - 1] == ')') {
       sh = sh.substr(1, sh.length() - 2);
     }
     return DBObject::quote(sh);
   } else {
-    // This is common on OSX - no procfs.
-    stringstream ss;
-    ss << "/bin/ps ho cmd " << getppid();
-
-    char sh[100];
-    FILE * p = popen(ss.str().c_str(), "r");
-    if (p && fgets(sh, 100, p) != 0) {
-      pclose(p);
-      return DBObject::quote(string(sh));
-    }
-    pclose(p);
+    // This is expected on OSX - no procfs so no /proc directory.
+    string sh = ps("ho cmd", shell_pid());
+    return sh == "null" ? sh : DBObject::quote(sh);
   }
   return "null";
 }
@@ -134,7 +165,7 @@ const string unix::euid() {
  * Returns the process ID of the shell.
  */
 const string unix::pid() {
-  return Util::to_string(getppid());
+  return Util::to_string(shell_pid());
 }
 
 

@@ -94,19 +94,6 @@ const string Session::get_name() const {
 
 
 /**
- * Returns a query to insert this Session object into the sessions table.
- */
-const string Session::get_sql() const {
-  stringstream ss;
-  ss << "BEGIN TRANSACTION; "
-     << DBObject::get_sql()
-     << "SELECT last_insert_rowid(); "
-     << "COMMIT;";
-  return ss.str();
-}
-
-
-/**
  * Returns a query to finalize this Session in the sessions table.
  */
 const string Session::get_close_session_sql() const {

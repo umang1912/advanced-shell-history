@@ -40,7 +40,6 @@ class Session : public DBObject {
     virtual ~Session();
 
     virtual const string get_close_session_sql() const;
-    virtual const string get_sql() const;
     virtual const string get_name() const;
 };
 

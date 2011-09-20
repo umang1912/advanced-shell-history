@@ -33,6 +33,7 @@ class sqlite3;  // Forward declaration.
 namespace ash {
 
 class Database;  // Forward declaration.
+class DBObject;  // Forward declaration.
 
 
 /**
@@ -75,6 +76,8 @@ class Database {
     ResultSet * exec(const string & query) const;
 
     int select_int(const string & query) const;
+    long int insert(DBObject * object) const;
+
     void init_db();
 
   private:

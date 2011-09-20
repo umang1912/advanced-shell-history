@@ -26,7 +26,6 @@ ash_query.cpp
 
 
 BUGS
-  [ ] the shell name in the sessions table has a trailing newline - annoying
   [ ] 
 
 

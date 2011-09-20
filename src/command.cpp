@@ -97,15 +97,3 @@ const string Command::get_name() const {
   return "commands";
 }
 
-
-/**
- * Returns a query to insert this Command into the commands table.
- */
-const string Command::get_sql() const {
-  stringstream ss;
-  ss << DBObject::get_sql()
-     << "UPDATE sessions "
-     << "SET end_time = null, duration = null "
-     << "WHERE id = " << unix::env_int("ASH_SESSION_ID") << ";";
-  return ss.str();
-}

@@ -39,7 +39,6 @@ class Command : public DBObject {
     virtual ~Command();
 
     virtual const string get_name() const;
-    virtual const string get_sql() const;
 };
 
 

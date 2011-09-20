@@ -204,7 +204,7 @@ void ash_sleep() {
 
   // Measure a timestamp to count how long we actually slept.
   struct timespec before_ts, after_ts;
-  if (clock_gettime(CLOCK_MONOTONIC_RAW, &before_ts)) {
+  if (clock_gettime(CLOCK_MONOTONIC, &before_ts)) {
     perror("clock_gettime failed");
   }
 
@@ -239,7 +239,7 @@ void ash_sleep() {
   }
 
   // Check to see how long has passed since ash_sleep began.
-  if (clock_gettime(CLOCK_MONOTONIC_RAW, &after_ts)) {
+  if (clock_gettime(CLOCK_MONOTONIC, &after_ts)) {
     perror("clock_gettime failed");
   }
   
@@ -310,6 +310,14 @@ bool executed(const string & query, sqlite3 * db, callback c, void * result) {
  * Executes a query expecting a single int return value.
  */
 int Database::select_int(const string & query) const {
+/*
+WHY U NO WORK?!?!?!
+  ResultSet * rs = exec(query);
+  if (!rs) LOG(FATAL) << "Expected a resulting int from query: " << query;
+  const char * rval = rs -> data[0][0].c_str();
+  if (!rval) LOG(FATAL) << "Expected a non-null value from query: " << query;
+  return atoi(rval);
+//*/
   // TODO(cpa): deprecate this method in favor of exec
   int result = -1;
   if (!executed(query, db, SelectInt, &result)) {
@@ -317,6 +325,16 @@ int Database::select_int(const string & query) const {
   }
   return result;
 // */
+}
+
+
+/**
+ * Inserts the DBObject, returning the new ROWID.
+ */
+long int Database::insert(DBObject * object) const {
+  if (!object) return 0;
+  exec(object -> get_sql());
+  return sqlite3_last_insert_rowid(db);
 }
 
 

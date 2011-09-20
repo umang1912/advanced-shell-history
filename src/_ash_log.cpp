@@ -122,7 +122,7 @@ int main(int argc, char ** argv) {
       cout << id << endl;
     } else {
       Session session;
-      cout << db.select_int(session.get_sql()) << endl;
+      cout << db.insert(&session) << endl;
     }
   }
 
@@ -138,7 +138,7 @@ int main(int argc, char ** argv) {
     Database db = Database(db_file);
     Command com(FLAGS_command, FLAGS_command_exit, FLAGS_command_start,
       FLAGS_command_finish, FLAGS_command_number, FLAGS_command_pipe_status);
-    db.exec(com.get_sql());
+    db.insert(&com);
   }
 
   // End the current session in the DB: -E
