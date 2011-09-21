@@ -7,15 +7,12 @@ TODO
   [ ] add some linter scripts to test the code for style and correctness.
   [ ] audit the shell code for READONLY changes to be made.
   [ ] add env variables to the wiki that are only in the shell code.
-  [ ] test concurrent inserts using cssh
   [ ] 
 
 database.cpp
-  [ ] get rid of the old sqlite3_exec crap - replace with the prepare, step, finalze logic
   [ ] 
 
 _ash_log.cpp
-  [ ] fork and implement some kind of alarm timeout?  it seems to be getting stuck sleeping somewhere.
   [ ] 
 
 ash_query.cpp

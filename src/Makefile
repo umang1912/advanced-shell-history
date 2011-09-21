@@ -14,7 +14,7 @@
 #   limitations under the License.
 #
 
-VERSION := 0.1.r89
+VERSION := 0.1.r90
 LOGGER	:= _ash_log
 QUERIER	:= ash_query
 EXES	:= ${LOGGER} ${QUERIER}
@@ -92,7 +92,7 @@ Makefile: ${CPPS}
 #  / \
 #
 # DEPENDENCIES: (Do not edit this line!)
-_ash_log.o: _ash_log.hpp command.hpp config.hpp flags.hpp logger.hpp session.hpp unix.hpp
+_ash_log.o: _ash_log.hpp command.hpp config.hpp database.hpp flags.hpp logger.hpp session.hpp unix.hpp
 ash_query.o: ash_query.hpp command.hpp config.hpp database.hpp flags.hpp formatter.hpp logger.hpp queries.hpp session.hpp
 command.o: command.hpp unix.hpp util.hpp
 config.o: config.hpp

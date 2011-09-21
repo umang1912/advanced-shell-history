@@ -92,7 +92,7 @@ Logger::Logger(const Severity lvl)
     if (level != FATAL) {
       LOG(FATAL) << "Failed to get localtime on this machine.";  // recurse
     } else {
-      log << "SESSION: " << session_id << ": " << to_str(level) << ": ";
+      log << "SESSION " << session_id << ": " << to_str(level) << ": ";
       return;
     }
   }
@@ -104,10 +104,10 @@ Logger::Logger(const Severity lvl)
     if (level != FATAL) {  // avoids infinite recursion.
       LOG(FATAL) << "ASH_CFG_LOG_DATE_FMT is invalid: '" << format << "'";
     } else {
-      log << "SESSION: " << session_id << ": " << to_str(level) << ": ";
+      log << "SESSION " << session_id << ": " << to_str(level) << ": ";
     }
   } else {
-    log << time_now << "SESSION: " << session_id << ": " << to_str(level)
+    log << time_now << "SESSION " << session_id << ": " << to_str(level)
         << ": ";
   }
 }

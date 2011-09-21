@@ -29,6 +29,7 @@ using std::string;
 using std::vector;
 
 class sqlite3;  // Forward declaration.
+class sqlite3_stmt;  // Forward declaration.
 
 namespace ash {
 
@@ -75,10 +76,12 @@ class Database {
 
     ResultSet * exec(const string & query) const;
 
-    int select_int(const string & query) const;
     long int insert(DBObject * object) const;
 
     void init_db();
+
+  private:
+    sqlite3_stmt * prepare_stmt(const string & query) const;
 
   private:
     const string db_filename;

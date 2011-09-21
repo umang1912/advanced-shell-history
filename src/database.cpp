@@ -108,7 +108,10 @@ Database::Database(const string & filename)
   ss << ");";
   string query = ss.str();
 
-  size_t defined_tables = select_int(query.c_str());
+  ResultSet * rs = exec(query.c_str());
+  size_t defined_tables =
+    rs && rs -> rows == 1 ? atoi(rs -> data[0][0].c_str()) : 0;
+  if (rs) delete rs;
   if (defined_tables == registered) return;  // Normal case.
 
   // Initialize the DB if it's not already set up.
@@ -160,19 +163,9 @@ void Database::init_db() {
 
 
 /**
- * Callback used in Database::select_int.
- */
-int SelectInt(void * result, int rows, char ** cols, char ** column_names) {
-  *((int*) result) = atoi(cols[0]);
-  return 0;
-}
-
-
-// Convenience type for the callback invoked after query execution.
-typedef int (*callback)(void*,int,char**,char**);
-
-
-/**
+ * This method is only to be invoked if the database were locked when an insert
+ * or other query was attempted.
+ *
  * This method does a lot to make sure a good sleep is had.  It checks the
  * configured sleep settings: ASH_CFG_DB_FAIL_RANDOM_TIMEOUT and
  * ASH_CFG_DB_FAIL_TIMEOUT.  It also tries to make sure that the specified sleep
@@ -191,7 +184,7 @@ void ash_sleep() {
   if (random_ms < 0) random_ms = 0;
 
   // Sleep a number amount of ms within the parameters.
-  long int ms = fail_ms;
+  unsigned long int ms = fail_ms;
   if (random_ms > 0) {
     // Randomize with both the time and the PID.  Since the database being
     // locked is likely a collission with another _ash_log - time along will
@@ -208,16 +201,17 @@ void ash_sleep() {
     perror("clock_gettime failed");
   }
 
-  unsigned int sleep_attempts = ms;
+  unsigned int sleep_attempts = retries * 2;
   struct timespec to_sleep, remaining;
-  to_sleep.tv_sec = ms / 1000;
-  to_sleep.tv_nsec = (ms % 1000) * 1000000L;
+  to_sleep.tv_sec = ms / 1000L;
+  to_sleep.tv_nsec = (ms % 1000L) * 1000000L;
 
   while (to_sleep.tv_sec || to_sleep.tv_nsec) {
     // Sanity check to make sure we aren't looping infinitely.
     if (sleep_attempts == 0) {
-      LOG(WARNING) << "Sleep break triggered.  "
-                   << "Maybe CLOCK_MONOTONIC doesn't work on your system.";
+      LOG(WARNING) << "Sleep break triggered.  CLOCK_MONOTONIC may not work as "
+                   << "expected on your system.  Or the database may be "
+                   << "extremely busy with concurrent requests.";
       break;  // safety
     }
     --sleep_attempts;
@@ -229,13 +223,33 @@ void ash_sleep() {
         LOG(ERROR) << "Failed to clock_nanosleep: " << strerror(errno);
         continue;
       case 0: break;
+      case EFAULT:
+        LOG(ERROR) << "clock_nanosleep: EFAULT sleeping " << ms << " ms.";
+        break;
+      case EINTR:
+        LOG(ERROR) << "clock_nanosleep: EINTR sleeping " << ms << " ms.";
+        break;
+      case EINVAL:
+        LOG(ERROR) << "clock_nanosleep: EINVAL sleeping (tv_sec="
+                   << to_sleep.tv_sec << ", tv_nsec="
+                   << to_sleep.tv_nsec << ")";
+        break;
       default:
         LOG(ERROR) << "Unexpected rval from clock_nanosleep: " << rval;
     }
 
     // If there is any time remaining, prepare to sleep again.
-    to_sleep.tv_sec = remaining.tv_sec;
-    to_sleep.tv_nsec = remaining.tv_nsec;
+    if (remaining.tv_sec == 0
+        && remaining.tv_nsec > 0
+        && remaining.tv_nsec <= 999999999
+        && remaining.tv_nsec < to_sleep.tv_nsec)
+    {
+      LOG(DEBUG) << "slept (to_sleep.tv_nsec - remaining.tv_nsec = "
+                 << to_sleep.tv_nsec << " - " << remaining.tv_nsec << " = "
+                 << (to_sleep.tv_nsec - remaining.tv_nsec) << ")";
+      to_sleep.tv_sec = remaining.tv_sec;
+      to_sleep.tv_nsec = remaining.tv_nsec;
+    }
   }
 
   // Check to see how long has passed since ash_sleep began.
@@ -243,7 +257,7 @@ void ash_sleep() {
     perror("clock_gettime failed");
   }
   
-  long int slept =
+  unsigned long int slept =
     (after_ts.tv_sec - before_ts.tv_sec) * 1000 +
     (after_ts.tv_nsec - before_ts.tv_nsec) / 1000000L;
 
@@ -262,73 +276,6 @@ void ash_sleep() {
 
 
 /**
- * RECURSIVE: Tries to execute the argument query, retrying a set number of
- * times with a random sleep between each attempt.
- */
-bool retry_execute(const string & query, sqlite3 * db, callback c,
-                   void * result, int retries)
-{
-  // TODO(cpa): deprecate this method in favor of exec
-  if (retries == 0)
-    return false;  // base case.
-
-  // sleep a random amount of ms.
-  ash_sleep();
-
-  if (sqlite3_exec(db, query.c_str(), c, result, 0)) {
-    // Have we run out of attempts?
-    if (retries == 1) {
-      LOG(ERROR) << "Failed to execute: " << sqlite3_errmsg(db) << '\n'
-          << query << endl;
-    }
-    return retry_execute(query, db, c, result, retries - 1);
-  }
-  return true;
-}
-
-
-/**
- * Retries (if necessary) up to as many times as configured to execute the
- * argument query.
- */
-bool executed(const string & query, sqlite3 * db, callback c, void * result) {
-  // TODO(cpa): deprecate this method in favor of exec
-  // If the first query fails, retry as many times as configured.
-  if (sqlite3_exec(db, query.c_str(), c, result, 0)) {
-    Config & config = Config::instance();
-
-    int retries = config.get_int("DB_MAX_RETRIES", -1);
-    if (retries < 0) retries = 5;
-
-    return retry_execute(query, db, c, result, retries);
-  }
-  return true;
-}
-
-
-/**
- * Executes a query expecting a single int return value.
- */
-int Database::select_int(const string & query) const {
-/*
-WHY U NO WORK?!?!?!
-  ResultSet * rs = exec(query);
-  if (!rs) LOG(FATAL) << "Expected a resulting int from query: " << query;
-  const char * rval = rs -> data[0][0].c_str();
-  if (!rval) LOG(FATAL) << "Expected a non-null value from query: " << query;
-  return atoi(rval);
-//*/
-  // TODO(cpa): deprecate this method in favor of exec
-  int result = -1;
-  if (!executed(query, db, SelectInt, &result)) {
-    LOG(FATAL) << "Failed to select an int from: " << query;
-  }
-  return result;
-// */
-}
-
-
-/**
  * Inserts the DBObject, returning the new ROWID.
  */
 long int Database::insert(DBObject * object) const {
@@ -339,17 +286,47 @@ long int Database::insert(DBObject * object) const {
 
 
 /**
+ * Returns a prepared statement if possible.  This method will attempt to
+ * retry preparing the statement up to ASH_CFG_DB_MAX_RETRIES times before
+ * admitting defeat and exiting the program with a FATAL error.
+ */
+sqlite3_stmt * Database::prepare_stmt(const string & query) const {
+  sqlite3_stmt * ps = 0;
+
+  Config & config = Config::instance();
+  int max_retries = config.get_int("DB_MAX_RETRIES", -1);
+  if (max_retries <= 0) max_retries = 5;
+  int tries = max_retries + 1;
+
+try_prepare:
+  sqlite3_prepare_v2(db, query.c_str(), query.length(), &ps, 0);
+  if (ps) return ps;
+  int error_code = sqlite3_errcode(db);
+  switch (error_code) {
+    case SQLITE_LOCKED:  // fallthrough
+    case SQLITE_BUSY:
+      LOG(DEBUG) << "Database is busy while preparing a statement.";
+      sqlite3_finalize(ps);
+      if (--tries > 0) {
+        LOG(DEBUG) << "Sleeping and trying to prepare statement again.";
+        ash_sleep();
+        goto try_prepare;
+      }
+      LOG(FATAL) << "Failed to prepare statement after " << max_retries
+                 << " failed attempts.";
+      return 0;  // unreachable
+    default:
+      LOG(FATAL) << "Unexpected error code while preparing statement: "
+                 << error_code;
+      return 0;  // unreachable
+  }
+}
+
+
+/**
  * Execute a query or abort the program with the DB error message.
  */
 ResultSet * Database::exec(const string & query) const {
-  // Halt if the query doesn't even parse.
-  sqlite3_stmt * ps = 0;
-  sqlite3_prepare_v2(db, query.c_str(), query.length(), &ps, 0);
-  if (!ps) {
-    LOG(FATAL) << "Failed to create a prepared statement for query: '" << query
-               << "'\nError:\n" << sqlite3_errmsg(db);
-  }
-
   // Load the relevant configured values.
   Config & config = Config::instance();
 
@@ -360,7 +337,8 @@ ResultSet * Database::exec(const string & query) const {
   ResultSet::HeadersType headers;
   ResultSet::DataType results;
   stringstream ss;
-  unsigned int rows = 0, columns = sqlite3_column_count(ps);
+  sqlite3_stmt * ps = prepare_stmt(query);
+  unsigned int rows, columns = sqlite3_column_count(ps);
 
   // YES, this is a GOTO target.  This is used to implement the retry logic.
   // If a query fails because of a lock, it may goto this block to retry.
@@ -394,6 +372,7 @@ try_sql:
         goto finalize;
       case SQLITE_DONE:
         goto finalize;
+      case SQLITE_LOCKED:  // Fallthrough.
       case SQLITE_BUSY: {
         // Abort if we are out of attempts.
         if (tries <= 0) {
@@ -407,10 +386,7 @@ try_sql:
 
         // Reset the prepared statement.
         sqlite3_finalize(ps);
-        ps = 0;
-        if (sqlite3_prepare_v2(db, query.c_str(), query.length(), &ps, 0)) {
-          LOG(FATAL) << "Prepared statement failed unexpectedly.";
-        }
+        ps = prepare_stmt(query);
 
         // Decrement the try count and jump.
         --tries;

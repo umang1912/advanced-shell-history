@@ -18,6 +18,7 @@
 
 #include "command.hpp"
 #include "config.hpp"
+#include "database.hpp"
 #include "flags.hpp"
 #include "logger.hpp"
 #include "session.hpp"
@@ -108,9 +109,10 @@ int main(int argc, char ** argv) {
     stringstream ss;
     char * id = getenv("ASH_SESSION_ID");
     if (id) {
-      ss << "select count(*) from sessions where id = " << id
+      ss << "select count(*) as session_cnt from sessions where id = " << id
          << " and duration is null;";
-      if (db.select_int(ss.str()) == 0) {
+      ResultSet * rs = db.exec(ss.str());
+      if (!rs || rs -> rows != 1) {
         cerr << "ERROR: session_id(" << id << ") not found, "
              << "creating new session." << endl << ss.str() << endl;
         id = 0;
