@@ -14,7 +14,7 @@ If you are running Mac OSX, you may need to perform an extra step.
  # Open a new terminal window.  The following steps will be performed within the shell.
  # Download and unpack the source tarball (or minimal source tarball). Alternatively, you can [http://code.google.com/p/advanced-shell-history/source/checkout checkout the repository] and continue building from the next step.
 {{{
-  curl -s http://code.google.com/p/advanced-shell-history/downloads/ash-latest-src.tar.gz -o /tmp/ash-src.tar.gz
+  curl -s http://advanced-shell-history.googlecode.com/files/ash-0.1.r92.tar.gz -o /tmp/ash-src.tar.gz
   cd /tmp
   tar -xvzpf ash-src.tar.gz
 }}}
