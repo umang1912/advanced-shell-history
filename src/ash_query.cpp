@@ -166,7 +166,6 @@ int main(int argc, char ** argv) {
 
   // Initialize the available formatters.
   CsvFormatter::init();
-  GroupedFormatter::init();
   NullFormatter::init();
   SpacedFormatter::init();
 

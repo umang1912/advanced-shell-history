@@ -205,20 +205,3 @@ void NullFormatter::insert(const ResultSet * rs, ostream & out) const {
   insert_delimited(rs, out, string("\0", 1), do_show_headings);
 }
 
-
-/**
- * Makes this Formatter avaiable for use within the program.
- */
-void GroupedFormatter::init() {
-  static GroupedFormatter instance("group",
-    "Repeated values are summarized before the rows.");
-}
-
-
-/**
- *
- */
-void GroupedFormatter::insert(const ResultSet * rs, ostream & out) const {
-  if (!rs) return;
-  // TODO(cpa): complete this class.
-}

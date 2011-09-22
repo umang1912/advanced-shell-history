@@ -79,13 +79,16 @@ source <( typeset -f precmd | sed -e 's/^precmd/ash::original_precmd/' )
 #
 function precmd() {
   ASH_PIPESTATUS=( ${?} ${pipestatus[@]} )
-  if [[ -z ${ASH_SESSION_ID:-} ]]; then
-    export ASH_SESSION_ID="$( _ash_log --get_session_id )"
-    if [[ -n ${ASH_CFG_MOTD:-} ]]; then
-      _ash_log -a "${ASH_CFG_MOTD}session ${ASH_SESSION_ID}"
+
+  if [[ -z ${ASH_DISABLED:-} ]]; then
+    if [[ -z ${ASH_SESSION_ID:-} ]]; then
+      export ASH_SESSION_ID="$( _ash_log --get_session_id )"
+      if [[ -n ${ASH_CFG_MOTD:-} ]]; then
+        _ash_log -a "${ASH_CFG_MOTD}session ${ASH_SESSION_ID}"
+      fi
+    else
+      ASH=1 ash::log ${ASH_PIPESTATUS[@]}
     fi
-  else
-    ASH=1 ash::log ${ASH_PIPESTATUS[@]}
   fi
   ASH=1 ash::original_precmd
 

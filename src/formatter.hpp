@@ -110,12 +110,6 @@ FORMATTER(Csv);
 FORMATTER(Null);
 
 
-/**
- * Singleton class that converts a result set into output,
- */
-FORMATTER(Grouped);
-
-
 }  // namespace ash
 
 #endif  /* __ASH_FORMATTER__ */

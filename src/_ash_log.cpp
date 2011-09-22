@@ -61,7 +61,7 @@ void usage(ostream & out) {
 
 
 int main(int argc, char ** argv) {
-  if (getenv("ASH_DISABLED")) return 0;
+  if (getenv("ASH_DISABLED")) return FLAGS_exit;
 
   // Load the config from the environment.
   Config & config = Config::instance();

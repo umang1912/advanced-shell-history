@@ -79,6 +79,9 @@ function ash::begin_session() {
 # afterward.  The previous command exit code is reset after this function.
 #
 function ash::precmd() {
+  # Do nothing if this variable is set.
+  [[ -n "${ASH_DISABLED:-}" ]] && return
+
   # Prevent users from manually invoking this function from the command line.
   [[ "${ASH:-0}" == "0" ]] && ash::info ash::precmd && return
 
