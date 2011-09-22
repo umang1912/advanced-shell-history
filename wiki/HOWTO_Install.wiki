@@ -16,7 +16,7 @@ If you are running Mac OSX, you may need to perform an extra step.
 {{{
   curl -s http://advanced-shell-history.googlecode.com/files/ash-0.1.r92.tar.gz -o /tmp/ash-src.tar.gz
   cd /tmp
-  tar -xvzpf ash-src.tar.gz
+  tar -xvzpf ash-*.tar.gz
 }}}
  # Compile the code.
 {{{
@@ -30,7 +30,7 @@ If you are running Mac OSX, you may need to perform an extra step.
  # Cleanup (Optional).
 {{{
   cd /tmp
-  rm -rf ash-src ash-src.tar.gz
+  rm -rf ash-src ash-*.tar.gz
 }}}
  # Congratulations!  The code compiled and is installed, but you are not quite done yet.  You still need to opt-in to the system.
 
