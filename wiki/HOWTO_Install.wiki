@@ -17,6 +17,10 @@ If you are running Mac OSX, you may need to perform an extra step.
   curl -s http://advanced-shell-history.googlecode.com/files/ash-0.1.r92.tar.gz -o /tmp/ash-src.tar.gz
   cd /tmp
   tar -xvzpf ash-*.tar.gz
+
+# Alternatively, you can check out the source with svn:
+
+  svn checkout http://advanced-shell-history.googlecode.com/svn/branches/rb-0.1/ /tmp/ash-src
 }}}
  # Compile the code.
 {{{
