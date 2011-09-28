@@ -1,7 +1,7 @@
 #summary The SQL Database Schema.
 #labels Featured,Phase-Implementation,Phase-Design
 
-[https://lh4.googleusercontent.com/-j-h4YLQhsM8/Tm8M7GaAH-I/AAAAAAAAJ6A/D4j8YARt1EA/ASH%252520Schema.png]
+[http://advanced-shell-history.googlecode.com/svn/wiki/ASH%20Schema.png]
 
 
 = Introduction =
