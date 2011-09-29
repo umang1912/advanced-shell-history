@@ -83,7 +83,8 @@ The only difference in each example below is the formatter.
 
 
 ==={{{auto}}}===
-  The most sophisticated formatter; it tries to group identical values in the leftmost columns and only print changes.
+  The most sophisticated formatter (and the default); it tries to group identical values in the leftmost columns and print the unique bits of data aligned.  The point is to try to reduce the total 'area' of printed space.
+
 {{{
 me@my_host:~/code/advanced-shell-history/trunk/src$ ash_query -q ME -f auto
 current_working_dir
@@ -132,10 +133,11 @@ current_working_dir
 }}}
 
 ==={{{aligned}}}===
-    Prints the values left-aligned and with fixed widths large enough to hold the widest value (with a maximum width of 80 oer column).
+    Prints the values left-aligned and with fixed widths large enough to hold the widest value (with a maximum width of 80 per column).
+
 {{{
 me@my_host:~/code/advanced-shell-history/trunk/src$ ash_query -q ME -f aligned
-current_working_dir                                   cmd     start_time             secs    exit    command
+current_working_dir                               cmd     start_time             secs    exit    command
 /home/me                                          1001    2011-09-28 22:42:12    0       0       cd code/
 /home/me/code                                     1002    2011-09-28 22:42:28    0       0       ls
 /home/me/code                                     1003    2011-09-28 22:42:35    0       0       ash_query --version
