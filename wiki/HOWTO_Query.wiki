@@ -20,7 +20,7 @@ By default, {{{ash_query}}} displays the output in text-aligned columns.  If you
   $ ash_query -q CWD -f csv  # display the CWD history in CSV format.
 }}}
 
-The data formatters are built-in to the code, but the queries are not.  They are saved in two possible locations
+The data [Formatters formatters] are built-in to the code, but the queries are not.  They are saved in two possible locations
   * {{{/etc/ash/queries}}} - the default system-wide file for saved queries
   * {{{~/.ash/queries}}} - the default file for user-written saved queries.
 
