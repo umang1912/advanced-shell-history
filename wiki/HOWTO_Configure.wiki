@@ -53,7 +53,7 @@ For example:
 
 ===={{{ash_query}}} Options====
 || *Environment Variable Name* || *Default Value* || *Description* ||
-||ASH_CFG_DEFAULT_FORMAT||aligned||The default value for the --format flag in {{{ash_query}}}.||
+||ASH_CFG_DEFAULT_FORMAT||auto||The default value for the --format flag in {{{ash_query}}}.||
 ||ASH_CFG_DEFAULT_QUERY||session||The default value for the --query flag in {{{ash_query}}}.||
 ||ASH_CFG_HIDE_USAGE_FOR_NO_ARGS||false||Normally, if you invoke {{{ash_query}}} with no arguments, the {{{--help}}} output is displayed.  With this variable set to a non-empty value, the {{{--help}}} output is suppressed in this case.||
 ||ASH_CFG_IGNORE_UNKNOWN_FLAGS||false||Normally {{{ash_query}}} complains when it sees unknown flags.  With this variable set to a non-empty value, unknown flags are ignored.||
