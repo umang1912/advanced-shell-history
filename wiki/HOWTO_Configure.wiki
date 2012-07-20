@@ -45,6 +45,7 @@ For example:
 ====Custom Installation Options====
 || *Environment Variable Name* || *Default Value* || *Description* ||
 ||ASH_CFG_LIB||{{{/usr/lib/advanced_shell_history}}}||The location of the sourced shell code.  This is only changed when doing [HOWTO_Custom custom installations.]||
+||ASH_LOG_BIN||{{{/usr/local/bin/_ash_log}}}||The binary used to log commands.  This can be changed to select the Python version of the logger: {{{/usr/local/bin/_ash_log.py}}}.||
 
 ====General Options====
 || *Environment Variable Name* || *Default Value* || *Description* ||
