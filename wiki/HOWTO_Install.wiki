@@ -20,7 +20,7 @@ If you are running Mac OSX, you may need to perform an extra step.
 
 # Alternatively, you can check out the source with svn:
 
-  svn checkout http://advanced-shell-history.googlecode.com/svn/trunk/ /tmp/ash-src
+  svn checkout http://advanced-shell-history.googlecode.com/svn/branches/rb-0.3 /tmp/ash-src
 }}}
  # Compile the code.
 {{{
