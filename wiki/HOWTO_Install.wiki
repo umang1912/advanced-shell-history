@@ -36,7 +36,7 @@ If you are running Mac OSX, you may need to perform an extra step.
   cd /tmp
   rm -rf ash-src ash-*.tar.gz
 }}}
- # Congratulations!  The code compiled and is installed, but you are not quite done yet.  You still need to opt-in to the system.
+ # Congratulations!  The code compiled and is installed, but you are not quite done yet.  You still need to enable the system for your account.
 
 = [HOWTO_Begin Next] =
 
