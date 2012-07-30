@@ -10,7 +10,7 @@ If you are running Mac OSX, you may need to perform an extra step.
 
 = Steps =
 
- # If you are running Mac OSX, you will need to install Xcode. See http://developer.apple.com/xcode/
+ # If you are running Mac OSX, you will need to install the Xcode command line tools. See https://developer.apple.com/downloads/index.action?query=command%20line%20tools
  # Open a new terminal window.  The following steps will be performed within the shell.
  # Download and unpack the source tarball (or minimal source tarball). Alternatively, you can [http://code.google.com/p/advanced-shell-history/source/checkout checkout the repository] and continue building from the next step.
 {{{
