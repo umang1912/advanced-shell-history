@@ -1,0 +1,19 @@
+#summary OSX is Different(tm).
+
+= Introduction =
+There are known issues with OSX that make it more difficult to make ASH work.  In the OSX world, things seem to change drastically between releases, so some fiddling may be required.
+
+If you find something that works for you that is not documented here, please help by adding comments or contributing to the Wiki.
+
+
+= Details =
+
+ # You will need to install the Xcode command line tools if you would like to install from svn.  See https://developer.apple.com/downloads/index.action?query=command%20line%20tools if you don't already have it installed.
+ # In some versions of OSX - /etc is actually a symlink to /private/etc.  In this case, the normall installation procedure may not work.  To install, you may first need to {{{mkdir /etc/ash}}}.
+ # Install the package from source using the [HOWTO_Install standard instructions].
+ # After you have installed the package, you may not be able to source the required shell code without first sourcing the program configuration file.  Your .bashrc file may need to look like this:
+{{{
+# File: .bashrc
+[ -e /etc/ash/ash.conf] && source /etc/ash/ash.conf
+[ -e /usr/lib/advanced_shell_history/bash ] && source /usr/lib/advanced_shell_history/bash
+}}}
