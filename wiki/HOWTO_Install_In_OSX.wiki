@@ -10,11 +10,19 @@ If you find something that works for you that is not documented here, please hel
 
  # You will need to install the Xcode command line tools if you would like to install from svn.  See https://developer.apple.com/downloads/index.action?query=command%20line%20tools if you don't already have it installed.
  # In some versions of OSX - {{{/etc}}} is actually a symlink to {{{/private/etc}}}.  In this case, the normall installation procedure may not work.  To install, you may first need to {{{sudo mkdir /etc/ash}}}.
- # Install the package from source using the [HOWTO_Install standard instructions].
- # After you have installed the package, you may not be able to source the required shell code without first sourcing the program configuration file.  Your .bashrc file may need to look like this:
+ # Install the package from source using the [HOWTO_Install standard instructions].  Note: the C++ code may not compile on OSX.  In this case, the python version is the only option.  You can still {{{make install_python}}}
+ # After you have installed the program, you may not be able to source the required shell code without first sourcing the program configuration file.  Your .bashrc file may need to include the following:
 {{{
-# File: .bashrc
+# File: ~/.bashrc
+#...
+
+# Source the configuration file.
 [ -e /etc/ash/ash.conf] && source /etc/ash/ash.conf
+
+# If you are using the Python version:
+export ASH_LOG_BIN=/usr/local/bin/_ash_log.py
+
+# Source the shell code to enable the automatic command logging hooks.
 [ -e /usr/lib/advanced_shell_history/bash ] && source /usr/lib/advanced_shell_history/bash
 }}}
  # OSX does not include procfs, so there is no {{{/proc}}} in your filesystem.  Currently (Aug-2012) this causes one or two data points to not be collected.  Testers and bug fixes are welcome!
