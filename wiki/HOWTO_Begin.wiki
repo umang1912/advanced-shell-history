@@ -8,7 +8,7 @@ Once you have [HOWTO_Install compiled and installed] the program, you need to ac
 = Steps =
  # To begin, you need to source the correct shell code library into your shell session.  Start by manually sourcing the appropriate library in {{{/usr/lib/advanced_shell_history}}} - later you will see how to make this automatic.
 {{{
-  source /etc/ash/ash.conf  # may only be needed for OSX users.
+  source /etc/ash/ash.conf  # OSX workaround - not needed for linux users
   source /usr/lib/advanced_shell_history/bash  # for bash users
 }}}
  # Confirm that a history database has been created by looking for it in the default location.
@@ -24,6 +24,7 @@ Once you have [HOWTO_Install compiled and installed] the program, you need to ac
  # Source the shell library code automatically by adding the {{{source}}} command to your shell resource file.  Add the following to your {{{~/.bashrc}}} file (for bash users).
 {{{
   # Enable Advanced Shell History:
+  source /etc/ash/ash.conf  # OSX workaround - not needed for linux users
   source /usr/lib/advanced_shell_history/bash
 }}}
  # Confirm this works by opening a new terminal window and changing to a new directory and viewing history for that particular directory.  For example:
