@@ -25,11 +25,19 @@ If you are running Mac OSX, you may need to perform an extra step.
  # Compile the code.
 {{{
   cd /tmp/ash-src
-  make
+  make build
+}}}
+  * NOTE: there is a known issue compiling the C++ source on some systems.  You can build a Python-only version instead.
+{{{
+  make build_python
 }}}
  # If you wish to install the package system-wide, you can use the included makefile target to do so.  If you do NOT want to install the package system-wide, see the guide for [HOWTO_Custom custom installations.]
 {{{
   make install
+}}}
+  * You can also install the Python-only version if there are problems with the C++ version.
+{{{
+  make install_python
 }}}
  # Cleanup (Optional).
 {{{
