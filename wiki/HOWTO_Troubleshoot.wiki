@@ -16,14 +16,20 @@ It may be worth your time to [HOWTO_Debug turn on more verbose debugging output]
 
 = Common Problems =
 
+== Compilation Errors ==
+ * There is a known C++ issue preventing users on some platforms from using the program.  The code may not compile or it may segfault when invoked.
+  * If Python is available, you can install the Python version with:
+{{{
+  make install_python
+}}}
+
 == Slowness ==
 
 ====There is noticeable delay before each prompt is redrawn.====
 
 This can be caused by a few things.
- * The cpu is overloaded or something else is wrong with the host.
  * Your DB file exists on an NFS mount and it can't be reached quickly.
- * Your connection to the remote host is flaky.
+ * You are connected to a remote host and the connection to the remote host is flaky.
 
 You can _immediately disable_ history logging by exporting an environment variable.
 {{{
