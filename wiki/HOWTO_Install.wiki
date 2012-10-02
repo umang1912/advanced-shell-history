@@ -14,20 +14,20 @@ If you are running Mac OSX, you may need to perform an extra step.
  # Open a new terminal window.  The following steps will be performed within the shell.
  # Download and unpack the source tarball (or minimal source tarball). Alternatively, you can [http://code.google.com/p/advanced-shell-history/source/checkout checkout the repository] and continue building from the next step.
 {{{
-  curl -s http://advanced-shell-history.googlecode.com/files/ash-0.3.r119.tar.gz -o /tmp/ash-src.tar.gz
+  curl -s http://advanced-shell-history.googlecode.com/files/ash-0.5.r155.tar.gz -o /tmp/ash-src.tar.gz
   cd /tmp
   tar -xvzpf ash-*.tar.gz
 
 # Alternatively, you can check out the source with svn:
 
-  svn checkout http://advanced-shell-history.googlecode.com/svn/branches/rb-0.3 /tmp/ash-src
+  svn checkout http://advanced-shell-history.googlecode.com/svn/branches/rb-0.5 /tmp/ash-src
 }}}
  # Compile the code.
 {{{
   cd /tmp/ash-src
   make build
 }}}
-  * NOTE: there is a known issue compiling the C++ source on some systems.  You can build a Python-only version instead.
+  * NOTE: If there are problems compiling the C++ source on your system, you can build a Python-only version instead.
 {{{
   make build_python
 }}}
